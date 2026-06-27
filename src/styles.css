@@ -136,6 +136,32 @@ button:disabled {
   color: #6b7280;
 }
 
+.zoom-controls {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  gap: 4px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+.zoom-controls button {
+  font: inherit;
+  font-size: 14px;
+  min-width: 30px;
+  height: 28px;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.zoom-controls button:hover {
+  background: #f0f2f5;
+}
+
 .body-layer {
   pointer-events: none;
 }

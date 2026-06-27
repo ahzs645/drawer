@@ -47,10 +47,16 @@ interface StoreState {
   tool: Tool
   selectedCalloutId: string | null
   status: string
+  past: DrawerDoc[]
+  future: DrawerDoc[]
   // lifecycle
   loadSampleKey: (key: string, withSeeds?: boolean) => Promise<void>
   importSvgText: (name: string, raw: string) => void
   loadDoc: (doc: DrawerDoc) => void
+  // history
+  record: () => void
+  undo: () => void
+  redo: () => void
   // tools / selection
   setTool: (t: Tool) => void
   select: (id: string | null) => void
@@ -74,11 +80,15 @@ function activeView(doc: DrawerDoc): View {
   return doc.views.find((v) => v.id === doc.activeViewId) ?? doc.views[0]
 }
 
+const HISTORY_LIMIT = 60
+
 export const useStore = create<StoreState>((set, get) => ({
   doc: null,
   tool: 'anchor',
   selectedCalloutId: null,
   status: 'Loading…',
+  past: [],
+  future: [],
 
   loadSampleKey: async (key, withSeeds = false) => {
     const sample = SAMPLES.find((s) => s.key === key) ?? SAMPLES[0]
@@ -91,7 +101,7 @@ export const useStore = create<StoreState>((set, get) => ({
       const base = parseSvg(raw)
       const doc = makeDoc(sample.label, base)
       if (withSeeds && key === 'divider') seedDivider(doc)
-      set({ doc, selectedCalloutId: null, status: '', tool: 'anchor' })
+      set({ doc, selectedCalloutId: null, status: '', tool: 'anchor', past: [], future: [] })
     } catch (e) {
       set({ status: `Failed to load sample: ${(e as Error).message}` })
     }
@@ -101,13 +111,44 @@ export const useStore = create<StoreState>((set, get) => ({
     try {
       const base = parseSvg(raw)
       const doc = makeDoc(name.replace(/\.svg$/i, ''), base)
-      set({ doc, selectedCalloutId: null, status: '', tool: 'anchor' })
+      set({ doc, selectedCalloutId: null, status: '', tool: 'anchor', past: [], future: [] })
     } catch (e) {
       set({ status: `Import failed: ${(e as Error).message}` })
     }
   },
 
-  loadDoc: (doc) => set({ doc, selectedCalloutId: null, status: '', tool: 'select' }),
+  loadDoc: (doc) =>
+    set({ doc, selectedCalloutId: null, status: '', tool: 'select', past: [], future: [] }),
+
+  // snapshot the current doc onto the undo stack (call before a discrete edit,
+  // or once at the start of a drag)
+  record: () => {
+    const { doc, past } = get()
+    if (!doc) return
+    set({ past: [...past, structuredClone(doc)].slice(-HISTORY_LIMIT), future: [] })
+  },
+
+  undo: () => {
+    const { doc, past, future } = get()
+    if (!past.length || !doc) return
+    const prev = past[past.length - 1]
+    set({
+      doc: prev,
+      past: past.slice(0, -1),
+      future: [structuredClone(doc), ...future].slice(0, HISTORY_LIMIT),
+    })
+  },
+
+  redo: () => {
+    const { doc, past, future } = get()
+    if (!future.length || !doc) return
+    const next = future[0]
+    set({
+      doc: next,
+      past: [...past, structuredClone(doc)].slice(-HISTORY_LIMIT),
+      future: future.slice(1),
+    })
+  },
 
   setTool: (t) => set({ tool: t }),
   select: (id) => set({ selectedCalloutId: id }),
@@ -115,6 +156,7 @@ export const useStore = create<StoreState>((set, get) => ({
   addCalloutAt: (point, targetId = null) => {
     const doc = get().doc
     if (!doc) return
+    get().record()
     const n = pointToNormalized(point, doc.base.contentBox)
     const anchor: Anchor = {
       id: uid('anchor'),
@@ -208,6 +250,7 @@ export const useStore = create<StoreState>((set, get) => ({
     if (!doc) return
     const callout = doc.callouts.find((c) => c.id === id)
     if (!callout) return
+    get().record()
     set({
       doc: {
         ...doc,
@@ -226,6 +269,7 @@ export const useStore = create<StoreState>((set, get) => ({
   addView: (name, labelMode, copyFromActive = false) => {
     const doc = get().doc
     if (!doc) return
+    get().record()
     const v = newView(name, labelMode)
     if (copyFromActive) {
       const src = activeView(doc)
@@ -249,6 +293,7 @@ export const useStore = create<StoreState>((set, get) => ({
   deleteView: (id) => {
     const doc = get().doc
     if (!doc || doc.views.length <= 1) return
+    get().record()
     const views = doc.views.filter((v) => v.id !== id)
     const activeViewId = doc.activeViewId === id ? views[0].id : doc.activeViewId
     set({ doc: { ...doc, views, activeViewId } })

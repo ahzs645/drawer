@@ -17,6 +17,11 @@ export function Toolbar() {
   const importSvgText = useStore((s) => s.importSvgText)
   const loadDoc = useStore((s) => s.loadDoc)
   const setDocName = useStore((s) => s.setDocName)
+  const record = useStore((s) => s.record)
+  const undo = useStore((s) => s.undo)
+  const redo = useStore((s) => s.redo)
+  const canUndo = useStore((s) => s.past.length > 0)
+  const canRedo = useStore((s) => s.future.length > 0)
 
   const svgInput = useRef<HTMLInputElement>(null)
   const projInput = useRef<HTMLInputElement>(null)
@@ -77,6 +82,15 @@ export function Toolbar() {
       </div>
 
       <div className="group">
+        <button onClick={undo} disabled={!canUndo} title="Undo (Ctrl/Cmd+Z)" aria-label="Undo">
+          ↺
+        </button>
+        <button onClick={redo} disabled={!canRedo} title="Redo (Ctrl/Cmd+Shift+Z)" aria-label="Redo">
+          ↻
+        </button>
+      </div>
+
+      <div className="group">
         <label className="field">
           Body
           <select
@@ -104,6 +118,7 @@ export function Toolbar() {
           type="text"
           value={doc?.name ?? ''}
           placeholder="diagram"
+          onFocus={record}
           onChange={(e) => setDocName(e.target.value)}
         />
       </label>

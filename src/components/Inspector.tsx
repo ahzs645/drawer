@@ -9,6 +9,7 @@ export function Inspector() {
   const updateOverride = useStore((s) => s.updateOverride)
   const setElbow = useStore((s) => s.setElbow)
   const deleteCallout = useStore((s) => s.deleteCallout)
+  const record = useStore((s) => s.record)
 
   if (!doc) return null
   const callout = doc.callouts.find((c) => c.id === selectedId)
@@ -38,6 +39,7 @@ export function Inspector() {
         <input
           type="text"
           value={callout.labelText}
+          onFocus={record}
           onChange={(e) => updateBase(callout.id, { labelText: e.target.value })}
         />
       </label>
@@ -47,7 +49,10 @@ export function Inspector() {
           Balloon
           <select
             value={callout.balloonShape}
-            onChange={(e) => updateBase(callout.id, { balloonShape: e.target.value as BalloonShape })}
+            onChange={(e) => {
+              record()
+              updateBase(callout.id, { balloonShape: e.target.value as BalloonShape })
+            }}
           >
             <option value="none">None</option>
             <option value="circle">Circle</option>
@@ -59,6 +64,7 @@ export function Inspector() {
           <input
             type="text"
             value={callout.balloonText}
+            onFocus={record}
             onChange={(e) => updateBase(callout.id, { balloonText: e.target.value })}
           />
         </label>
@@ -69,7 +75,10 @@ export function Inspector() {
           Leader
           <select
             value={callout.leaderStyle}
-            onChange={(e) => updateBase(callout.id, { leaderStyle: e.target.value as LeaderStyle })}
+            onChange={(e) => {
+              record()
+              updateBase(callout.id, { leaderStyle: e.target.value as LeaderStyle })
+            }}
           >
             <option value="elbow">Elbow</option>
             <option value="straight">Straight</option>
@@ -80,6 +89,7 @@ export function Inspector() {
           <input
             type="color"
             value={callout.color}
+            onFocus={record}
             onChange={(e) => updateBase(callout.id, { color: e.target.value })}
           />
         </label>
@@ -89,13 +99,22 @@ export function Inspector() {
         <input
           type="checkbox"
           checked={visible}
-          onChange={(e) => updateOverride(callout.id, { visible: e.target.checked })}
+          onChange={(e) => {
+            record()
+            updateOverride(callout.id, { visible: e.target.checked })
+          }}
         />
         Visible in “{view.name}”
       </label>
 
       {ov.elbow && (
-        <button className="link" onClick={() => setElbow(callout.id, null)}>
+        <button
+          className="link"
+          onClick={() => {
+            record()
+            setElbow(callout.id, null)
+          }}
+        >
           Reset leader bend
         </button>
       )}

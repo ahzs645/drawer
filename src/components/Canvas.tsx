@@ -42,6 +42,7 @@ export function Canvas() {
   const moveLabel = useStore((s) => s.moveLabel)
   const moveAnchor = useStore((s) => s.moveAnchorForCallout)
   const setElbow = useStore((s) => s.setElbow)
+  const record = useStore((s) => s.record)
 
   const [size, setSize] = useState({ w: 0, h: 0 })
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, w: 100 })
@@ -97,6 +98,22 @@ export function Canvas() {
   const aspect = size.w > 0 ? size.h / size.w : 1
   const camH = camera.w * aspect
 
+  const fitView = () => {
+    if (doc && size.w) setCamera(initCamera(doc.base.viewBox, size))
+  }
+  const zoomBy = (factor: number) => {
+    if (!doc) return
+    setCamera((c) => {
+      const w = Math.min(
+        Math.max(c.w * factor, doc.base.viewBox.w * 0.05),
+        doc.base.viewBox.w * 8,
+      )
+      const cx = c.x + c.w / 2
+      const cyc = c.y + (c.w * aspect) / 2
+      return { x: cx - w / 2, y: cyc - (w * aspect) / 2, w }
+    })
+  }
+
   // --- background: place (anchor tool) or pan ---
   const onBackgroundDown = (e: React.PointerEvent) => {
     if (e.button !== 0 || !doc) return
@@ -135,7 +152,13 @@ export function Canvas() {
     if (!c) return
     const start = clientToSvg(svgRef.current!, e.clientX, e.clientY)
     const offset: Vec2 = { x: c.labelPos.x - start.x, y: c.labelPos.y - start.y }
-    begin({ onMove: (p) => moveLabel(id, { x: p.x + offset.x, y: p.y + offset.y }) })
+    let rec = false
+    begin({
+      onMove: (p) => {
+        if (!rec) { rec = true; record() }
+        moveLabel(id, { x: p.x + offset.x, y: p.y + offset.y })
+      },
+    })
   }
 
   // --- anchor drag (body-locked, affects all views) ---
@@ -146,7 +169,13 @@ export function Canvas() {
     if (!c) return
     const start = clientToSvg(svgRef.current!, e.clientX, e.clientY)
     const offset: Vec2 = { x: c.anchorPoint.x - start.x, y: c.anchorPoint.y - start.y }
-    begin({ onMove: (p) => moveAnchor(id, { x: p.x + offset.x, y: p.y + offset.y }) })
+    let rec = false
+    begin({
+      onMove: (p) => {
+        if (!rec) { rec = true; record() }
+        moveAnchor(id, { x: p.x + offset.x, y: p.y + offset.y })
+      },
+    })
   }
 
   // --- elbow drag (grab offset, matching label/anchor) ---
@@ -159,7 +188,13 @@ export function Canvas() {
     const cur = geo.points.length >= 3 ? geo.points[1] : c.labelPos
     const start = clientToSvg(svgRef.current!, e.clientX, e.clientY)
     const offset: Vec2 = { x: cur.x - start.x, y: cur.y - start.y }
-    begin({ onMove: (p) => setElbow(id, { x: p.x + offset.x, y: p.y + offset.y }) })
+    let rec = false
+    begin({
+      onMove: (p) => {
+        if (!rec) { rec = true; record() }
+        setElbow(id, { x: p.x + offset.x, y: p.y + offset.y })
+      },
+    })
   }
 
   return (
@@ -202,6 +237,13 @@ export function Canvas() {
           </>
         )}
       </svg>
+      {doc && (
+        <div className="zoom-controls">
+          <button onClick={() => zoomBy(1 / 1.25)} title="Zoom out" aria-label="Zoom out">−</button>
+          <button onClick={fitView} title="Fit to view">Fit</button>
+          <button onClick={() => zoomBy(1.25)} title="Zoom in" aria-label="Zoom in">+</button>
+        </div>
+      )}
       {!doc && <div className="canvas-empty">No drawing loaded.</div>}
     </>
   )

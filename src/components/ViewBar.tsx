@@ -13,6 +13,7 @@ export function ViewBar() {
   const addView = useStore((s) => s.addView)
   const updateViewMeta = useStore((s) => s.updateViewMeta)
   const deleteView = useStore((s) => s.deleteView)
+  const record = useStore((s) => s.record)
 
   if (!doc) return null
   const active = doc.views.find((v) => v.id === doc.activeViewId) ?? doc.views[0]
@@ -40,6 +41,7 @@ export function ViewBar() {
           <input
             type="text"
             value={active.name}
+            onFocus={record}
             onChange={(e) => updateViewMeta(active.id, { name: e.target.value })}
           />
         </label>
@@ -47,7 +49,10 @@ export function ViewBar() {
           Mode
           <select
             value={active.labelMode}
-            onChange={(e) => updateViewMeta(active.id, { labelMode: e.target.value as LabelMode })}
+            onChange={(e) => {
+              record()
+              updateViewMeta(active.id, { labelMode: e.target.value as LabelMode })
+            }}
           >
             {MODES.map((m) => (
               <option key={m.value} value={m.value}>

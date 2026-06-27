@@ -8,6 +8,7 @@ function CalloutList() {
   const selectedId = useStore((s) => s.selectedCalloutId)
   const select = useStore((s) => s.select)
   const updateOverride = useStore((s) => s.updateOverride)
+  const record = useStore((s) => s.record)
 
   if (!doc) return null
   const view = doc.views.find((v) => v.id === doc.activeViewId) ?? doc.views[0]
@@ -35,7 +36,10 @@ function CalloutList() {
                 checked={visible}
                 title="Visible in this view"
                 onClick={(e) => e.stopPropagation()}
-                onChange={(e) => updateOverride(c.id, { visible: e.target.checked })}
+                onChange={(e) => {
+                  record()
+                  updateOverride(c.id, { visible: e.target.checked })
+                }}
               />
             </li>
           )

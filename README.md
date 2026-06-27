@@ -47,6 +47,18 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
     so the label↔location link is preserved inside the flat output.
   - **PNG** — rasterized at 2× for handouts/slides.
   - **Save project** — full editable JSON (`*.drawer.json`); reopen with **Open project**.
+- **Edit comfortably** — full **undo/redo**, **autosave** (your session is restored
+  on reload), **zoom/pan** (wheel + `− Fit +` controls), and keyboard shortcuts.
+
+### Keyboard
+
+| Key | Action |
+| --- | --- |
+| `⌘/Ctrl + Z` | Undo |
+| `⌘/Ctrl + Shift + Z` (or `Ctrl + Y`) | Redo |
+| `Delete` / `Backspace` | Delete the selected callout |
+| `Esc` | Deselect |
+| Mouse wheel | Zoom to cursor; drag empty space to pan |
 
 ## Exported SVG shape
 
@@ -112,3 +124,7 @@ public/samples/       the six body SVGs
 - `path-offset` anchoring UI (snap along a stroke)
 - PDF export; multi-page figure sheets
 - Auto-layout / collision avoidance for labels
+- Multi-select and group move/delete
+
+Implemented since the first cut: undo/redo, autosave + session restore, zoom/pan
+controls, and keyboard shortcuts.
