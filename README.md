@@ -28,9 +28,12 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
 
 ## What you can do
 
-- **Load a body** — six bundled views (standing front/back, back, half-body front/back,
-  side-lying, seated wheelchair) or **Import** any SVG.
-- **Add callout** — click the body to anchor a point; a leader + label appear.
+- **Load a body** — bundled views (standing front/back, back, half-body front/back,
+  side-lying, seated wheelchair, plus a multi-part *torso organs* demo) or **Import** any SVG.
+- **Add callout** — click the body to anchor a point; a leader + label appear. Clicking a
+  *named part* of a multi-element SVG (e.g. the heart in the organs demo) anchors to **that
+  element**, normalized to its bounding box, so it tracks the part. Re-target or detach any
+  anchor from the inspector’s “Anchored to part” menu.
 - **Drag** the label (per-view position), the white anchor dot (body-locked, affects all
   views), or the small square to bend the leader into an elbow.
 - **Edit** label text, balloon shape (none / circle / hexagon), number/code, leader style
@@ -120,11 +123,20 @@ public/samples/       the six body SVGs
 ## Roadmap
 
 - Per-view label text overrides (translations) and per-view balloon styles
-- Click an imported SVG *element* to anchor relative to that part (`data-target`)
 - `path-offset` anchoring UI (snap along a stroke)
 - PDF export; multi-page figure sheets
 - Auto-layout / collision avoidance for labels
 - Multi-select and group move/delete
 
 Implemented since the first cut: undo/redo, autosave + session restore, zoom/pan
-controls, and keyboard shortcuts.
+controls, keyboard shortcuts, and **anchor-to-element** (`data-target`).
+
+## Extensibility / tldraw
+
+The model, geometry, resolver, and exporters (`types.ts`, `geometry.ts`, `resolve.ts`,
+`export/`) are pure, framework-agnostic TypeScript — the React/SVG canvas is just one
+renderer. That keeps the door open to a future `@drawer/tldraw` adapter: the callout maps
+to a custom tldraw `ShapeUtil` (whose `toSvg` can emit the same clean metadata), the anchor
+to a custom `BindingUtil` (tldraw arrows already bind via a normalized relative anchor), and
+placement to a custom tool. We keep the SVG-native app as the source of truth (clean export,
+no watermark/licensing) and can layer a tldraw editing surface on the same core later.

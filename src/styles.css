@@ -162,8 +162,9 @@ button:disabled {
   background: #f0f2f5;
 }
 
-.body-layer {
-  pointer-events: none;
+/* body elements are hit-testable so a click can anchor to a specific part */
+.canvas.tool-anchor .body-layer {
+  cursor: crosshair;
 }
 
 .label-text {

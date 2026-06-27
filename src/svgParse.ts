@@ -17,12 +17,15 @@ function parseViewBox(svg: SVGSVGElement): Box {
 }
 
 /**
- * Measure the tight bounding box of arbitrary inner SVG markup by mounting it
- * offscreen and calling getBBox. Falls back to the viewBox if measurement is
- * unavailable (e.g. non-DOM environments).
+ * Mount inner SVG markup offscreen and measure both the overall content box and
+ * the bounding box of every addressable element (keyed by id / data-drawer-el).
+ * Falls back to the viewBox if measurement is unavailable (non-DOM env).
  */
-export function measureContentBox(inner: string, viewBox: Box): Box {
-  if (typeof document === 'undefined') return viewBox
+export function measureGeometry(
+  inner: string,
+  viewBox: Box,
+): { contentBox: Box; targetBoxes: Record<string, Box> } {
+  if (typeof document === 'undefined') return { contentBox: viewBox, targetBoxes: {} }
   const ns = 'http://www.w3.org/2000/svg'
   const svg = document.createElementNS(ns, 'svg')
   svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`)
@@ -35,18 +38,31 @@ export function measureContentBox(inner: string, viewBox: Box): Box {
   g.innerHTML = inner
   svg.appendChild(g)
   document.body.appendChild(svg)
-  let box: Box = viewBox
+  let contentBox: Box = viewBox
+  const targetBoxes: Record<string, Box> = {}
   try {
     const b = g.getBBox()
     if (b.width > 0 && b.height > 0) {
-      box = { x: b.x, y: b.y, w: b.width, h: b.height }
+      contentBox = { x: b.x, y: b.y, w: b.width, h: b.height }
     }
+    g.querySelectorAll<SVGGraphicsElement>('[id],[data-drawer-el]').forEach((el) => {
+      const key = el.id || el.getAttribute('data-drawer-el')
+      if (!key) return
+      try {
+        const eb = el.getBBox()
+        if (eb.width > 0 || eb.height > 0) {
+          targetBoxes[key] = { x: eb.x, y: eb.y, w: eb.width, h: eb.height }
+        }
+      } catch {
+        /* skip un-measurable element */
+      }
+    })
   } catch {
-    box = viewBox
+    contentBox = viewBox
   } finally {
     document.body.removeChild(svg)
   }
-  return box
+  return { contentBox, targetBoxes }
 }
 
 /** Strip active/scriptable content in place (markup is injected via innerHTML). */
@@ -84,7 +100,16 @@ export function parseSvg(raw: string): BaseDrawing {
   // strip <title> so it doesn't render as a tooltip we don't control
   svg.querySelectorAll('title').forEach((t) => t.remove())
   sanitizeElement(svg)
+  // give every drawable element a stable handle so anchors can target a part
+  let n = 0
+  svg
+    .querySelectorAll('path, circle, ellipse, rect, polygon, polyline, line')
+    .forEach((el) => {
+      if (!el.id && !el.getAttribute('data-drawer-el')) {
+        el.setAttribute('data-drawer-el', `el${++n}`)
+      }
+    })
   const inner = svg.innerHTML.trim()
-  const contentBox = measureContentBox(inner, viewBox)
-  return { inner, viewBox, contentBox }
+  const { contentBox, targetBoxes } = measureGeometry(inner, viewBox)
+  return { inner, viewBox, contentBox, targetBoxes }
 }

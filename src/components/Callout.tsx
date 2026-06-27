@@ -45,6 +45,7 @@ export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
         strokeLinejoin="round"
         strokeLinecap="round"
         opacity={0.95}
+        pointerEvents="none"
       />
 
       {/* anchor marker on the body */}

@@ -24,9 +24,12 @@ export function resolveCallouts(doc: DrawerDoc, viewId?: string): ResolvedCallou
     const index = visibleCount // 1-based among visible callouts
 
     const anchor = anchorById.get(c.anchorId)
-    const anchorPoint = anchor
-      ? resolveAnchor(anchor, doc.base.contentBox)
-      : c.labelPos
+    const targetId = anchor?.relative?.targetId
+    const box =
+      targetId && doc.base.targetBoxes?.[targetId]
+        ? doc.base.targetBoxes[targetId]
+        : doc.base.contentBox
+    const anchorPoint = anchor ? resolveAnchor(anchor, box) : c.labelPos
 
     const labelPos = ov.labelPos ?? c.labelPos
     const elbow = ov.elbow !== undefined ? ov.elbow : c.elbow

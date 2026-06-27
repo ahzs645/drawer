@@ -92,6 +92,12 @@ export interface BaseDrawing {
   viewBox: Box
   /** tight bounding box of the drawn content, used for normalized anchoring */
   contentBox: Box
+  /**
+   * bounding box per addressable body element (keyed by id or assigned
+   * data-drawer-el). An anchor with relative.targetId set is normalized to and
+   * resolved against the matching box, so it tracks that specific body part.
+   */
+  targetBoxes: Record<string, Box>
 }
 
 export interface DrawerDoc {

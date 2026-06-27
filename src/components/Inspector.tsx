@@ -8,6 +8,7 @@ export function Inspector() {
   const updateBase = useStore((s) => s.updateCalloutBase)
   const updateOverride = useStore((s) => s.updateOverride)
   const setElbow = useStore((s) => s.setElbow)
+  const setAnchorTarget = useStore((s) => s.setAnchorTarget)
   const deleteCallout = useStore((s) => s.deleteCallout)
   const record = useStore((s) => s.record)
 
@@ -119,10 +120,27 @@ export function Inspector() {
         </button>
       )}
 
-      {anchor?.mode === 'relative-bbox' && anchor.relative && (
-        <p className="hint mono">
-          anchor → {round(anchor.relative.nx * 100)}%, {round(anchor.relative.ny * 100)}% of body box
-        </p>
+      {anchor?.relative && (
+        <>
+          <label className="field">
+            Anchored to part
+            <select
+              value={anchor.relative.targetId ?? ''}
+              onChange={(e) => setAnchorTarget(callout.id, e.target.value || null)}
+            >
+              <option value="">Whole body (box)</option>
+              {Object.keys(doc.base.targetBoxes).map((k) => (
+                <option key={k} value={k}>
+                  {k}
+                </option>
+              ))}
+            </select>
+          </label>
+          <p className="hint mono">
+            {round(anchor.relative.nx * 100)}%, {round(anchor.relative.ny * 100)}% of{' '}
+            {anchor.relative.targetId ?? 'body'} box
+          </p>
+        </>
       )}
 
       <button className="danger block" onClick={() => deleteCallout(callout.id)}>

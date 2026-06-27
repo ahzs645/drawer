@@ -13,6 +13,7 @@ export const SAMPLES: SampleDef[] = [
   { key: 'backRight', file: 'standing_back_right_half.svg', label: 'Standing — back (right half)' },
   { key: 'sideLying', file: 'side_lying_view.svg', label: 'Side-lying' },
   { key: 'wheelchair', file: 'seated_wheelchair_side_view.svg', label: 'Seated — wheelchair' },
+  { key: 'organs', file: 'organs_demo.svg', label: 'Torso organs (parts demo)' },
 ]
 
 export const DEFAULT_SAMPLE_KEY = 'divider'

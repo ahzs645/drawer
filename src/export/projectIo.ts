@@ -35,6 +35,7 @@ export function parseProject(text: string): DrawerDoc {
   }
   // body markup from a project file is also injected via innerHTML — sanitize it
   doc.base.inner = sanitizeMarkup(doc.base.inner)
+  if (!doc.base.targetBoxes) doc.base.targetBoxes = {}
   if (!doc.activeViewId || !doc.views.some((v) => v.id === doc.activeViewId)) {
     doc.activeViewId = doc.views[0].id
   }

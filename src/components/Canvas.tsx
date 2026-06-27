@@ -114,11 +114,15 @@ export function Canvas() {
     })
   }
 
-  // --- background: place (anchor tool) or pan ---
-  const onBackgroundDown = (e: React.PointerEvent) => {
+  // --- canvas background/body: place (anchor tool) or pan ---
+  const onCanvasDown = (e: React.PointerEvent) => {
     if (e.button !== 0 || !doc) return
     const svg = svgRef.current!
     const downPoint = clientToSvg(svg, e.clientX, e.clientY)
+    // which body element (if any) was clicked, so the anchor can target that part
+    const hit = (e.target as Element).closest('[data-drawer-el],[id]')
+    const inBody = !!(e.target as Element).closest('.body-layer')
+    const targetId = inBody && hit ? hit.id || hit.getAttribute('data-drawer-el') : null
     const rectW = svg.getBoundingClientRect().width || size.w || 1
     let lastX = e.clientX
     let lastY = e.clientY
@@ -137,7 +141,7 @@ export function Canvas() {
       },
       onEnd: () => {
         if (moved < 4) {
-          if (tool === 'anchor') addCalloutAt(downPoint)
+          if (tool === 'anchor') addCalloutAt(downPoint, targetId)
           else select(null)
         }
       },
@@ -204,6 +208,7 @@ export function Canvas() {
         className={`canvas tool-${tool}`}
         viewBox={`${camera.x} ${camera.y} ${camera.w} ${camH}`}
         preserveAspectRatio="xMidYMid meet"
+        onPointerDown={onCanvasDown}
       >
         {doc && (
           <>
@@ -214,7 +219,6 @@ export function Canvas() {
               width={camera.w}
               height={camH}
               fill="#ffffff"
-              onPointerDown={onBackgroundDown}
             />
 
             {/* base body drawing */}

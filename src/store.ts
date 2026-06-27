@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { pointToNormalized } from './geometry'
+import { pointToNormalized, resolveAnchor } from './geometry'
 import { uid } from './id'
 import {
   DEFAULT_SAMPLE_KEY,
@@ -12,6 +12,7 @@ import type {
   Anchor,
   BalloonShape,
   BaseDrawing,
+  Box,
   Callout,
   CalloutOverride,
   DrawerDoc,
@@ -66,6 +67,7 @@ interface StoreState {
   updateOverride: (id: string, patch: CalloutOverride) => void
   moveLabel: (id: string, pos: Vec2) => void
   moveAnchorForCallout: (id: string, point: Vec2) => void
+  setAnchorTarget: (id: string, targetId: string | null) => void
   setElbow: (id: string, point: Vec2 | null) => void
   deleteCallout: (id: string) => void
   // views
@@ -78,6 +80,12 @@ interface StoreState {
 
 function activeView(doc: DrawerDoc): View {
   return doc.views.find((v) => v.id === doc.activeViewId) ?? doc.views[0]
+}
+
+/** The bounding box an anchor is relative to: a targeted element, else content. */
+function targetBoxFor(doc: DrawerDoc, targetId: string | null): Box {
+  if (targetId && doc.base.targetBoxes?.[targetId]) return doc.base.targetBoxes[targetId]
+  return doc.base.contentBox
 }
 
 const HISTORY_LIMIT = 60
@@ -157,7 +165,8 @@ export const useStore = create<StoreState>((set, get) => ({
     const doc = get().doc
     if (!doc) return
     get().record()
-    const n = pointToNormalized(point, doc.base.contentBox)
+    const box = targetBoxFor(doc, targetId)
+    const n = pointToNormalized(point, box)
     const anchor: Anchor = {
       id: uid('anchor'),
       mode: 'relative-bbox',
@@ -232,13 +241,39 @@ export const useStore = create<StoreState>((set, get) => ({
     if (!doc) return
     const callout = doc.callouts.find((c) => c.id === id)
     if (!callout) return
-    const n = pointToNormalized(point, doc.base.contentBox)
+    const anchor = doc.anchors.find((a) => a.id === callout.anchorId)
+    const targetId = anchor?.relative?.targetId ?? null
+    const n = pointToNormalized(point, targetBoxFor(doc, targetId))
     set({
       doc: {
         ...doc,
         anchors: doc.anchors.map((a) =>
           a.id === callout.anchorId
-            ? { ...a, mode: 'relative-bbox', relative: { targetId: a.relative?.targetId ?? null, nx: n.nx, ny: n.ny } }
+            ? { ...a, mode: 'relative-bbox', relative: { targetId, nx: n.nx, ny: n.ny } }
+            : a,
+        ),
+      },
+    })
+  },
+
+  // re-target a callout's anchor to a body element (or detach to the body box),
+  // keeping its current on-screen point fixed
+  setAnchorTarget: (id, targetId) => {
+    const doc = get().doc
+    if (!doc) return
+    const callout = doc.callouts.find((c) => c.id === id)
+    if (!callout) return
+    const anchor = doc.anchors.find((a) => a.id === callout.anchorId)
+    if (!anchor) return
+    get().record()
+    const current = resolveAnchor(anchor, targetBoxFor(doc, anchor.relative?.targetId ?? null))
+    const n = pointToNormalized(current, targetBoxFor(doc, targetId))
+    set({
+      doc: {
+        ...doc,
+        anchors: doc.anchors.map((a) =>
+          a.id === anchor.id
+            ? { ...a, mode: 'relative-bbox', relative: { targetId, nx: n.nx, ny: n.ny } }
             : a,
         ),
       },

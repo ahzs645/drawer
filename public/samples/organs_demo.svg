@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="600" viewBox="0 0 420 600" role="img" aria-label="Torso organs (demo)">
+  <title>Torso organs (demo)</title>
+  <path id="torso" d="M120 70 C105 38 315 38 300 70 L332 524 C332 566 88 566 88 524 Z" fill="#ffffff" stroke="#333333" stroke-width="2.5"/>
+  <ellipse id="lung_right" cx="160" cy="205" rx="46" ry="92" fill="#dcecff" stroke="#333333" stroke-width="2"/>
+  <ellipse id="lung_left" cx="262" cy="205" rx="46" ry="92" fill="#dcecff" stroke="#333333" stroke-width="2"/>
+  <path id="heart" d="M210 250 C188 222 168 236 178 262 C186 282 210 296 210 296 C210 296 234 282 242 262 C252 236 232 222 210 250 Z" fill="#ffd6d6" stroke="#333333" stroke-width="2"/>
+  <ellipse id="liver" cx="255" cy="332" rx="72" ry="38" fill="#e8d9b5" stroke="#333333" stroke-width="2"/>
+  <ellipse id="stomach" cx="165" cy="338" rx="42" ry="30" fill="#ffe9c7" stroke="#333333" stroke-width="2"/>
+  <ellipse id="kidney_right" cx="158" cy="410" rx="19" ry="32" fill="#e2d2f0" stroke="#333333" stroke-width="2"/>
+  <ellipse id="kidney_left" cx="262" cy="410" rx="19" ry="32" fill="#e2d2f0" stroke="#333333" stroke-width="2"/>
+  <ellipse id="bladder" cx="210" cy="486" rx="32" ry="26" fill="#fff3b0" stroke="#333333" stroke-width="2"/>
+</svg>
