@@ -25,10 +25,9 @@ function initCamera(viewBox: Box, size: { w: number; h: number }): Camera {
   const pad = padBox(viewBox)
   const aspect = size.w > 0 ? size.h / size.w : pad.h / pad.w
   const w = Math.max(pad.w, pad.h / aspect)
-  const h = w * aspect
   const cx = pad.x + pad.w / 2
   const cy = pad.y + pad.h / 2
-  return { x: cx - w / 2, y: cy - h / 2, w }
+  return { x: cx - w / 2, y: cy - (w * aspect) / 2, w }
 }
 
 export function Canvas() {
@@ -70,16 +69,37 @@ export function Canvas() {
     setCamera(initCamera(doc.base.viewBox, size))
   }, [doc?.id, size.w, size.h])
 
-  if (!doc) return <div className="canvas-empty">No drawing loaded.</div>
+  // non-passive wheel listener so zooming never scrolls the page
+  useEffect(() => {
+    const el = svgRef.current
+    if (!el) return
+    const onWheelNative = (e: WheelEvent) => {
+      const d = useStore.getState().doc
+      if (!d) return
+      e.preventDefault()
+      const factor = e.deltaY > 0 ? 1.1 : 1 / 1.1
+      const p = clientToSvg(el, e.clientX, e.clientY)
+      setCamera((c) => {
+        const w = Math.min(
+          Math.max(c.w * factor, d.base.viewBox.w * 0.05),
+          d.base.viewBox.w * 8,
+        )
+        const k = w / c.w
+        return { x: p.x - (p.x - c.x) * k, y: p.y - (p.y - c.y) * k, w }
+      })
+    }
+    el.addEventListener('wheel', onWheelNative, { passive: false })
+    return () => el.removeEventListener('wheel', onWheelNative)
+  }, [])
 
-  const resolved = resolveCallouts(doc)
-  const fontSize = fontSizeFor(doc.base.viewBox)
+  const resolved = doc ? resolveCallouts(doc) : []
+  const fontSize = doc ? fontSizeFor(doc.base.viewBox) : 14
   const aspect = size.w > 0 ? size.h / size.w : 1
   const camH = camera.w * aspect
 
   // --- background: place (anchor tool) or pan ---
   const onBackgroundDown = (e: React.PointerEvent) => {
-    if (e.button !== 0) return
+    if (e.button !== 0 || !doc) return
     const svg = svgRef.current!
     const downPoint = clientToSvg(svg, e.clientX, e.clientY)
     const rectW = svg.getBoundingClientRect().width || size.w || 1
@@ -142,55 +162,47 @@ export function Canvas() {
     begin({ onMove: (p) => setElbow(id, { x: p.x + offset.x, y: p.y + offset.y }) })
   }
 
-  const onWheel = (e: React.WheelEvent) => {
-    const factor = e.deltaY > 0 ? 1.1 : 1 / 1.1
-    const p = clientToSvg(svgRef.current!, e.clientX, e.clientY)
-    setCamera((c) => {
-      const w = Math.min(
-        Math.max(c.w * factor, doc.base.viewBox.w * 0.05),
-        doc.base.viewBox.w * 8,
-      )
-      const k = w / c.w
-      // uniform scale (camH scales with w by the same k), so pivot p stays fixed
-      return { x: p.x - (p.x - c.x) * k, y: p.y - (p.y - c.y) * k, w }
-    })
-  }
-
   return (
-    <svg
-      ref={svgRef}
-      className={`canvas tool-${tool}`}
-      viewBox={`${camera.x} ${camera.y} ${camera.w} ${camH}`}
-      preserveAspectRatio="xMidYMid meet"
-      onWheel={onWheel}
-    >
-      {/* background hit target */}
-      <rect
-        x={camera.x}
-        y={camera.y}
-        width={camera.w}
-        height={camH}
-        fill="#ffffff"
-        onPointerDown={onBackgroundDown}
-      />
+    <>
+      <svg
+        ref={svgRef}
+        className={`canvas tool-${tool}`}
+        viewBox={`${camera.x} ${camera.y} ${camera.w} ${camH}`}
+        preserveAspectRatio="xMidYMid meet"
+      >
+        {doc && (
+          <>
+            {/* background hit target */}
+            <rect
+              x={camera.x}
+              y={camera.y}
+              width={camera.w}
+              height={camH}
+              fill="#ffffff"
+              onPointerDown={onBackgroundDown}
+            />
 
-      {/* base body drawing */}
-      <g className="body-layer" dangerouslySetInnerHTML={{ __html: doc.base.inner }} />
+            {/* base body drawing */}
+            <g className="body-layer" dangerouslySetInnerHTML={{ __html: doc.base.inner }} />
 
-      {/* callouts */}
-      {resolved.map((c) => (
-        <CalloutView
-          key={c.id}
-          c={c}
-          fontSize={fontSize}
-          selected={selectedId === c.id}
-          editing={selectedId === c.id}
-          onSelect={select}
-          onLabelDown={onLabelDown}
-          onAnchorDown={onAnchorDown}
-          onElbowDown={onElbowDown}
-        />
-      ))}
-    </svg>
+            {/* callouts */}
+            {resolved.map((c) => (
+              <CalloutView
+                key={c.id}
+                c={c}
+                fontSize={fontSize}
+                selected={selectedId === c.id}
+                editing={selectedId === c.id}
+                onSelect={select}
+                onLabelDown={onLabelDown}
+                onAnchorDown={onAnchorDown}
+                onElbowDown={onElbowDown}
+              />
+            ))}
+          </>
+        )}
+      </svg>
+      {!doc && <div className="canvas-empty">No drawing loaded.</div>}
+    </>
   )
 }

@@ -74,6 +74,10 @@ export function sanitizeMarkup(inner: string): string {
 /** Parse a raw SVG document string into a BaseDrawing. */
 export function parseSvg(raw: string): BaseDrawing {
   const doc = new DOMParser().parseFromString(raw, 'image/svg+xml')
+  // DOMParser reports XML errors as a <parsererror> node instead of throwing
+  if (doc.querySelector('parsererror')) {
+    throw new Error('The file could not be parsed as valid SVG/XML.')
+  }
   const svg = doc.querySelector('svg')
   if (!svg) throw new Error('No <svg> element found in the imported file.')
   const viewBox = parseViewBox(svg as unknown as SVGSVGElement)

@@ -17,8 +17,17 @@ export function clientToSvg(svg: SVGSVGElement, clientX: number, clientY: number
   pt.y = clientY
   const ctm = svg.getScreenCTM()
   if (!ctm) return { x: clientX, y: clientY }
-  const local = pt.matrixTransform(ctm.inverse())
-  return { x: local.x, y: local.y }
+  try {
+    const local = pt.matrixTransform(ctm.inverse())
+    // a singular CTM (e.g. zero-size element) yields NaN/Infinity — reject it so
+    // anchors/labels are never written with corrupt coordinates
+    if (!Number.isFinite(local.x) || !Number.isFinite(local.y)) {
+      return { x: clientX, y: clientY }
+    }
+    return { x: local.x, y: local.y }
+  } catch {
+    return { x: clientX, y: clientY }
+  }
 }
 
 /** Scale a client-space delta (dx,dy in px) into SVG user-space units. */

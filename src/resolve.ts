@@ -14,6 +14,7 @@ export function getView(doc: DrawerDoc, viewId?: string): View {
 
 export function resolveCallouts(doc: DrawerDoc, viewId?: string): ResolvedCallout[] {
   const view = getView(doc, viewId)
+  const anchorById = new Map(doc.anchors.map((a) => [a.id, a]))
   let visibleCount = 0
 
   return doc.callouts.map((c) => {
@@ -22,7 +23,7 @@ export function resolveCallouts(doc: DrawerDoc, viewId?: string): ResolvedCallou
     if (visible) visibleCount += 1
     const index = visibleCount // 1-based among visible callouts
 
-    const anchor = doc.anchors.find((a) => a.id === c.anchorId)
+    const anchor = anchorById.get(c.anchorId)
     const anchorPoint = anchor
       ? resolveAnchor(anchor, doc.base.contentBox)
       : c.labelPos
