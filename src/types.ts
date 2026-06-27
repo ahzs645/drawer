@@ -1,0 +1,122 @@
+// ---------------------------------------------------------------------------
+// Data model for the semantic SVG annotation editor.
+//
+// The whole point of this model is to keep the *relationship* between a label
+// and the body location it points to, instead of baking everything into one
+// flat picture. So we separate:
+//   - the base body drawing (imported SVG silhouette)
+//   - anchors            (points LOCKED to the body)
+//   - callouts           (the visible balloon + label + leader line)
+//   - views              (named label-sets: names / numbers / blank quiz / ...)
+// ---------------------------------------------------------------------------
+
+export interface Vec2 {
+  x: number
+  y: number
+}
+
+export interface Box {
+  x: number
+  y: number
+  w: number
+  h: number
+}
+
+/**
+ * How an anchor's position is stored.
+ *  - 'relative-bbox': normalized 0..1 inside a target element's bounding box
+ *    (or the whole drawing's content box when targetId is null). This survives
+ *    scaling / swapping a redrawn body, which is what we want by default.
+ *  - 'absolute': raw SVG user-unit coordinates. Simple, but tied to one drawing.
+ *  - 'path-offset': a fraction along a specific <path> (reserved; resolved when
+ *    the target element is a path).
+ */
+export type AnchorMode = 'relative-bbox' | 'absolute' | 'path-offset'
+
+export interface Anchor {
+  id: string
+  mode: AnchorMode
+  /** present when mode === 'absolute' */
+  absolute?: Vec2
+  /** present when mode === 'relative-bbox' */
+  relative?: { targetId: string | null; nx: number; ny: number }
+  /** present when mode === 'path-offset' */
+  pathOffset?: { targetId: string; t: number }
+}
+
+export type BalloonShape = 'circle' | 'hex' | 'none'
+export type LeaderStyle = 'straight' | 'elbow'
+
+/**
+ * A callout: the visible annotation. Holds default appearance; per-view
+ * overrides (label position, text, etc.) live on the View.
+ */
+export interface Callout {
+  id: string
+  anchorId: string
+  labelText: string
+  balloonShape: BalloonShape
+  /** short text / number drawn inside the balloon */
+  balloonText: string
+  leaderStyle: LeaderStyle
+  /** default head position (balloon center) in SVG user units */
+  labelPos: Vec2
+  /** optional manual elbow bend point in SVG user units */
+  elbow: Vec2 | null
+  color: string
+}
+
+export type LabelMode = 'names' | 'numbers' | 'blank'
+
+export interface CalloutOverride {
+  visible?: boolean
+  labelPos?: Vec2
+  labelText?: string
+  balloonText?: string
+  balloonShape?: BalloonShape
+  elbow?: Vec2 | null
+}
+
+/** A named label-set. Switching views re-skins every callout. */
+export interface View {
+  id: string
+  name: string
+  labelMode: LabelMode
+  overrides: Record<string, CalloutOverride>
+}
+
+export interface BaseDrawing {
+  /** inner SVG markup of the body (paths/groups), without the outer <svg> */
+  inner: string
+  /** the imported viewBox */
+  viewBox: Box
+  /** tight bounding box of the drawn content, used for normalized anchoring */
+  contentBox: Box
+}
+
+export interface DrawerDoc {
+  id: string
+  name: string
+  base: BaseDrawing
+  anchors: Anchor[]
+  callouts: Callout[]
+  views: View[]
+  activeViewId: string
+}
+
+/** A callout fully resolved against the active view, ready to render. */
+export interface ResolvedCallout {
+  id: string
+  anchorId: string
+  anchorPoint: Vec2
+  labelText: string
+  balloonShape: BalloonShape
+  balloonText: string
+  leaderStyle: LeaderStyle
+  labelPos: Vec2
+  elbow: Vec2 | null
+  color: string
+  visible: boolean
+  /** 1-based number used in 'numbers' mode and the legend */
+  index: number
+}
