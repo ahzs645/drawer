@@ -1,4 +1,4 @@
-import { resolveAnchor } from './geometry'
+import { boxForTarget, resolveAnchor } from './geometry'
 import type { DrawerDoc, ResolvedCallout, View } from './types'
 
 // ---------------------------------------------------------------------------
@@ -24,11 +24,7 @@ export function resolveCallouts(doc: DrawerDoc, viewId?: string): ResolvedCallou
     const index = visibleCount // 1-based among visible callouts
 
     const anchor = anchorById.get(c.anchorId)
-    const targetId = anchor?.relative?.targetId
-    const box =
-      targetId && doc.base.targetBoxes?.[targetId]
-        ? doc.base.targetBoxes[targetId]
-        : doc.base.contentBox
+    const box = boxForTarget(doc.base, anchor?.relative?.targetId ?? null)
     const anchorPoint = anchor ? resolveAnchor(anchor, box) : c.labelPos
 
     const labelPos = ov.labelPos ?? c.labelPos

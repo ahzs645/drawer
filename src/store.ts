@@ -1,6 +1,7 @@
 import { create } from 'zustand'
-import { pointToNormalized, resolveAnchor } from './geometry'
+import { boxForTarget, pointToNormalized, resolveAnchor } from './geometry'
 import { uid } from './id'
+import { buildLandmarksFor } from './landmarks'
 import {
   DEFAULT_SAMPLE_KEY,
   DIVIDER_SEEDS,
@@ -17,6 +18,7 @@ import type {
   CalloutOverride,
   DrawerDoc,
   LabelMode,
+  Landmark,
   LeaderStyle,
   Vec2,
   View,
@@ -30,7 +32,7 @@ function newView(name: string, labelMode: LabelMode): View {
   return { id: uid('view'), name, labelMode, overrides: {} }
 }
 
-function makeDoc(name: string, base: BaseDrawing): DrawerDoc {
+function makeDoc(name: string, base: BaseDrawing, landmarks: Landmark[] = []): DrawerDoc {
   const view = newView('Names', 'names')
   return {
     id: uid('doc'),
@@ -40,7 +42,25 @@ function makeDoc(name: string, base: BaseDrawing): DrawerDoc {
     callouts: [],
     views: [view],
     activeViewId: view.id,
+    landmarks,
   }
+}
+
+/** Place a label/balloon outward from the body center on the nearer side. */
+function outwardLabelPos(base: BaseDrawing, point: Vec2): Vec2 {
+  const center = base.contentBox.x + base.contentBox.w / 2
+  const outX =
+    point.x < center ? base.contentBox.x - 4 : base.contentBox.x + base.contentBox.w + 4
+  return { x: outX, y: point.y }
+}
+
+/** Next free balloon number, robust to deletions of middle callouts. */
+function nextBalloonNumber(doc: DrawerDoc): number {
+  const maxNum = doc.callouts.reduce((m, c) => {
+    const n = parseInt(c.balloonText, 10)
+    return Number.isFinite(n) ? Math.max(m, n) : m
+  }, 0)
+  return maxNum + 1
 }
 
 interface StoreState {
@@ -50,6 +70,9 @@ interface StoreState {
   status: string
   past: DrawerDoc[]
   future: DrawerDoc[]
+  // landmark catalog UI
+  showLandmarks: boolean
+  hoverLandmarkId: string | null
   // lifecycle
   loadSampleKey: (key: string, withSeeds?: boolean) => Promise<void>
   importSvgText: (name: string, raw: string) => void
@@ -61,6 +84,12 @@ interface StoreState {
   // tools / selection
   setTool: (t: Tool) => void
   select: (id: string | null) => void
+  // landmark catalog
+  setShowLandmarks: (v: boolean) => void
+  setHoverLandmark: (id: string | null) => void
+  addLandmark: (name: string, point: Vec2, targetId?: string | null) => void
+  removeLandmark: (id: string) => void
+  addCalloutAtLandmark: (landmarkId: string) => void
   // callouts
   addCalloutAt: (point: Vec2, targetId?: string | null) => void
   updateCalloutBase: (id: string, patch: Partial<Callout>) => void
@@ -84,8 +113,7 @@ function activeView(doc: DrawerDoc): View {
 
 /** The bounding box an anchor is relative to: a targeted element, else content. */
 function targetBoxFor(doc: DrawerDoc, targetId: string | null): Box {
-  if (targetId && doc.base.targetBoxes?.[targetId]) return doc.base.targetBoxes[targetId]
-  return doc.base.contentBox
+  return boxForTarget(doc.base, targetId)
 }
 
 const HISTORY_LIMIT = 60
@@ -97,6 +125,8 @@ export const useStore = create<StoreState>((set, get) => ({
   status: 'Loading…',
   past: [],
   future: [],
+  showLandmarks: true,
+  hoverLandmarkId: null,
 
   loadSampleKey: async (key, withSeeds = false) => {
     const sample = SAMPLES.find((s) => s.key === key) ?? SAMPLES[0]
@@ -107,9 +137,18 @@ export const useStore = create<StoreState>((set, get) => ({
         return r.text()
       })
       const base = parseSvg(raw)
-      const doc = makeDoc(sample.label, base)
+      const landmarks = buildLandmarksFor(sample.key, base.targetBoxes)
+      const doc = makeDoc(sample.label, base, landmarks)
       if (withSeeds && key === 'divider') seedDivider(doc)
-      set({ doc, selectedCalloutId: null, status: '', tool: 'anchor', past: [], future: [] })
+      set({
+        doc,
+        selectedCalloutId: null,
+        status: '',
+        tool: 'anchor',
+        past: [],
+        future: [],
+        hoverLandmarkId: null,
+      })
     } catch (e) {
       set({ status: `Failed to load sample: ${(e as Error).message}` })
     }
@@ -118,15 +157,33 @@ export const useStore = create<StoreState>((set, get) => ({
   importSvgText: (name, raw) => {
     try {
       const base = parseSvg(raw)
-      const doc = makeDoc(name.replace(/\.svg$/i, ''), base)
-      set({ doc, selectedCalloutId: null, status: '', tool: 'anchor', past: [], future: [] })
+      // imported SVGs get a catalog auto-derived from their named elements
+      const landmarks = buildLandmarksFor(null, base.targetBoxes)
+      const doc = makeDoc(name.replace(/\.svg$/i, ''), base, landmarks)
+      set({
+        doc,
+        selectedCalloutId: null,
+        status: '',
+        tool: 'anchor',
+        past: [],
+        future: [],
+        hoverLandmarkId: null,
+      })
     } catch (e) {
       set({ status: `Import failed: ${(e as Error).message}` })
     }
   },
 
   loadDoc: (doc) =>
-    set({ doc, selectedCalloutId: null, status: '', tool: 'select', past: [], future: [] }),
+    set({
+      doc,
+      selectedCalloutId: null,
+      status: '',
+      tool: 'select',
+      past: [],
+      future: [],
+      hoverLandmarkId: null,
+    }),
 
   // snapshot the current doc onto the undo stack (call before a discrete edit,
   // or once at the start of a drag)
@@ -161,33 +218,83 @@ export const useStore = create<StoreState>((set, get) => ({
   setTool: (t) => set({ tool: t }),
   select: (id) => set({ selectedCalloutId: id }),
 
+  setShowLandmarks: (v) => set({ showLandmarks: v }),
+  setHoverLandmark: (id) => set({ hoverLandmarkId: id }),
+
+  // add a new named location to the catalog (e.g. "save as landmark" on an
+  // imported body so the point can be reused later)
+  addLandmark: (name, point, targetId = null) => {
+    const doc = get().doc
+    if (!doc) return
+    get().record()
+    const n = pointToNormalized(point, targetBoxFor(doc, targetId))
+    const landmark: Landmark = {
+      id: uid('lm'),
+      name: name || 'Landmark',
+      nx: n.nx,
+      ny: n.ny,
+      targetId,
+      group: 'Custom',
+    }
+    set({ doc: { ...doc, landmarks: [...doc.landmarks, landmark] } })
+  },
+
+  removeLandmark: (id) => {
+    const doc = get().doc
+    if (!doc) return
+    get().record()
+    set({ doc: { ...doc, landmarks: doc.landmarks.filter((l) => l.id !== id) } })
+  },
+
+  // place a callout on a catalog landmark: anchor locks to the landmark's
+  // normalized position (tracking its element when it has one) and the label
+  // inherits the landmark name.
+  addCalloutAtLandmark: (landmarkId) => {
+    const doc = get().doc
+    if (!doc) return
+    const lm = doc.landmarks.find((l) => l.id === landmarkId)
+    if (!lm) return
+    get().record()
+    const targetId = lm.targetId ?? null
+    const anchor: Anchor = {
+      id: uid('anchor'),
+      mode: 'relative-bbox',
+      relative: { targetId, nx: lm.nx, ny: lm.ny },
+    }
+    const point = resolveAnchor(anchor, targetBoxFor(doc, targetId))
+    const next = nextBalloonNumber(doc)
+    const callout: Callout = {
+      id: uid('callout'),
+      anchorId: anchor.id,
+      labelText: lm.name,
+      balloonShape: 'none',
+      balloonText: String(next),
+      leaderStyle: 'elbow',
+      labelPos: outwardLabelPos(doc.base, point),
+      elbow: null,
+      color: PALETTE[(next - 1) % PALETTE.length],
+    }
+    set({
+      doc: {
+        ...doc,
+        anchors: [...doc.anchors, anchor],
+        callouts: [...doc.callouts, callout],
+      },
+      selectedCalloutId: callout.id,
+    })
+  },
+
   addCalloutAt: (point, targetId = null) => {
     const doc = get().doc
     if (!doc) return
     get().record()
-    const box = targetBoxFor(doc, targetId)
-    const n = pointToNormalized(point, box)
+    const n = pointToNormalized(point, targetBoxFor(doc, targetId))
     const anchor: Anchor = {
       id: uid('anchor'),
       mode: 'relative-bbox',
       relative: { targetId, nx: n.nx, ny: n.ny },
     }
-    // place the label outward from the body center, on the nearer horizontal edge
-    const center = doc.base.contentBox.x + doc.base.contentBox.w / 2
-    const outX = point.x < center
-      ? doc.base.contentBox.x - 4
-      : doc.base.contentBox.x + doc.base.contentBox.w + 4
-    const labelPos: Vec2 = {
-      x: outX,
-      y: point.y,
-    }
-    // derive the next number from the max existing numeric balloon text so it
-    // never collides with a survivor after a middle callout is deleted
-    const maxNum = doc.callouts.reduce((m, c) => {
-      const n = parseInt(c.balloonText, 10)
-      return Number.isFinite(n) ? Math.max(m, n) : m
-    }, 0)
-    const next = maxNum + 1
+    const next = nextBalloonNumber(doc)
     const callout: Callout = {
       id: uid('callout'),
       anchorId: anchor.id,
@@ -195,7 +302,7 @@ export const useStore = create<StoreState>((set, get) => ({
       balloonShape: 'none',
       balloonText: String(next),
       leaderStyle: 'elbow',
-      labelPos,
+      labelPos: outwardLabelPos(doc.base, point),
       elbow: null,
       color: PALETTE[(next - 1) % PALETTE.length],
     }

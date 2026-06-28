@@ -30,6 +30,20 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
 
 - **Load a body** — bundled views (standing front/back, back, half-body front/back,
   side-lying, seated wheelchair, plus a multi-part *torso organs* demo) or **Import** any SVG.
+- **Landmark catalog** — a predefined library of *named* body locations you pick from and
+  snap to, instead of free-clicking a blank silhouette (the idea behind body-map libraries
+  like *react-native-body-highlighter*, *MuscleMap*, *bodymap*). The catalog comes from two
+  places:
+  - **curated** lists for the silhouette bodies (e.g. the front/back divider ships with
+    Chin, Scapula, Sacrum, Malleolus… grouped Anterior / Posterior), and
+  - **auto-derived** from a body's *named SVG elements* — every named part of the organs
+    demo (or any imported multi-part SVG) becomes a landmark at its center, tracking that
+    element. So importing a labelled SVG gives you a catalog for free.
+
+  Pick a landmark from the **Landmarks** panel (or click its ring on the body) to drop a
+  named callout there; **hover** to locate it and **highlight** the region it belongs to.
+  A free click *near* a landmark **auto-locks** onto it, and dragging an anchor **snaps**
+  to nearby landmarks. Build your own catalog on any body with **“Save as landmark.”**
 - **Add callout** — click the body to anchor a point; a leader + label appear. Clicking a
   *named part* of a multi-element SVG (e.g. the heart in the organs demo) anchors to **that
   element**, normalized to its bounding box, so it tracks the part. Re-target or detach any
@@ -91,9 +105,10 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
 | --- | --- |
 | `BaseDrawing` | imported body markup + `viewBox` + tight `contentBox` (for normalization) |
 | `Anchor` | a point locked to the body (`relative-bbox` \| `absolute` \| `path-offset`) |
+| `Landmark` | a named, reusable body location (`nx,ny` in a target/content box) — the catalog |
 | `Callout` | anchor + default label/balloon/leader/color |
 | `View` | a named label-set: `labelMode` (`names`/`numbers`/`blank`) + per-callout overrides |
-| `DrawerDoc` | the whole document: base + anchors + callouts + views |
+| `DrawerDoc` | the whole document: base + anchors + callouts + views + landmarks |
 
 `resolve.ts` merges each callout with the active view to produce render-ready
 `ResolvedCallout`s, shared by the canvas and the SVG exporter.
@@ -121,7 +136,8 @@ src/
   svgParse.ts         import SVG -> BaseDrawing (+ sanitization)
   store.ts            Zustand store (all document mutations)
   samples.ts          bundled bodies + demo landmark seeds
-  components/         Canvas, Callout, Toolbar, ViewBar, Inspector, Sidebar
+  landmarks.ts        the named landmark catalog (curated + auto-derived) + snap helpers
+  components/         Canvas, Callout, LandmarkLayer, LandmarkPanel, Toolbar, ViewBar, Inspector, Sidebar
   export/             exportSvg (static + metadata), exportPng, projectIo (save/load)
 public/samples/       the six body SVGs
 ```
@@ -130,13 +146,15 @@ public/samples/       the six body SVGs
 
 - Per-view balloon styles
 - `path-offset` anchoring UI (snap along a stroke)
-- Multi-page PDF figure sheets (one page per view)
+- Region *fill* highlight baked into the static export (data-driven "heatmap" view,
+  like react-native-body-highlighter's intensity colouring)
 - Auto-layout / collision avoidance for labels
 - Multi-select and group move/delete
 
 Implemented since the first cut: undo/redo, autosave + session restore, zoom/pan
 controls, keyboard shortcuts, **anchor-to-element** (`data-target`), **per-view label
-text** (translations), and **vector PDF export**.
+text** (translations), **vector PDF export**, multi-page PDF sheets, and the
+**named landmark catalog** (curated + auto-derived, snap-to placement, region highlight).
 
 ## Extensibility / tldraw
 

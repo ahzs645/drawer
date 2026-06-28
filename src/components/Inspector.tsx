@@ -1,4 +1,4 @@
-import { round } from '../geometry'
+import { boxForTarget, resolveAnchor, round } from '../geometry'
 import { useStore } from '../store'
 import type { BalloonShape, LeaderStyle } from '../types'
 
@@ -10,6 +10,7 @@ export function Inspector() {
   const setElbow = useStore((s) => s.setElbow)
   const setAnchorTarget = useStore((s) => s.setAnchorTarget)
   const deleteCallout = useStore((s) => s.deleteCallout)
+  const addLandmark = useStore((s) => s.addLandmark)
   const record = useStore((s) => s.record)
 
   if (!doc) return null
@@ -155,6 +156,17 @@ export function Inspector() {
             {round(anchor.relative.nx * 100)}%, {round(anchor.relative.ny * 100)}% of{' '}
             {anchor.relative.targetId ?? 'body'} box
           </p>
+          <button
+            className="link"
+            title="Add this point to the catalog so it can be reused"
+            onClick={() => {
+              const targetId = anchor.relative?.targetId ?? null
+              const pt = resolveAnchor(anchor, boxForTarget(doc.base, targetId))
+              addLandmark(callout.labelText || 'Landmark', pt, targetId)
+            }}
+          >
+            + Save as landmark
+          </button>
         </>
       )}
 
