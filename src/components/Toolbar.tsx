@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { exportSvg } from '../export/exportSvg'
 import { svgToPng } from '../export/exportPng'
-import { svgToPdf } from '../export/exportPdf'
+import { svgToPdf, svgsToPdf } from '../export/exportPdf'
 import {
   downloadBlob,
   downloadText,
@@ -61,6 +61,18 @@ export function Toolbar() {
     setBusy(true)
     try {
       await svgToPdf(exportSvg(doc), `${doc.name || 'diagram'}.pdf`)
+    } catch (e) {
+      alert(`PDF export failed: ${(e as Error).message}`)
+    } finally {
+      setBusy(false)
+    }
+  }
+  const doExportPdfAll = async () => {
+    if (!doc) return
+    setBusy(true)
+    try {
+      const pages = doc.views.map((v) => exportSvg(doc, { viewId: v.id }))
+      await svgsToPdf(pages, `${doc.name || 'diagram'}-all-views.pdf`)
     } catch (e) {
       alert(`PDF export failed: ${(e as Error).message}`)
     } finally {
@@ -148,6 +160,15 @@ export function Toolbar() {
         <button onClick={doExportPdf} disabled={!doc || busy}>
           Export PDF
         </button>
+        {doc && doc.views.length > 1 && (
+          <button
+            onClick={doExportPdfAll}
+            disabled={busy}
+            title="One vector PDF with a page per view"
+          >
+            PDF · all views
+          </button>
+        )}
         <a
           className="source-link"
           href="https://github.com/ahzs645/drawer"
