@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { exportSvg } from '../export/exportSvg'
 import { svgToPng } from '../export/exportPng'
+import { svgToPdf } from '../export/exportPdf'
 import {
   downloadBlob,
   downloadText,
@@ -51,6 +52,17 @@ export function Toolbar() {
       downloadBlob(`${doc.name || 'diagram'}.png`, blob)
     } catch (e) {
       alert(`PNG export failed: ${(e as Error).message}`)
+    } finally {
+      setBusy(false)
+    }
+  }
+  const doExportPdf = async () => {
+    if (!doc) return
+    setBusy(true)
+    try {
+      await svgToPdf(exportSvg(doc), `${doc.name || 'diagram'}.pdf`)
+    } catch (e) {
+      alert(`PDF export failed: ${(e as Error).message}`)
     } finally {
       setBusy(false)
     }
@@ -132,6 +144,9 @@ export function Toolbar() {
         </button>
         <button onClick={doExportPng} disabled={!doc || busy}>
           {busy ? 'Rendering…' : 'Export PNG'}
+        </button>
+        <button onClick={doExportPdf} disabled={!doc || busy}>
+          Export PDF
         </button>
         <a
           className="source-link"

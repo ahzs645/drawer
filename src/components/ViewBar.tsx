@@ -72,7 +72,13 @@ export function ViewBar() {
 
       <div className="view-add">
         <button onClick={() => addView('Numbered', 'numbers', true)}>+ Numbered view</button>
-        <button onClick={() => addView('Quiz', 'blank', true)}>+ Blank quiz</button>
+        <button onClick={() => addView('Blank quiz', 'blank', true)}>+ Blank quiz</button>
+        <button
+          onClick={() => addView('Translation', 'names', true)}
+          title="A names view that starts from the current labels — override each per-callout in the inspector"
+        >
+          + Translation
+        </button>
         <button onClick={() => addView(`${active.name} copy`, active.labelMode, true)}>
           Duplicate
         </button>

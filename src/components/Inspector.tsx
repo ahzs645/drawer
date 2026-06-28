@@ -36,7 +36,7 @@ export function Inspector() {
       <div className="panel-title">Callout</div>
 
       <label className="field">
-        Label text
+        Label text{doc.views.length > 1 ? ' (default)' : ''}
         <input
           type="text"
           value={callout.labelText}
@@ -44,6 +44,21 @@ export function Inspector() {
           onChange={(e) => updateBase(callout.id, { labelText: e.target.value })}
         />
       </label>
+
+      {doc.views.length > 1 && view.labelMode === 'names' && (
+        <label className="field">
+          Label in “{view.name}”
+          <input
+            type="text"
+            value={ov.labelText ?? ''}
+            placeholder={callout.labelText || '(default)'}
+            onFocus={record}
+            onChange={(e) =>
+              updateOverride(callout.id, { labelText: e.target.value || undefined })
+            }
+          />
+        </label>
+      )}
 
       <div className="row">
         <label className="field">

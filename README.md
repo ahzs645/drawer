@@ -42,13 +42,19 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
   - **Names** — anatomical labels with leaders (like the original reference)
   - **Numbered** — SolidWorks-style numbered balloons + an auto legend
   - **Blank quiz** — empty balloons for student worksheets
-  Each view keeps its own label positions and per-callout visibility, so one document
-  produces many figures.
+  - **Translations** — a names view where each callout's visible label can be overridden
+    per view (e.g. a *Français* view: Chin → Menton), falling back to the canonical
+    default. The exported `data-name` stays the canonical term while the visible text
+    is translated.
+  Each view keeps its own label positions, per-callout visibility, and label text, so
+  one document produces many figures.
 - **Export**
   - **SVG** — a standalone static file. Each callout is wrapped in
     `<g class="callout" data-callout-id data-name data-anchor-mode data-nx data-ny …>`
     so the label↔location link is preserved inside the flat output.
   - **PNG** — rasterized at 2× for handouts/slides.
+  - **PDF** — a single-page **vector** PDF (paths + text stay crisp), page-sized to the
+    figure. The PDF libraries are loaded lazily so they don't weigh down initial load.
   - **Save project** — full editable JSON (`*.drawer.json`); reopen with **Open project**.
 - **Edit comfortably** — full **undo/redo**, **autosave** (your session is restored
   on reload), **zoom/pan** (wheel + `− Fit +` controls), and keyboard shortcuts.
@@ -122,14 +128,15 @@ public/samples/       the six body SVGs
 
 ## Roadmap
 
-- Per-view label text overrides (translations) and per-view balloon styles
+- Per-view balloon styles
 - `path-offset` anchoring UI (snap along a stroke)
-- PDF export; multi-page figure sheets
+- Multi-page PDF figure sheets (one page per view)
 - Auto-layout / collision avoidance for labels
 - Multi-select and group move/delete
 
 Implemented since the first cut: undo/redo, autosave + session restore, zoom/pan
-controls, keyboard shortcuts, and **anchor-to-element** (`data-target`).
+controls, keyboard shortcuts, **anchor-to-element** (`data-target`), **per-view label
+text** (translations), and **vector PDF export**.
 
 ## Extensibility / tldraw
 
