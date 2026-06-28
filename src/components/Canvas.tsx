@@ -1,10 +1,37 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { buildLeader, clientToSvg, fontSizeFor } from '../geometry'
+import {
+  buildLeader,
+  clientToSvg,
+  fontSizeFor,
+  landmarkPoint,
+  nearestLandmark,
+} from '../geometry'
 import { usePointerDrag } from '../hooks/usePointerDrag'
 import { resolveCallouts } from '../resolve'
 import { useStore } from '../store'
 import type { Box, Vec2 } from '../types'
 import { CalloutView } from './Callout'
+import { LandmarkLayer, type LandmarkMark } from './LandmarkLayer'
+
+/** Screen-space snap radius (px) for catalog landmarks. */
+const SNAP_PX = 16
+
+/** Read a body element's markup for the highlight overlay, stripping its id so
+ * the clone doesn't collide with the original. */
+function elementMarkup(root: SVGGElement | null, id: string | null): string | null {
+  if (!root || !id) return null
+  let el: Element | null = null
+  try {
+    el = root.querySelector(`#${CSS.escape(id)}, [data-drawer-el="${CSS.escape(id)}"]`)
+  } catch {
+    return null
+  }
+  if (!el) return null
+  const clone = el.cloneNode(true) as Element
+  clone.removeAttribute('id')
+  clone.removeAttribute('data-drawer-el')
+  return clone.outerHTML
+}
 
 /** Camera stores x/y/w; height is derived from the live viewport aspect so the
  * camera box aspect always equals the element's pixel aspect (no letterbox),
@@ -32,6 +59,7 @@ function initCamera(viewBox: Box, size: { w: number; h: number }): Camera {
 
 export function Canvas() {
   const svgRef = useRef<SVGSVGElement | null>(null)
+  const bodyRef = useRef<SVGGElement | null>(null)
   const begin = usePointerDrag(svgRef)
 
   const doc = useStore((s) => s.doc)
@@ -39,13 +67,18 @@ export function Canvas() {
   const selectedId = useStore((s) => s.selectedCalloutId)
   const select = useStore((s) => s.select)
   const addCalloutAt = useStore((s) => s.addCalloutAt)
+  const addCalloutAtLandmark = useStore((s) => s.addCalloutAtLandmark)
   const moveLabel = useStore((s) => s.moveLabel)
   const moveAnchor = useStore((s) => s.moveAnchorForCallout)
   const setElbow = useStore((s) => s.setElbow)
   const record = useStore((s) => s.record)
+  const showLandmarks = useStore((s) => s.showLandmarks)
+  const hoverLandmarkId = useStore((s) => s.hoverLandmarkId)
+  const setHoverLandmark = useStore((s) => s.setHoverLandmark)
 
   const [size, setSize] = useState({ w: 0, h: 0 })
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, w: 100 })
+  const [highlightMarkup, setHighlightMarkup] = useState<string | null>(null)
   const initedFor = useRef<string | null>(null)
 
   // track the rendered pixel size so the camera aspect can match it
@@ -98,6 +131,36 @@ export function Canvas() {
   const aspect = size.w > 0 ? size.h / size.w : 1
   const camH = camera.w * aspect
 
+  // catalog markers resolved to user-space points (best-effort "used" by name)
+  const usedNames = new Set(doc?.callouts.map((c) => c.labelText) ?? [])
+  const marks: LandmarkMark[] =
+    doc && showLandmarks && tool === 'anchor'
+      ? doc.landmarks.map((lm) => {
+          const p = landmarkPoint(doc.base, lm)
+          return { id: lm.id, name: lm.name, x: p.x, y: p.y, used: usedNames.has(lm.name) }
+        })
+      : []
+
+  /** screen px -> svg user units at the current zoom */
+  const unitsPerPx = () => camera.w / (svgRef.current?.getBoundingClientRect().width || size.w || 1)
+
+  /** nearest catalog landmark to an svg point, within the screen snap radius */
+  const snapAt = (p: Vec2) =>
+    doc ? nearestLandmark(doc.base, doc.landmarks, p, SNAP_PX * unitsPerPx()) : null
+
+  // region highlight: the named part under the hovered landmark, else the part
+  // the selected callout is anchored to. Recolored clone overlays the original.
+  const hoverLm = doc?.landmarks.find((l) => l.id === hoverLandmarkId)
+  let highlightTargetId: string | null = hoverLm?.targetId ?? null
+  if (!highlightTargetId && selectedId && doc) {
+    const c = doc.callouts.find((x) => x.id === selectedId)
+    const a = c && doc.anchors.find((x) => x.id === c.anchorId)
+    highlightTargetId = a?.relative?.targetId ?? null
+  }
+  useLayoutEffect(() => {
+    setHighlightMarkup(elementMarkup(bodyRef.current, highlightTargetId))
+  }, [highlightTargetId, doc?.id])
+
   const fitView = () => {
     if (doc && size.w) setCamera(initCamera(doc.base.viewBox, size))
   }
@@ -141,11 +204,33 @@ export function Canvas() {
       },
       onEnd: () => {
         if (moved < 4) {
-          if (tool === 'anchor') addCalloutAt(downPoint, targetId)
-          else select(null)
+          if (tool === 'anchor') {
+            // a click near a catalog landmark snaps to it (named + locked)
+            const snap = snapAt(downPoint)
+            if (snap) addCalloutAtLandmark(snap.landmark.id)
+            else addCalloutAt(downPoint, targetId)
+          } else {
+            select(null)
+          }
         }
       },
     })
+  }
+
+  // hover preview: in the Add-callout tool, highlight the nearest snap target
+  const onCanvasMove = (e: React.PointerEvent) => {
+    if (!doc || tool !== 'anchor') return
+    const p = clientToSvg(svgRef.current!, e.clientX, e.clientY)
+    const snap = snapAt(p)
+    const id = snap?.landmark.id ?? null
+    if (id !== useStore.getState().hoverLandmarkId) setHoverLandmark(id)
+  }
+
+  // click a catalog marker directly -> place a named callout there
+  const onLandmarkDown = (e: React.PointerEvent, id: string) => {
+    if (e.button !== 0) return
+    e.stopPropagation()
+    addCalloutAtLandmark(id)
   }
 
   // --- label/balloon drag (per-view position) ---
@@ -177,8 +262,13 @@ export function Canvas() {
     begin({
       onMove: (p) => {
         if (!rec) { rec = true; record() }
-        moveAnchor(id, { x: p.x + offset.x, y: p.y + offset.y })
+        const raw = { x: p.x + offset.x, y: p.y + offset.y }
+        // snap the dragged anchor onto a nearby catalog landmark
+        const snap = snapAt(raw)
+        setHoverLandmark(snap?.landmark.id ?? null)
+        moveAnchor(id, snap ? snap.point : raw)
       },
+      onEnd: () => setHoverLandmark(null),
     })
   }
 
@@ -209,6 +299,7 @@ export function Canvas() {
         viewBox={`${camera.x} ${camera.y} ${camera.w} ${camH}`}
         preserveAspectRatio="xMidYMid meet"
         onPointerDown={onCanvasDown}
+        onPointerMove={onCanvasMove}
       >
         {doc && (
           <>
@@ -222,7 +313,30 @@ export function Canvas() {
             />
 
             {/* base body drawing */}
-            <g className="body-layer" dangerouslySetInnerHTML={{ __html: doc.base.inner }} />
+            <g
+              ref={bodyRef}
+              className="body-layer"
+              dangerouslySetInnerHTML={{ __html: doc.base.inner }}
+            />
+
+            {/* region highlight: recolored clone of the active named part */}
+            {highlightMarkup && (
+              <g
+                className="region-highlight"
+                pointerEvents="none"
+                dangerouslySetInnerHTML={{ __html: highlightMarkup }}
+              />
+            )}
+
+            {/* catalog snap targets (Add-callout tool only) */}
+            <LandmarkLayer
+              marks={marks}
+              hoverId={hoverLandmarkId}
+              fontSize={fontSize}
+              onDown={onLandmarkDown}
+              onEnter={(id) => setHoverLandmark(id)}
+              onLeave={() => setHoverLandmark(null)}
+            />
 
             {/* callouts */}
             {resolved.map((c) => (

@@ -1,6 +1,8 @@
 import type {
   Anchor,
+  BaseDrawing,
   Box,
+  Landmark,
   ResolvedCallout,
   Vec2,
 } from './types'
@@ -9,6 +11,43 @@ import type {
 // Coordinate transforms + leader geometry. This module is pure (no React) so
 // it can be unit-tested and reused by the exporters.
 // ---------------------------------------------------------------------------
+
+/**
+ * The bounding box a normalized position (anchor or landmark) is relative to:
+ * a specific targeted element's box if present, else the whole content box.
+ * One source of truth shared by the store, resolver, and landmark catalog.
+ */
+export function boxForTarget(base: BaseDrawing, targetId: string | null | undefined): Box {
+  if (targetId && base.targetBoxes?.[targetId]) return base.targetBoxes[targetId]
+  return base.contentBox
+}
+
+/** Resolve a landmark to an absolute point in the drawing's user space. */
+export function landmarkPoint(base: BaseDrawing, lm: Landmark): Vec2 {
+  const box = boxForTarget(base, lm.targetId ?? null)
+  return { x: box.x + lm.nx * box.w, y: box.y + lm.ny * box.h }
+}
+
+/**
+ * Nearest landmark to a point, within maxDist (user units). Returns the
+ * landmark plus its resolved point, or null. Used for snap-to-catalog.
+ */
+export function nearestLandmark(
+  base: BaseDrawing,
+  landmarks: Landmark[],
+  p: Vec2,
+  maxDist: number,
+): { landmark: Landmark; point: Vec2; dist: number } | null {
+  let best: { landmark: Landmark; point: Vec2; dist: number } | null = null
+  for (const lm of landmarks) {
+    const pt = landmarkPoint(base, lm)
+    const dist = Math.hypot(pt.x - p.x, pt.y - p.y)
+    if (dist <= maxDist && (!best || dist < best.dist)) {
+      best = { landmark: lm, point: pt, dist }
+    }
+  }
+  return best
+}
 
 /** Convert a client (screen) point to SVG user-space using the live CTM. */
 export function clientToSvg(svg: SVGSVGElement, clientX: number, clientY: number): Vec2 {

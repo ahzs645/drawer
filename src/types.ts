@@ -44,6 +44,27 @@ export interface Anchor {
   pathOffset?: { targetId: string; t: number }
 }
 
+/**
+ * A named body location you can pick from / snap to — the "catalog" idea from
+ * body-map libraries (react-native-body-highlighter, MuscleMap, bodymap, …).
+ * Stored like an anchor: normalized 0..1 inside a target element's box, or the
+ * whole drawing's content box when targetId is null. So the catalog survives
+ * scaling and keeps pointing at the right relative spot.
+ */
+export interface Landmark {
+  id: string
+  /** display name, e.g. "Scapula" — becomes the callout label when placed */
+  name: string
+  /** normalized x within the (target or content) box, 0..1 */
+  nx: number
+  /** normalized y within the (target or content) box, 0..1 */
+  ny: number
+  /** element this landmark tracks (e.g. "heart"); null = whole-body box */
+  targetId?: string | null
+  /** optional group for the picker, e.g. "Anterior" / "Posterior" / "Organs" */
+  group?: string
+}
+
 export type BalloonShape = 'circle' | 'hex' | 'none'
 export type LeaderStyle = 'straight' | 'elbow'
 
@@ -108,6 +129,8 @@ export interface DrawerDoc {
   callouts: Callout[]
   views: View[]
   activeViewId: string
+  /** named body locations to pick from / snap to (the catalog) */
+  landmarks: Landmark[]
 }
 
 /** A callout fully resolved against the active view, ready to render. */

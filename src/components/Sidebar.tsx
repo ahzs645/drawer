@@ -1,6 +1,7 @@
 import { resolveCallouts } from '../resolve'
 import { useStore } from '../store'
 import { Inspector } from './Inspector'
+import { LandmarkPanel } from './LandmarkPanel'
 import { ViewBar } from './ViewBar'
 
 function CalloutList() {
@@ -56,6 +57,7 @@ export function Sidebar() {
       {status && <div className="status">{status}</div>}
       <ViewBar />
       <Inspector />
+      <LandmarkPanel />
       <CalloutList />
     </aside>
   )

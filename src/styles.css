@@ -345,3 +345,95 @@ button.link {
 .callout .elbow-handle {
   touch-action: none;
 }
+
+/* ---- landmark catalog (snap targets on the body) ---- */
+.landmark {
+  touch-action: none;
+}
+.landmark-dot {
+  fill: #fff;
+  stroke: #8a94a6;
+  stroke-width: 1.5px;
+  transition: r 80ms ease;
+}
+.landmark.used .landmark-dot {
+  stroke-dasharray: 2.5 2;
+  opacity: 0.6;
+}
+.landmark.hot .landmark-dot {
+  fill: var(--accent);
+  stroke: var(--accent);
+  opacity: 1;
+}
+.landmark-name {
+  fill: #111;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* recolored clone of the named part under the cursor / selection */
+.region-highlight > * {
+  fill: var(--accent) !important;
+  fill-opacity: 0.22 !important;
+  stroke: var(--accent) !important;
+  stroke-width: 2.5px !important;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ---- landmark picker panel ---- */
+.lm-group-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #6b7280;
+  margin: 6px 0 2px;
+}
+.lm-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.lm-list li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.lm-list li:hover {
+  background: #e7f0ff;
+}
+.lm-list li.used {
+  color: #6b7280;
+}
+.lm-list .lm-add {
+  margin-left: auto;
+  color: var(--accent);
+  font-size: 16px;
+  line-height: 1;
+}
+.lm-list .lm-check {
+  margin-left: auto;
+  color: #1a7f37;
+  font-size: 12px;
+}
+.lm-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+}
+.lm-toolbar .field.checkbox {
+  font-size: 12px;
+  color: #6b7280;
+}
