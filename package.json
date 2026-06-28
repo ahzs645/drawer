@@ -4,6 +4,12 @@
   "version": "0.1.0",
   "type": "module",
   "description": "Semantic SVG annotation editor for medical/anatomy diagrams — draggable SolidWorks-style leader-line callouts with static export.",
+  "license": "AGPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ahzs645/drawer.git"
+  },
+  "homepage": "https://github.com/ahzs645/drawer",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

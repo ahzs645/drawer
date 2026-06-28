@@ -140,3 +140,21 @@ to a custom tldraw `ShapeUtil` (whose `toSvg` can emit the same clean metadata),
 to a custom `BindingUtil` (tldraw arrows already bind via a normalized relative anchor), and
 placement to a custom tool. We keep the SVG-native app as the source of truth (clean export,
 no watermark/licensing) and can layer a tldraw editing surface on the same core later.
+
+> Note: tldraw's SDK is **not** OSI open source — production use requires a license key and
+> shows a "Made with tldraw" watermark unless you buy a business license, and that obligation
+> flows to downstream users. Our SVG-native stack has no such constraint, which is why Drawer
+> can be fully open source (below).
+
+## License
+
+Drawer is free software licensed under the **GNU Affero General Public License v3.0**
+([AGPL-3.0](./LICENSE)). You may use, study, share, and modify it. The AGPL's defining
+condition: if you run a modified version as a **network service**, you must offer that
+version's source to its users. The app's **“Source ↗”** link points back to this repository
+to satisfy that obligation (AGPL §13).
+
+Copyright © 2026 ahzs645 and contributors.
+
+All runtime dependencies are permissively licensed (React, Vite, Zustand — MIT), so the
+project carries no third-party copyleft or watermark obligations of its own.

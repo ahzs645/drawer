@@ -328,6 +328,18 @@ button.link {
   font-size: 12px;
 }
 
+.source-link {
+  align-self: center;
+  font-size: 12px;
+  color: #6b7280;
+  text-decoration: none;
+  padding: 4px 6px;
+}
+.source-link:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
 .callout .anchor-handle,
 .callout .callout-head,
 .callout .elbow-handle {

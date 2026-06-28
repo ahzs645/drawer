@@ -133,6 +133,15 @@ export function Toolbar() {
         <button onClick={doExportPng} disabled={!doc || busy}>
           {busy ? 'Rendering…' : 'Export PNG'}
         </button>
+        <a
+          className="source-link"
+          href="https://github.com/ahzs645/drawer"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Drawer is free software (AGPL-3.0). View the source."
+        >
+          Source ↗
+        </a>
       </div>
 
       <input
