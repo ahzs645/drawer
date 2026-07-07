@@ -1,4 +1,5 @@
 import { boxForTarget, resolveAnchor } from './geometry'
+import { DEFAULT_STYLE } from './types'
 import type { DrawerDoc, ResolvedCallout, View } from './types'
 
 // ---------------------------------------------------------------------------
@@ -30,9 +31,16 @@ export function resolveCallouts(doc: DrawerDoc, viewId?: string): ResolvedCallou
     const labelPos = ov.labelPos ?? c.labelPos
     const elbow = ov.elbow !== undefined ? ov.elbow : c.elbow
 
+    // a view can impose a style FORMAT on every callout; otherwise use the
+    // callout's own base style. Per-callout overrides still win for balloonShape.
+    const vs = view.style
     let labelText = ov.labelText ?? c.labelText
-    let balloonShape = ov.balloonShape ?? c.balloonShape
+    let balloonShape = ov.balloonShape ?? vs?.balloonShape ?? c.balloonShape
     let balloonText = ov.balloonText ?? c.balloonText
+    const leaderStyle = vs?.leaderStyle ?? c.leaderStyle
+    const anchorMarker = vs?.anchorMarker ?? c.anchorMarker ?? DEFAULT_STYLE.anchorMarker
+    const leaderEnd = vs?.leaderEnd ?? c.leaderEnd ?? DEFAULT_STYLE.leaderEnd
+    const dashed = vs?.dashed ?? c.dashed ?? DEFAULT_STYLE.dashed
 
     switch (view.labelMode) {
       case 'names':
@@ -57,7 +65,10 @@ export function resolveCallouts(doc: DrawerDoc, viewId?: string): ResolvedCallou
       labelText,
       balloonShape,
       balloonText,
-      leaderStyle: c.leaderStyle,
+      leaderStyle,
+      anchorMarker,
+      leaderEnd,
+      dashed,
       labelPos,
       elbow,
       color: c.color,

@@ -67,6 +67,46 @@ export interface Landmark {
 
 export type BalloonShape = 'circle' | 'hex' | 'none'
 export type LeaderStyle = 'straight' | 'elbow'
+/** How the point ON the body is drawn (the end the leader lands on). */
+export type AnchorMarker = 'ring' | 'dot' | 'tick' | 'none'
+/** Decoration at the body end of the leader line. */
+export type LeaderEnd = 'none' | 'arrow' | 'dot'
+
+/**
+ * The reusable visual style of a callout — how the point looks, how the leader
+ * looks, and what the "thing it leads to" (balloon/label) looks like. This is
+ * the bundle a StylePreset captures. Kept separate from position/text so it can
+ * be swapped freely and shared across drawings.
+ */
+export interface CalloutStyle {
+  balloonShape: BalloonShape
+  leaderStyle: LeaderStyle
+  anchorMarker: AnchorMarker
+  leaderEnd: LeaderEnd
+  /** dashed leader line */
+  dashed: boolean
+}
+
+export const DEFAULT_STYLE: CalloutStyle = {
+  balloonShape: 'none',
+  leaderStyle: 'elbow',
+  anchorMarker: 'ring',
+  leaderEnd: 'none',
+  dashed: false,
+}
+
+/**
+ * A named, reusable callout style. Presets live at the app level (persisted in
+ * the browser), NOT inside a document, so the same look can be reused across
+ * different images instead of being baked into one drawing.
+ */
+export interface StylePreset {
+  id: string
+  name: string
+  /** built-in presets ship with the app and can't be deleted */
+  builtin?: boolean
+  style: CalloutStyle
+}
 
 /**
  * A callout: the visible annotation. Holds default appearance; per-view
@@ -80,6 +120,12 @@ export interface Callout {
   /** short text / number drawn inside the balloon */
   balloonText: string
   leaderStyle: LeaderStyle
+  /** how the point on the body is drawn (optional; defaults to 'ring') */
+  anchorMarker?: AnchorMarker
+  /** decoration at the body end of the leader (optional; defaults to 'none') */
+  leaderEnd?: LeaderEnd
+  /** dashed leader line (optional; defaults to false) */
+  dashed?: boolean
   /** default head position (balloon center) in SVG user units */
   labelPos: Vec2
   /** optional manual elbow bend point in SVG user units */
@@ -104,6 +150,13 @@ export interface View {
   name: string
   labelMode: LabelMode
   overrides: Record<string, CalloutOverride>
+  /**
+   * Optional style FORMAT for this view. When set, every callout is rendered in
+   * this style regardless of its own base style — so the same placed markers can
+   * appear as plain textbook lines in one view and numbered balloons in another.
+   * Undefined = use each callout's own base style.
+   */
+  style?: CalloutStyle
 }
 
 export interface BaseDrawing {
@@ -142,6 +195,9 @@ export interface ResolvedCallout {
   balloonShape: BalloonShape
   balloonText: string
   leaderStyle: LeaderStyle
+  anchorMarker: AnchorMarker
+  leaderEnd: LeaderEnd
+  dashed: boolean
   labelPos: Vec2
   elbow: Vec2 | null
   color: string

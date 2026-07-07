@@ -188,6 +188,25 @@ export function polylineToPoints(points: Vec2[]): string {
   return points.map((p) => `${round(p.x)},${round(p.y)}`).join(' ')
 }
 
+/**
+ * Arrowhead polygon points for a leader whose body end is `tip`, with the line
+ * arriving from `from`. Returns a small triangle pointing at `tip`.
+ */
+export function arrowHead(tip: Vec2, from: Vec2, size: number): string {
+  const dx = tip.x - from.x
+  const dy = tip.y - from.y
+  const len = Math.hypot(dx, dy) || 1
+  const ux = dx / len
+  const uy = dy / len
+  // base of the triangle, `size` back along the line; corners spread sideways
+  const bx = tip.x - ux * size
+  const by = tip.y - uy * size
+  const half = size * 0.5
+  const p1 = `${round(bx - uy * half)},${round(by + ux * half)}`
+  const p2 = `${round(bx + uy * half)},${round(by - ux * half)}`
+  return `${round(tip.x)},${round(tip.y)} ${p1} ${p2}`
+}
+
 export function hexPoints(center: Vec2, r: number): string {
   const pts: string[] = []
   for (let i = 0; i < 6; i++) {

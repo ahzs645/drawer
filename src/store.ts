@@ -3,12 +3,20 @@ import { boxForTarget, pointToNormalized, resolveAnchor } from './geometry'
 import { uid } from './id'
 import { buildLandmarksFor } from './landmarks'
 import {
+  DEFAULT_PRESET_ID,
+  loadDefaultPresetId,
+  loadPresets,
+  saveDefaultPresetId,
+  savePresets,
+} from './presets'
+import {
   DEFAULT_SAMPLE_KEY,
   DIVIDER_SEEDS,
   SAMPLES,
   sampleUrl,
 } from './samples'
 import { parseSvg } from './svgParse'
+import { DEFAULT_STYLE } from './types'
 import type {
   Anchor,
   BalloonShape,
@@ -16,10 +24,12 @@ import type {
   Box,
   Callout,
   CalloutOverride,
+  CalloutStyle,
   DrawerDoc,
   LabelMode,
   Landmark,
   LeaderStyle,
+  StylePreset,
   Vec2,
   View,
 } from './types'
@@ -70,6 +80,9 @@ interface StoreState {
   status: string
   past: DrawerDoc[]
   future: DrawerDoc[]
+  // callout style presets (app-level, persisted; not bound to the image)
+  presets: StylePreset[]
+  defaultPresetId: string
   // landmark catalog UI
   showLandmarks: boolean
   hoverLandmarkId: string | null
@@ -90,6 +103,12 @@ interface StoreState {
   addLandmark: (name: string, point: Vec2, targetId?: string | null) => void
   removeLandmark: (id: string) => void
   addCalloutAtLandmark: (landmarkId: string) => void
+  // style presets
+  setDefaultPreset: (id: string) => void
+  applyPreset: (calloutId: string, presetId: string) => void
+  applyPresetToAll: (presetId: string) => void
+  saveStyleAsPreset: (name: string, style: CalloutStyle) => string
+  deletePreset: (id: string) => void
   // callouts
   addCalloutAt: (point: Vec2, targetId?: string | null) => void
   updateCalloutBase: (id: string, patch: Partial<Callout>) => void
@@ -103,6 +122,7 @@ interface StoreState {
   addView: (name: string, labelMode: LabelMode, copyFromActive?: boolean) => void
   setActiveView: (id: string) => void
   updateViewMeta: (id: string, patch: Partial<Pick<View, 'name' | 'labelMode'>>) => void
+  setViewStyle: (id: string, style: CalloutStyle | null) => void
   deleteView: (id: string) => void
   setDocName: (name: string) => void
 }
@@ -118,6 +138,11 @@ function targetBoxFor(doc: DrawerDoc, targetId: string | null): Box {
 
 const HISTORY_LIMIT = 60
 
+/** The style new callouts should adopt, from the active default preset. */
+function defaultStyle(presets: StylePreset[], defaultPresetId: string): CalloutStyle {
+  return presets.find((p) => p.id === defaultPresetId)?.style ?? DEFAULT_STYLE
+}
+
 export const useStore = create<StoreState>((set, get) => ({
   doc: null,
   tool: 'anchor',
@@ -125,6 +150,8 @@ export const useStore = create<StoreState>((set, get) => ({
   status: 'Loading…',
   past: [],
   future: [],
+  presets: loadPresets(),
+  defaultPresetId: loadDefaultPresetId(),
   showLandmarks: true,
   hoverLandmarkId: null,
 
@@ -263,13 +290,13 @@ export const useStore = create<StoreState>((set, get) => ({
     }
     const point = resolveAnchor(anchor, targetBoxFor(doc, targetId))
     const next = nextBalloonNumber(doc)
+    const style = defaultStyle(get().presets, get().defaultPresetId)
     const callout: Callout = {
       id: uid('callout'),
       anchorId: anchor.id,
       labelText: lm.name,
-      balloonShape: 'none',
       balloonText: String(next),
-      leaderStyle: 'elbow',
+      ...style,
       labelPos: outwardLabelPos(doc.base, point),
       elbow: null,
       color: PALETTE[(next - 1) % PALETTE.length],
@@ -284,6 +311,64 @@ export const useStore = create<StoreState>((set, get) => ({
     })
   },
 
+  setDefaultPreset: (id) => {
+    if (!get().presets.some((p) => p.id === id)) return
+    saveDefaultPresetId(id)
+    set({ defaultPresetId: id })
+  },
+
+  applyPreset: (calloutId, presetId) => {
+    const doc = get().doc
+    const preset = get().presets.find((p) => p.id === presetId)
+    if (!doc || !preset) return
+    get().record()
+    set({
+      doc: {
+        ...doc,
+        callouts: doc.callouts.map((c) =>
+          c.id === calloutId ? { ...c, ...preset.style } : c,
+        ),
+      },
+    })
+  },
+
+  applyPresetToAll: (presetId) => {
+    const doc = get().doc
+    const preset = get().presets.find((p) => p.id === presetId)
+    if (!doc || !preset) return
+    get().record()
+    set({
+      doc: {
+        ...doc,
+        callouts: doc.callouts.map((c) => ({ ...c, ...preset.style })),
+      },
+    })
+  },
+
+  saveStyleAsPreset: (name, style) => {
+    const preset: StylePreset = {
+      id: uid('preset'),
+      name: name || 'My style',
+      builtin: false,
+      style,
+    }
+    const presets = [...get().presets, preset]
+    savePresets(presets)
+    set({ presets })
+    return preset.id
+  },
+
+  deletePreset: (id) => {
+    const target = get().presets.find((p) => p.id === id)
+    if (!target || target.builtin) return
+    const presets = get().presets.filter((p) => p.id !== id)
+    savePresets(presets)
+    const defaultPresetId =
+      get().defaultPresetId === id ? DEFAULT_PRESET_ID : get().defaultPresetId
+    if (defaultPresetId !== get().defaultPresetId) saveDefaultPresetId(defaultPresetId)
+    set({ presets, defaultPresetId })
+  },
+
   addCalloutAt: (point, targetId = null) => {
     const doc = get().doc
     if (!doc) return
@@ -295,13 +380,13 @@ export const useStore = create<StoreState>((set, get) => ({
       relative: { targetId, nx: n.nx, ny: n.ny },
     }
     const next = nextBalloonNumber(doc)
+    const style = defaultStyle(get().presets, get().defaultPresetId)
     const callout: Callout = {
       id: uid('callout'),
       anchorId: anchor.id,
       labelText: `Label ${next}`,
-      balloonShape: 'none',
       balloonText: String(next),
-      leaderStyle: 'elbow',
+      ...style,
       labelPos: outwardLabelPos(doc.base, point),
       elbow: null,
       color: PALETTE[(next - 1) % PALETTE.length],
@@ -430,6 +515,20 @@ export const useStore = create<StoreState>((set, get) => ({
     const doc = get().doc
     if (!doc) return
     set({ doc: { ...doc, views: doc.views.map((v) => (v.id === id ? { ...v, ...patch } : v)) } })
+  },
+
+  setViewStyle: (id, style) => {
+    const doc = get().doc
+    if (!doc) return
+    get().record()
+    set({
+      doc: {
+        ...doc,
+        views: doc.views.map((v) =>
+          v.id === id ? { ...v, style: style ?? undefined } : v,
+        ),
+      },
+    })
   },
 
   deleteView: (id) => {

@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { exportSvg } from '../export/exportSvg'
+import { exportCalloutsJson } from '../export/exportCallouts'
 import { svgToPng } from '../export/exportPng'
 import { svgToPdf, svgsToPdf } from '../export/exportPdf'
 import {
@@ -43,6 +44,17 @@ export function Toolbar() {
   const doExportSvg = () => {
     if (!doc) return
     downloadText(`${doc.name || 'diagram'}.svg`, exportSvg(doc), 'image/svg+xml')
+  }
+  const doExportSvgJson = () => {
+    if (!doc) return
+    const stem = doc.name || 'diagram'
+    const svgName = `${stem}.svg`
+    downloadText(svgName, exportSvg(doc), 'image/svg+xml')
+    downloadText(
+      `${stem}.callouts.json`,
+      exportCalloutsJson(doc, { svgFilename: svgName }),
+      'application/json',
+    )
   }
   const doExportPng = async () => {
     if (!doc) return
@@ -153,6 +165,13 @@ export function Toolbar() {
         </button>
         <button onClick={doExportSvg} disabled={!doc}>
           Export SVG
+        </button>
+        <button
+          onClick={doExportSvgJson}
+          disabled={!doc}
+          title="Download the SVG plus a .callouts.json defining every callout"
+        >
+          SVG + JSON
         </button>
         <button onClick={doExportPng} disabled={!doc || busy}>
           {busy ? 'Rendering…' : 'Export PNG'}

@@ -215,6 +215,15 @@ button:disabled {
 .panel .row .field {
   flex: 1;
 }
+.panel .row.preset-actions {
+  align-items: center;
+  justify-content: space-between;
+}
+.panel .row.preset-actions .apply-all {
+  flex: 0 0 auto;
+  font-size: 12px;
+  padding: 3px 6px;
+}
 .hint {
   font-size: 12px;
   color: #6b7280;

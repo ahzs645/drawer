@@ -1,4 +1,5 @@
 import {
+  arrowHead,
   buildLeader,
   fontSizeFor,
   hexPoints,
@@ -82,15 +83,38 @@ function renderCallout(
   const tp = labelTextPlacement(c, geo)
   const col = esc(c.color)
   const parts: string[] = []
+  const anc = c.anchorPoint
+  const fromPoint = geo.points[1] ?? c.labelPos
+  const dashAttr = c.dashed ? ` stroke-dasharray="${round(fontSize * 0.5)} ${round(fontSize * 0.36)}"` : ''
 
   parts.push(
-    `<polyline points="${polylineToPoints(geo.points)}" fill="none" stroke="${col}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>`,
+    `<polyline points="${polylineToPoints(geo.points)}" fill="none" stroke="${col}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"${dashAttr}/>`,
   )
+  // leader end decoration at the body
+  if (c.leaderEnd === 'arrow') {
+    parts.push(`<polygon points="${arrowHead(anc, fromPoint, fontSize * 0.55)}" fill="${col}"/>`)
+  } else if (c.leaderEnd === 'dot') {
+    parts.push(`<circle cx="${round(anc.x)}" cy="${round(anc.y)}" r="${round(fontSize * 0.17)}" fill="${col}"/>`)
+  }
+  // anchor marker on the body (skipped entirely when anchors are excluded)
   if (opts.includeAnchors !== false) {
-    parts.push(
-      `<circle cx="${round(c.anchorPoint.x)}" cy="${round(c.anchorPoint.y)}" r="${round(fontSize * 0.32)}" fill="#fff" stroke="${col}" stroke-width="2"/>`,
-      `<circle cx="${round(c.anchorPoint.x)}" cy="${round(c.anchorPoint.y)}" r="${round(fontSize * 0.11)}" fill="${col}"/>`,
-    )
+    if (c.anchorMarker === 'ring') {
+      parts.push(
+        `<circle cx="${round(anc.x)}" cy="${round(anc.y)}" r="${round(fontSize * 0.32)}" fill="#fff" stroke="${col}" stroke-width="2"/>`,
+        `<circle cx="${round(anc.x)}" cy="${round(anc.y)}" r="${round(fontSize * 0.11)}" fill="${col}"/>`,
+      )
+    } else if (c.anchorMarker === 'dot') {
+      parts.push(`<circle cx="${round(anc.x)}" cy="${round(anc.y)}" r="${round(fontSize * 0.2)}" fill="${col}"/>`)
+    } else if (c.anchorMarker === 'tick') {
+      const ldx = fromPoint.x - anc.x
+      const ldy = fromPoint.y - anc.y
+      const llen = Math.hypot(ldx, ldy) || 1
+      const px = (-ldy / llen) * fontSize * 0.32
+      const py = (ldx / llen) * fontSize * 0.32
+      parts.push(
+        `<line x1="${round(anc.x - px)}" y1="${round(anc.y - py)}" x2="${round(anc.x + px)}" y2="${round(anc.y + py)}" stroke="${col}" stroke-width="2" stroke-linecap="round"/>`,
+      )
+    }
   }
   if (c.balloonShape === 'circle') {
     parts.push(

@@ -12,11 +12,17 @@ export function ViewBar() {
   const setActiveView = useStore((s) => s.setActiveView)
   const addView = useStore((s) => s.addView)
   const updateViewMeta = useStore((s) => s.updateViewMeta)
+  const setViewStyle = useStore((s) => s.setViewStyle)
   const deleteView = useStore((s) => s.deleteView)
   const record = useStore((s) => s.record)
+  const presets = useStore((s) => s.presets)
 
   if (!doc) return null
   const active = doc.views.find((v) => v.id === doc.activeViewId) ?? doc.views[0]
+  // which preset (if any) matches this view's imposed style format
+  const activeFormatId = active.style
+    ? presets.find((p) => JSON.stringify(p.style) === JSON.stringify(active.style))?.id ?? '__custom'
+    : ''
 
   return (
     <section className="panel views-panel">
@@ -59,6 +65,27 @@ export function ViewBar() {
                 {m.label}
               </option>
             ))}
+          </select>
+        </label>
+        <label className="field">
+          Format
+          <select
+            value={activeFormatId}
+            onChange={(e) => {
+              const v = e.target.value
+              if (v === '') return setViewStyle(active.id, null)
+              const preset = presets.find((p) => p.id === v)
+              if (preset) setViewStyle(active.id, preset.style)
+            }}
+            title="Render every marker in this view using one style format"
+          >
+            <option value="">Per-callout (own style)</option>
+            {presets.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+            {activeFormatId === '__custom' && <option value="__custom">Custom</option>}
           </select>
         </label>
         <button

@@ -1,6 +1,26 @@
 import { boxForTarget, resolveAnchor, round } from '../geometry'
+import { styleFromCallout } from '../presets'
 import { useStore } from '../store'
-import type { BalloonShape, LeaderStyle } from '../types'
+import type { AnchorMarker, BalloonShape, LeaderEnd, LeaderStyle } from '../types'
+
+/** Shared preset picker: choose which style new callouts start from. */
+function DefaultPresetField() {
+  const presets = useStore((s) => s.presets)
+  const defaultPresetId = useStore((s) => s.defaultPresetId)
+  const setDefaultPreset = useStore((s) => s.setDefaultPreset)
+  return (
+    <label className="field">
+      Style for new callouts
+      <select value={defaultPresetId} onChange={(e) => setDefaultPreset(e.target.value)}>
+        {presets.map((p) => (
+          <option key={p.id} value={p.id}>
+            {p.name}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
+}
 
 export function Inspector() {
   const doc = useStore((s) => s.doc)
@@ -12,6 +32,11 @@ export function Inspector() {
   const deleteCallout = useStore((s) => s.deleteCallout)
   const addLandmark = useStore((s) => s.addLandmark)
   const record = useStore((s) => s.record)
+  const presets = useStore((s) => s.presets)
+  const applyPreset = useStore((s) => s.applyPreset)
+  const applyPresetToAll = useStore((s) => s.applyPresetToAll)
+  const saveStyleAsPreset = useStore((s) => s.saveStyleAsPreset)
+  const deletePreset = useStore((s) => s.deletePreset)
 
   if (!doc) return null
   const callout = doc.callouts.find((c) => c.id === selectedId)
@@ -19,6 +44,7 @@ export function Inspector() {
     return (
       <section className="panel inspector">
         <div className="panel-title">Callout</div>
+        <DefaultPresetField />
         <p className="hint">
           Select <b>Add callout</b>, then click a point on the body. Drag the white dot to move
           the anchor, drag the label to reposition it, drag the small square to bend the leader.
@@ -32,9 +58,85 @@ export function Inspector() {
   const visible = ov.visible ?? true
   const anchor = doc.anchors.find((a) => a.id === callout.anchorId)
 
+  const onSavePreset = () => {
+    const name = window.prompt('Name this style preset:', 'My style')
+    if (name == null) return
+    const id = saveStyleAsPreset(name.trim() || 'My style', styleFromCallout(callout))
+    // make it the applied preset selection immediately (no-op visually, just clarity)
+    void id
+  }
+
   return (
     <section className="panel inspector">
       <div className="panel-title">Callout</div>
+
+      {view.style && (
+        <p className="hint">
+          View “{view.name}” imposes a <b>style format</b> on all markers, so the point/leader/balloon
+          settings below are overridden here. Set the view’s Format to “Per-callout” to use them.
+        </p>
+      )}
+
+      {/* --- style preset --- */}
+      <label className="field">
+        Style preset
+        <select
+          value=""
+          onChange={(e) => {
+            if (e.target.value) applyPreset(callout.id, e.target.value)
+            e.target.value = ''
+          }}
+        >
+          <option value="">Apply preset…</option>
+          {presets.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      <div className="row preset-actions">
+        <button className="link" onClick={onSavePreset} title="Save this callout's look as a reusable preset">
+          + Save as preset
+        </button>
+        <select
+          className="apply-all"
+          value=""
+          onChange={(e) => {
+            if (e.target.value) applyPresetToAll(e.target.value)
+            e.target.value = ''
+          }}
+          title="Apply a preset to every callout"
+        >
+          <option value="">Apply to all…</option>
+          {presets.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      {presets.some((p) => !p.builtin) && (
+        <label className="field">
+          Delete a saved preset
+          <select
+            value=""
+            onChange={(e) => {
+              if (e.target.value) deletePreset(e.target.value)
+              e.target.value = ''
+            }}
+          >
+            <option value="">Remove preset…</option>
+            {presets
+              .filter((p) => !p.builtin)
+              .map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+          </select>
+        </label>
+      )}
 
       <label className="field">
         Label text{doc.views.length > 1 ? ' (default)' : ''}
@@ -63,7 +165,7 @@ export function Inspector() {
 
       <div className="row">
         <label className="field">
-          Balloon
+          Balloon (label end)
           <select
             value={callout.balloonShape}
             onChange={(e) => {
@@ -84,6 +186,38 @@ export function Inspector() {
             onFocus={record}
             onChange={(e) => updateBase(callout.id, { balloonText: e.target.value })}
           />
+        </label>
+      </div>
+
+      <div className="row">
+        <label className="field">
+          Point (body end)
+          <select
+            value={callout.anchorMarker ?? 'ring'}
+            onChange={(e) => {
+              record()
+              updateBase(callout.id, { anchorMarker: e.target.value as AnchorMarker })
+            }}
+          >
+            <option value="ring">Ring + dot</option>
+            <option value="dot">Dot</option>
+            <option value="tick">Tick</option>
+            <option value="none">None</option>
+          </select>
+        </label>
+        <label className="field">
+          Leader end
+          <select
+            value={callout.leaderEnd ?? 'none'}
+            onChange={(e) => {
+              record()
+              updateBase(callout.id, { leaderEnd: e.target.value as LeaderEnd })
+            }}
+          >
+            <option value="none">Plain</option>
+            <option value="arrow">Arrow</option>
+            <option value="dot">Dot</option>
+          </select>
         </label>
       </div>
 
@@ -111,6 +245,18 @@ export function Inspector() {
           />
         </label>
       </div>
+
+      <label className="field checkbox">
+        <input
+          type="checkbox"
+          checked={callout.dashed ?? false}
+          onChange={(e) => {
+            record()
+            updateBase(callout.id, { dashed: e.target.checked })
+          }}
+        />
+        Dashed leader
+      </label>
 
       <label className="field checkbox">
         <input
