@@ -10,13 +10,13 @@ import {
   serializeProject,
 } from '../export/projectIo'
 import { SAMPLES, useStore } from '../store'
+import { NewDialog } from './NewDialog'
 
 export function Toolbar() {
   const doc = useStore((s) => s.doc)
   const tool = useStore((s) => s.tool)
   const setTool = useStore((s) => s.setTool)
   const loadSampleKey = useStore((s) => s.loadSampleKey)
-  const importSvgText = useStore((s) => s.importSvgText)
   const loadDoc = useStore((s) => s.loadDoc)
   const setDocName = useStore((s) => s.setDocName)
   const record = useStore((s) => s.record)
@@ -25,14 +25,11 @@ export function Toolbar() {
   const canUndo = useStore((s) => s.past.length > 0)
   const canRedo = useStore((s) => s.future.length > 0)
 
-  const svgInput = useRef<HTMLInputElement>(null)
   const projInput = useRef<HTMLInputElement>(null)
   const [busy, setBusy] = useState(false)
+  const [exportOpen, setExportOpen] = useState(false)
+  const [showNew, setShowNew] = useState(false)
 
-  const onImportSvg = async (file: File) => {
-    const text = await file.text()
-    importSvgText(file.name, text)
-  }
   const onOpenProject = async (file: File) => {
     try {
       loadDoc(parseProject(await file.text()))
@@ -144,7 +141,9 @@ export function Toolbar() {
             ))}
           </select>
         </label>
-        <button onClick={() => svgInput.current?.click()}>Import SVG</button>
+        <button onClick={() => setShowNew(true)} title="Start a new diagram from a file, pasted SVG, or a URL">
+          New…
+        </button>
         <button onClick={() => projInput.current?.click()}>Open project</button>
       </div>
 
@@ -163,31 +162,77 @@ export function Toolbar() {
         <button onClick={doSaveProject} disabled={!doc}>
           Save project
         </button>
-        <button onClick={doExportSvg} disabled={!doc}>
-          Export SVG
-        </button>
-        <button
-          onClick={doExportSvgJson}
-          disabled={!doc}
-          title="Download the SVG plus a .callouts.json defining every callout"
-        >
-          SVG + JSON
-        </button>
-        <button onClick={doExportPng} disabled={!doc || busy}>
-          {busy ? 'Rendering…' : 'Export PNG'}
-        </button>
-        <button onClick={doExportPdf} disabled={!doc || busy}>
-          Export PDF
-        </button>
-        {doc && doc.views.length > 1 && (
+
+        <div className="menu">
           <button
-            onClick={doExportPdfAll}
-            disabled={busy}
-            title="One vector PDF with a page per view"
+            className="menu-trigger"
+            disabled={!doc}
+            aria-haspopup="menu"
+            aria-expanded={exportOpen}
+            onClick={() => setExportOpen((o) => !o)}
           >
-            PDF · all views
+            {busy ? 'Rendering…' : 'Export ▾'}
           </button>
-        )}
+          {exportOpen && (
+            <>
+              <div className="menu-backdrop" onClick={() => setExportOpen(false)} />
+              <div className="menu-pop" role="menu">
+                <button
+                  role="menuitem"
+                  onClick={() => {
+                    doExportSvg()
+                    setExportOpen(false)
+                  }}
+                >
+                  SVG <span className="menu-note">standalone + metadata</span>
+                </button>
+                <button
+                  role="menuitem"
+                  onClick={() => {
+                    doExportSvgJson()
+                    setExportOpen(false)
+                  }}
+                >
+                  SVG + JSON <span className="menu-note">callouts sidecar</span>
+                </button>
+                <button
+                  role="menuitem"
+                  disabled={busy}
+                  onClick={() => {
+                    doExportPng()
+                    setExportOpen(false)
+                  }}
+                >
+                  PNG <span className="menu-note">2× raster</span>
+                </button>
+                <div className="menu-sep" />
+                <button
+                  role="menuitem"
+                  disabled={busy}
+                  onClick={() => {
+                    doExportPdf()
+                    setExportOpen(false)
+                  }}
+                >
+                  PDF <span className="menu-note">vector, this view</span>
+                </button>
+                {doc && doc.views.length > 1 && (
+                  <button
+                    role="menuitem"
+                    disabled={busy}
+                    onClick={() => {
+                      doExportPdfAll()
+                      setExportOpen(false)
+                    }}
+                  >
+                    PDF · all views <span className="menu-note">one page per view</span>
+                  </button>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+
         <a
           className="source-link"
           href="https://github.com/ahzs645/drawer"
@@ -200,17 +245,6 @@ export function Toolbar() {
       </div>
 
       <input
-        ref={svgInput}
-        type="file"
-        accept=".svg,image/svg+xml"
-        hidden
-        onChange={(e) => {
-          const f = e.target.files?.[0]
-          if (f) onImportSvg(f)
-          e.target.value = ''
-        }}
-      />
-      <input
         ref={projInput}
         type="file"
         accept=".json,application/json"
@@ -221,6 +255,8 @@ export function Toolbar() {
           e.target.value = ''
         }}
       />
+
+      {showNew && <NewDialog onClose={() => setShowNew(false)} />}
     </header>
   )
 }

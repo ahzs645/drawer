@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { applyArrangement } from './autoLayout'
 import { boxForTarget, pointToNormalized, resolveAnchor } from './geometry'
 import { uid } from './id'
 import { buildLandmarksFor } from './landmarks'
@@ -38,6 +39,22 @@ export type Tool = 'select' | 'anchor'
 
 const PALETTE = ['#1f6feb', '#d1242f', '#1a7f37', '#9a6700', '#8250df', '#bf3989']
 
+const AUTO_ARRANGE_KEY = 'drawer.autoArrange.v1'
+function loadAutoArrange(): boolean {
+  try {
+    return localStorage.getItem(AUTO_ARRANGE_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+function saveAutoArrange(v: boolean) {
+  try {
+    localStorage.setItem(AUTO_ARRANGE_KEY, v ? '1' : '0')
+  } catch {
+    /* storage unavailable — keep session-only */
+  }
+}
+
 function newView(name: string, labelMode: LabelMode): View {
   return { id: uid('view'), name, labelMode, overrides: {} }
 }
@@ -56,11 +73,15 @@ function makeDoc(name: string, base: BaseDrawing, landmarks: Landmark[] = []): D
   }
 }
 
-/** Place a label/balloon outward from the body center on the nearer side. */
+/**
+ * Place a label/balloon outward from the body center on the nearer side, clearing
+ * the body's silhouette by a gutter so the label doesn't sit on top of the drawing.
+ */
 function outwardLabelPos(base: BaseDrawing, point: Vec2): Vec2 {
-  const center = base.contentBox.x + base.contentBox.w / 2
-  const outX =
-    point.x < center ? base.contentBox.x - 4 : base.contentBox.x + base.contentBox.w + 4
+  const cb = base.contentBox
+  const gutter = Math.max(40, cb.w * 0.09)
+  const center = cb.x + cb.w / 2
+  const outX = point.x < center ? cb.x - gutter : cb.x + cb.w + gutter
   return { x: outX, y: point.y }
 }
 
@@ -86,6 +107,12 @@ interface StoreState {
   // landmark catalog UI
   showLandmarks: boolean
   hoverLandmarkId: string | null
+  // auto-arrange labels (boundary layout) when placing new callouts
+  autoArrange: boolean
+  // bumped to ask the canvas to re-fit the view (e.g. after an explicit arrange)
+  fitRequest: number
+  // bumped after placing a callout so the inspector focuses its label field for naming
+  labelFocusRequest: number
   // lifecycle
   loadSampleKey: (key: string, withSeeds?: boolean) => Promise<void>
   importSvgText: (name: string, raw: string) => void
@@ -115,6 +142,9 @@ interface StoreState {
   updateOverride: (id: string, patch: CalloutOverride) => void
   moveLabel: (id: string, pos: Vec2) => void
   moveAnchorForCallout: (id: string, point: Vec2) => void
+  // label layout
+  setAutoArrange: (v: boolean) => void
+  arrangeLabels: (viewId?: string) => void
   setAnchorTarget: (id: string, targetId: string | null) => void
   setElbow: (id: string, point: Vec2 | null) => void
   deleteCallout: (id: string) => void
@@ -123,6 +153,7 @@ interface StoreState {
   setActiveView: (id: string) => void
   updateViewMeta: (id: string, patch: Partial<Pick<View, 'name' | 'labelMode'>>) => void
   setViewStyle: (id: string, style: CalloutStyle | null) => void
+  setViewMono: (id: string, mono: boolean) => void
   deleteView: (id: string) => void
   setDocName: (name: string) => void
 }
@@ -154,6 +185,9 @@ export const useStore = create<StoreState>((set, get) => ({
   defaultPresetId: loadDefaultPresetId(),
   showLandmarks: true,
   hoverLandmarkId: null,
+  autoArrange: loadAutoArrange(),
+  fitRequest: 0,
+  labelFocusRequest: 0,
 
   loadSampleKey: async (key, withSeeds = false) => {
     const sample = SAMPLES.find((s) => s.key === key) ?? SAMPLES[0]
@@ -301,12 +335,13 @@ export const useStore = create<StoreState>((set, get) => ({
       elbow: null,
       color: PALETTE[(next - 1) % PALETTE.length],
     }
+    const doc2: DrawerDoc = {
+      ...doc,
+      anchors: [...doc.anchors, anchor],
+      callouts: [...doc.callouts, callout],
+    }
     set({
-      doc: {
-        ...doc,
-        anchors: [...doc.anchors, anchor],
-        callouts: [...doc.callouts, callout],
-      },
+      doc: get().autoArrange ? applyArrangement(doc2) : doc2,
       selectedCalloutId: callout.id,
     })
   },
@@ -384,20 +419,24 @@ export const useStore = create<StoreState>((set, get) => ({
     const callout: Callout = {
       id: uid('callout'),
       anchorId: anchor.id,
-      labelText: `Label ${next}`,
+      // start unnamed: a free-clicked point is a dot you name afterwards
+      labelText: '',
       balloonText: String(next),
       ...style,
       labelPos: outwardLabelPos(doc.base, point),
       elbow: null,
       color: PALETTE[(next - 1) % PALETTE.length],
     }
+    const doc2: DrawerDoc = {
+      ...doc,
+      anchors: [...doc.anchors, anchor],
+      callouts: [...doc.callouts, callout],
+    }
     set({
-      doc: {
-        ...doc,
-        anchors: [...doc.anchors, anchor],
-        callouts: [...doc.callouts, callout],
-      },
+      doc: get().autoArrange ? applyArrangement(doc2) : doc2,
       selectedCalloutId: callout.id,
+      // ask the inspector to focus the name field so you can type it immediately
+      labelFocusRequest: get().labelFocusRequest + 1,
     })
   },
 
@@ -427,6 +466,23 @@ export const useStore = create<StoreState>((set, get) => ({
 
   moveLabel: (id, pos) => get().updateOverride(id, { labelPos: pos }),
   setElbow: (id, point) => get().updateOverride(id, { elbow: point }),
+
+  setAutoArrange: (v) => {
+    saveAutoArrange(v)
+    set({ autoArrange: v })
+  },
+
+  // spread the current view's visible labels into non-overlapping side columns,
+  // then ask the canvas to re-fit so the arranged columns are fully visible
+  arrangeLabels: (viewId) => {
+    const doc = get().doc
+    if (!doc) return
+    get().record()
+    set({
+      doc: applyArrangement(doc, viewId ?? doc.activeViewId),
+      fitRequest: get().fitRequest + 1,
+    })
+  },
 
   moveAnchorForCallout: (id, point) => {
     const doc = get().doc
@@ -527,6 +583,18 @@ export const useStore = create<StoreState>((set, get) => ({
         views: doc.views.map((v) =>
           v.id === id ? { ...v, style: style ?? undefined } : v,
         ),
+      },
+    })
+  },
+
+  setViewMono: (id, mono) => {
+    const doc = get().doc
+    if (!doc) return
+    get().record()
+    set({
+      doc: {
+        ...doc,
+        views: doc.views.map((v) => (v.id === id ? { ...v, mono: mono || undefined } : v)),
       },
     })
   },

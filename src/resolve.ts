@@ -71,7 +71,8 @@ export function resolveCallouts(doc: DrawerDoc, viewId?: string): ResolvedCallou
       dashed,
       labelPos,
       elbow,
-      color: c.color,
+      // a mono view renders every callout in ink black (per-callout colors kept in the model)
+      color: view.mono ? '#111111' : c.color,
       visible,
       index,
     }

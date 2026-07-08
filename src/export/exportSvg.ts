@@ -1,6 +1,7 @@
 import {
   arrowHead,
   buildLeader,
+  calloutContentBounds,
   fontSizeFor,
   hexPoints,
   labelTextPlacement,
@@ -29,13 +30,6 @@ function esc(s: string): string {
     .replace(/"/g, '&quot;')
 }
 
-function expand(box: { minX: number; minY: number; maxX: number; maxY: number }, x: number, y: number) {
-  box.minX = Math.min(box.minX, x)
-  box.minY = Math.min(box.minY, y)
-  box.maxX = Math.max(box.maxX, x)
-  box.maxY = Math.max(box.maxY, y)
-}
-
 /** Compute a viewBox that contains the body + all visible callouts + legend. */
 function computeBounds(
   doc: DrawerDoc,
@@ -44,31 +38,16 @@ function computeBounds(
   legendWidth: number,
   legendCount: number,
 ): Box {
-  const cb = doc.base.contentBox
-  const b = { minX: cb.x, minY: cb.y, maxX: cb.x + cb.w, maxY: cb.y + cb.h }
-  for (const c of resolved) {
-    if (!c.visible) continue
-    const geo = buildLeader(c, fontSize)
-    expand(b, c.anchorPoint.x, c.anchorPoint.y)
-    expand(b, c.labelPos.x - geo.radius, c.labelPos.y - geo.radius)
-    expand(b, c.labelPos.x + geo.radius, c.labelPos.y + geo.radius)
-    if (c.elbow) expand(b, c.elbow.x, c.elbow.y)
-    if (c.labelText) {
-      const tp = labelTextPlacement(c, geo)
-      const tw = c.labelText.length * fontSize * 0.58
-      expand(b, tp.x, tp.y)
-      expand(b, tp.anchor === 'start' ? tp.x + tw : tp.x - tw, tp.y + fontSize)
-    }
-  }
+  const raw = calloutContentBounds(doc.base.contentBox, resolved, fontSize)
   const m = fontSize
   // the legend grows downward from y = top + 1.5*fontSize; make sure the box is
   // tall enough to contain it for callout-heavy documents.
   const legendHeight = legendCount > 0 ? (1.5 + legendCount * 1.35) * fontSize + m : 0
   return {
-    x: round(b.minX - m),
-    y: round(b.minY - m),
-    w: round(b.maxX - b.minX + m * 2 + legendWidth),
-    h: round(Math.max(b.maxY - b.minY + m * 2, legendHeight)),
+    x: round(raw.x - m),
+    y: round(raw.y - m),
+    w: round(raw.w + m * 2 + legendWidth),
+    h: round(Math.max(raw.h + m * 2, legendHeight)),
   }
 }
 

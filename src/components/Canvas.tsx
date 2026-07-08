@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
   buildLeader,
+  calloutContentBounds,
   clientToSvg,
   fontSizeFor,
   landmarkPoint,
@@ -9,7 +10,7 @@ import {
 import { usePointerDrag } from '../hooks/usePointerDrag'
 import { resolveCallouts } from '../resolve'
 import { useStore } from '../store'
-import type { Box, Vec2 } from '../types'
+import type { Box, DrawerDoc, Vec2 } from '../types'
 import { CalloutView } from './Callout'
 import { LandmarkLayer, type LandmarkMark } from './LandmarkLayer'
 
@@ -47,6 +48,18 @@ function padBox(b: Box, frac = 0.06): Box {
   return { x: b.x - pad, y: b.y - pad, w: b.w + pad * 2, h: b.h + pad * 2 }
 }
 
+/**
+ * The box the camera should fit: the body plus every visible callout label, so
+ * arranged labels in the side columns stay on screen. Falls back to the imported
+ * viewBox when the content box is degenerate.
+ */
+function contentFitBox(doc: DrawerDoc): Box {
+  const resolved = resolveCallouts(doc)
+  const fs = fontSizeFor(doc.base.viewBox)
+  const box = calloutContentBounds(doc.base.contentBox, resolved, fs)
+  return box.w > 0 && box.h > 0 ? box : doc.base.viewBox
+}
+
 /** Initial camera that contains the (padded) drawing within the viewport aspect. */
 function initCamera(viewBox: Box, size: { w: number; h: number }): Camera {
   const pad = padBox(viewBox)
@@ -75,6 +88,7 @@ export function Canvas() {
   const showLandmarks = useStore((s) => s.showLandmarks)
   const hoverLandmarkId = useStore((s) => s.hoverLandmarkId)
   const setHoverLandmark = useStore((s) => s.setHoverLandmark)
+  const fitRequest = useStore((s) => s.fitRequest)
 
   const [size, setSize] = useState({ w: 0, h: 0 })
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, w: 100 })
@@ -100,7 +114,7 @@ export function Canvas() {
     if (!doc || !size.w) return
     if (initedFor.current === doc.id) return
     initedFor.current = doc.id
-    setCamera(initCamera(doc.base.viewBox, size))
+    setCamera(initCamera(contentFitBox(doc), size))
   }, [doc?.id, size.w, size.h])
 
   // non-passive wheel listener so zooming never scrolls the page
@@ -162,8 +176,13 @@ export function Canvas() {
   }, [highlightTargetId, doc?.id])
 
   const fitView = () => {
-    if (doc && size.w) setCamera(initCamera(doc.base.viewBox, size))
+    if (doc && size.w) setCamera(initCamera(contentFitBox(doc), size))
   }
+  // honor an external fit request (bumped by the store after an explicit arrange)
+  useEffect(() => {
+    if (fitRequest > 0 && doc && size.w) setCamera(initCamera(contentFitBox(doc), size))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fitRequest])
   const zoomBy = (factor: number) => {
     if (!doc) return
     setCamera((c) => {
