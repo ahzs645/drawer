@@ -1,7 +1,9 @@
+import { useEffect, useRef } from 'react'
 import { boxForTarget, resolveAnchor, round } from '../geometry'
 import { styleFromCallout } from '../presets'
 import { useStore } from '../store'
 import type { AnchorMarker, BalloonShape, LeaderEnd, LeaderStyle } from '../types'
+import { CollapsiblePanel } from './CollapsiblePanel'
 
 /** Shared preset picker: choose which style new callouts start from. */
 function DefaultPresetField() {
@@ -37,19 +39,28 @@ export function Inspector() {
   const applyPresetToAll = useStore((s) => s.applyPresetToAll)
   const saveStyleAsPreset = useStore((s) => s.saveStyleAsPreset)
   const deletePreset = useStore((s) => s.deletePreset)
+  const labelFocusRequest = useStore((s) => s.labelFocusRequest)
+
+  // focus the name field right after a point is placed, so you can type its name
+  const labelRef = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    if (labelFocusRequest > 0) {
+      labelRef.current?.focus()
+      labelRef.current?.select()
+    }
+  }, [labelFocusRequest])
 
   if (!doc) return null
   const callout = doc.callouts.find((c) => c.id === selectedId)
   if (!callout) {
     return (
-      <section className="panel inspector">
-        <div className="panel-title">Callout</div>
+      <CollapsiblePanel title="Callout" className="inspector">
         <DefaultPresetField />
         <p className="hint">
           Select <b>Add callout</b>, then click a point on the body. Drag the white dot to move
           the anchor, drag the label to reposition it, drag the small square to bend the leader.
         </p>
-      </section>
+      </CollapsiblePanel>
     )
   }
 
@@ -67,9 +78,7 @@ export function Inspector() {
   }
 
   return (
-    <section className="panel inspector">
-      <div className="panel-title">Callout</div>
-
+    <CollapsiblePanel title="Callout" className="inspector">
       {view.style && (
         <p className="hint">
           View “{view.name}” imposes a <b>style format</b> on all markers, so the point/leader/balloon
@@ -141,8 +150,10 @@ export function Inspector() {
       <label className="field">
         Label text{doc.views.length > 1 ? ' (default)' : ''}
         <input
+          ref={labelRef}
           type="text"
           value={callout.labelText}
+          placeholder="Name this point…"
           onFocus={record}
           onChange={(e) => updateBase(callout.id, { labelText: e.target.value })}
         />
@@ -319,6 +330,6 @@ export function Inspector() {
       <button className="danger block" onClick={() => deleteCallout(callout.id)}>
         Delete callout
       </button>
-    </section>
+    </CollapsiblePanel>
   )
 }

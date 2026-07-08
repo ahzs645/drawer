@@ -29,7 +29,10 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
 ## What you can do
 
 - **Load a body** — bundled views (standing front/back, back, half-body front/back,
-  side-lying, seated wheelchair, plus a multi-part *torso organs* demo) or **Import** any SVG.
+  side-lying, seated wheelchair, plus a multi-part *torso organs* demo), or start a fresh
+  document with **New…**, which brings in any SVG three ways: **upload a file**, **paste
+  SVG markup**, or **fetch a URL**. Named elements in the imported SVG become landmarks
+  automatically.
 - **Landmark catalog** — a predefined library of *named* body locations you pick from and
   snap to, instead of free-clicking a blank silhouette (the idea behind body-map libraries
   like *react-native-body-highlighter*, *MuscleMap*, *bodymap*). The catalog comes from two
@@ -44,10 +47,12 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
   named callout there; **hover** to locate it and **highlight** the region it belongs to.
   A free click *near* a landmark **auto-locks** onto it, and dragging an anchor **snaps**
   to nearby landmarks. Build your own catalog on any body with **“Save as landmark.”**
-- **Add callout** — click the body to anchor a point; a leader + label appear. Clicking a
-  *named part* of a multi-element SVG (e.g. the heart in the organs demo) anchors to **that
-  element**, normalized to its bounding box, so it tracks the part. Re-target or detach any
-  anchor from the inspector’s “Anchored to part” menu.
+- **Add callout** — click the body to anchor a point. A free-clicked point drops as an
+  **unnamed dot** and the inspector’s name field is focused so you can **type its name right
+  away** (place a dot, name it, repeat). Clicking a *named part* of a multi-element SVG (e.g.
+  the heart in the organs demo) anchors to **that element**, normalized to its bounding box,
+  so it tracks the part. Re-target or detach any anchor from the inspector’s “Anchored to
+  part” menu.
 - **Drag** the label (per-view position), the white anchor dot (body-locked, affects all
   views), or the small square to bend the leader into an elbow.
 - **Edit** label text, balloon shape (none / circle / hexagon), number/code, leader style
@@ -61,7 +66,10 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
     default. The exported `data-name` stays the canonical term while the visible text
     is translated.
   Each view keeps its own label positions, per-callout visibility, and label text, so
-  one document produces many figures.
+  one document produces many figures. A per-view **Black lines** toggle renders every
+  leader/marker/balloon in ink black instead of each callout's color (the plain textbook
+  look), and **Auto-arrange labels** (shortcut `A`) spreads the visible labels into
+  non-overlapping side columns, parked clear of the silhouette.
 - **Export**
   - **SVG** — a standalone static file. Each callout is wrapped in
     `<g class="callout" data-callout-id data-name data-anchor-mode data-nx data-ny …>`
@@ -81,6 +89,7 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
 | `⌘/Ctrl + Shift + Z` (or `Ctrl + Y`) | Redo |
 | `Delete` / `Backspace` | Delete the selected callout |
 | `Esc` | Deselect |
+| `A` | Auto-arrange the current view's labels into non-overlapping side columns |
 | Mouse wheel | Zoom to cursor; drag empty space to pan |
 
 ## Exported SVG shape
@@ -148,13 +157,15 @@ public/samples/       the six body SVGs
 - `path-offset` anchoring UI (snap along a stroke)
 - Region *fill* highlight baked into the static export (data-driven "heatmap" view,
   like react-native-body-highlighter's intensity colouring)
-- Auto-layout / collision avoidance for labels
 - Multi-select and group move/delete
 
 Implemented since the first cut: undo/redo, autosave + session restore, zoom/pan
 controls, keyboard shortcuts, **anchor-to-element** (`data-target`), **per-view label
-text** (translations), **vector PDF export**, multi-page PDF sheets, and the
-**named landmark catalog** (curated + auto-derived, snap-to placement, region highlight).
+text** (translations), **vector PDF export**, multi-page PDF sheets, the
+**named landmark catalog** (curated + auto-derived, snap-to placement, region highlight),
+a collapsible sidebar + consolidated **Export** menu, and **auto-arrange labels**
+(boundary-labeling: visible labels spread into non-overlapping side columns, with an
+optional "auto on add").
 
 ## Extensibility / tldraw
 

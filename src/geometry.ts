@@ -184,6 +184,45 @@ export function labelTextPlacement(
   return { x: c.labelPos.x - gap, y: c.labelPos.y, anchor: 'end' }
 }
 
+/**
+ * Union box of the body content plus every *visible* callout — the leader
+ * anchor, the balloon, any elbow bend, and the estimated label-text extent.
+ * Shared by the SVG exporter's viewBox and the editor's "Fit" so that arranged
+ * labels parked in the side columns are never cropped off the canvas.
+ */
+export function calloutContentBounds(
+  contentBox: Box,
+  resolved: ResolvedCallout[],
+  fontSize: number,
+): Box {
+  let minX = contentBox.x
+  let minY = contentBox.y
+  let maxX = contentBox.x + contentBox.w
+  let maxY = contentBox.y + contentBox.h
+  const expand = (x: number, y: number) => {
+    if (x < minX) minX = x
+    if (y < minY) minY = y
+    if (x > maxX) maxX = x
+    if (y > maxY) maxY = y
+  }
+  for (const c of resolved) {
+    if (!c.visible) continue
+    const geo = buildLeader(c, fontSize)
+    expand(c.anchorPoint.x, c.anchorPoint.y)
+    expand(c.labelPos.x - geo.radius, c.labelPos.y - geo.radius)
+    expand(c.labelPos.x + geo.radius, c.labelPos.y + geo.radius)
+    if (c.elbow) expand(c.elbow.x, c.elbow.y)
+    if (c.labelText) {
+      const tp = labelTextPlacement(c, geo)
+      // rough text width estimate (no DOM measurement in this pure module)
+      const tw = c.labelText.length * fontSize * 0.58
+      expand(tp.x, tp.y)
+      expand(tp.anchor === 'start' ? tp.x + tw : tp.x - tw, tp.y + fontSize)
+    }
+  }
+  return { x: minX, y: minY, w: maxX - minX, h: maxY - minY }
+}
+
 export function polylineToPoints(points: Vec2[]): string {
   return points.map((p) => `${round(p.x)},${round(p.y)}`).join(' ')
 }

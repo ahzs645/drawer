@@ -157,6 +157,12 @@ export interface View {
    * Undefined = use each callout's own base style.
    */
   style?: CalloutStyle
+  /**
+   * Render every leader / marker / balloon in ink black instead of each callout's
+   * own color — the plain "textbook" look. Per-callout colors are preserved in the
+   * model and simply ignored while this is on.
+   */
+  mono?: boolean
 }
 
 export interface BaseDrawing {

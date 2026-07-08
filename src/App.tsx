@@ -89,6 +89,11 @@ export default function App() {
         if (typing || !s.selectedCalloutId) return
         e.preventDefault()
         s.deleteCallout(s.selectedCalloutId)
+      } else if ((e.key === 'a' || e.key === 'A') && !mod && !e.altKey) {
+        // auto-arrange the current view's labels into non-overlapping columns
+        if (typing) return
+        e.preventDefault()
+        s.arrangeLabels()
       }
     }
     window.addEventListener('keydown', onKey)

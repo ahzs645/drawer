@@ -1,5 +1,6 @@
 import { resolveCallouts } from '../resolve'
 import { useStore } from '../store'
+import { CollapsiblePanel } from './CollapsiblePanel'
 import { Inspector } from './Inspector'
 import { LandmarkPanel } from './LandmarkPanel'
 import { ViewBar } from './ViewBar'
@@ -16,8 +17,7 @@ function CalloutList() {
   const resolved = resolveCallouts(doc)
 
   return (
-    <section className="panel callout-list">
-      <div className="panel-title">Callouts ({doc.callouts.length})</div>
+    <CollapsiblePanel title={`Callouts (${doc.callouts.length})`} className="callout-list">
       {doc.callouts.length === 0 && <p className="hint">No callouts yet.</p>}
       <ul>
         {doc.callouts.map((c, i) => {
@@ -31,7 +31,9 @@ function CalloutList() {
             >
               <span className="swatch" style={{ background: c.color }} />
               <span className="cl-index">{r?.visible ? r.index : '–'}</span>
-              <span className="cl-name">{c.labelText || c.balloonText || 'Untitled'}</span>
+              <span className="cl-name">
+                {c.labelText || <span className="cl-unnamed">Unnamed</span>}
+              </span>
               <input
                 type="checkbox"
                 checked={visible}
@@ -46,7 +48,7 @@ function CalloutList() {
           )
         })}
       </ul>
-    </section>
+    </CollapsiblePanel>
   )
 }
 
