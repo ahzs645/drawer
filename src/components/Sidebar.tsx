@@ -1,7 +1,9 @@
 import { resolveCallouts } from '../resolve'
 import { useStore } from '../store'
 import { CollapsiblePanel } from './CollapsiblePanel'
+import { DrawingInspector } from './DrawingInspector'
 import { Inspector } from './Inspector'
+import { LandmarkInspector } from './LandmarkInspector'
 import { LandmarkPanel } from './LandmarkPanel'
 import { TextInspector } from './TextInspector'
 import { ViewBar } from './ViewBar'
@@ -79,15 +81,59 @@ function TextList() {
   )
 }
 
+function DrawingList() {
+  const doc = useStore((s) => s.doc)
+  const selectedId = useStore((s) => s.selectedDrawingId)
+  const selectDrawing = useStore((s) => s.selectDrawing)
+  if (!doc || doc.drawingElements.length === 0) return null
+  return (
+    <CollapsiblePanel title={`Lines / shapes (${doc.drawingElements.length})`} className="drawing-list">
+      <ul>
+        {doc.drawingElements.map((item, index) => (
+          <li key={item.id} className={item.id === selectedId ? 'selected' : ''} onClick={() => selectDrawing(item.id)}>
+            <span className="text-kind">{item.kind === 'line' ? '╱' : '□'}</span>
+            <span className="cl-name">{item.kind === 'line' ? 'Line' : 'Rectangle'} {index + 1}</span>
+          </li>
+        ))}
+      </ul>
+    </CollapsiblePanel>
+  )
+}
+
+function BasePanel() {
+  const duplicate = useStore((s) => s.duplicateBaseRight)
+  return (
+    <CollapsiblePanel title="Base drawing" className="base-panel" defaultOpen={false}>
+      <p className="hint">Create a second instance to the right before placing its landmarks and callouts.</p>
+      <div className="row">
+        <button onClick={() => duplicate(false)}>Duplicate right</button>
+        <button onClick={() => duplicate(true)}>Mirror copy right</button>
+      </div>
+    </CollapsiblePanel>
+  )
+}
+
 export function Sidebar() {
   const status = useStore((s) => s.status)
   const selectedTextId = useStore((s) => s.selectedTextId)
+  const selectedLandmarkId = useStore((s) => s.selectedLandmarkId)
+  const selectedDrawingId = useStore((s) => s.selectedDrawingId)
   return (
     <aside className="sidebar">
       {status && <div className="status">{status}</div>}
       <ViewBar />
-      {selectedTextId ? <TextInspector /> : <Inspector />}
+      {selectedLandmarkId ? (
+        <LandmarkInspector />
+      ) : selectedDrawingId ? (
+        <DrawingInspector />
+      ) : selectedTextId ? (
+        <TextInspector />
+      ) : (
+        <Inspector />
+      )}
+      <BasePanel />
       <TextList />
+      <DrawingList />
       <LandmarkPanel />
       <CalloutList />
     </aside>

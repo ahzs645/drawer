@@ -65,6 +65,8 @@ export interface Landmark {
   group?: string
 }
 
+export type FontWeight = 400 | 500 | 600 | 700
+
 export type TextAnnotationStyle = 'plain' | 'heading'
 export type TextAnnotationAlign = 'start' | 'middle' | 'end'
 
@@ -106,6 +108,11 @@ export interface CalloutStyle {
   leaderEnd: LeaderEnd
   /** dashed leader line */
   dashed: boolean
+  /** leader thickness in SVG user units */
+  leaderWidth?: number
+  /** optional label type settings; undefined fontSize follows the drawing scale */
+  fontSize?: number
+  fontWeight?: FontWeight
 }
 
 export const DEFAULT_STYLE: CalloutStyle = {
@@ -114,6 +121,8 @@ export const DEFAULT_STYLE: CalloutStyle = {
   anchorMarker: 'ring',
   leaderEnd: 'none',
   dashed: false,
+  leaderWidth: 1.6,
+  fontWeight: 500,
 }
 
 /**
@@ -152,6 +161,9 @@ export interface Callout {
   /** optional manual elbow bend point in SVG user units */
   elbow: Vec2 | null
   color: string
+  leaderWidth?: number
+  fontSize?: number
+  fontWeight?: FontWeight
 }
 
 export type LabelMode = 'names' | 'numbers' | 'blank'
@@ -201,6 +213,21 @@ export interface BaseDrawing {
   targetBoxes: Record<string, Box>
 }
 
+export type DrawingElementKind = 'line' | 'rect'
+
+/** A freely drawn line or rectangle layered over the imported base drawing. */
+export interface DrawingElement {
+  id: string
+  kind: DrawingElementKind
+  start: Vec2
+  end: Vec2
+  stroke: string
+  strokeWidth: number
+  dashed: boolean
+  /** rectangle fill; null means transparent */
+  fill: string | null
+}
+
 export interface DrawerDoc {
   id: string
   name: string
@@ -213,6 +240,12 @@ export interface DrawerDoc {
   landmarks: Landmark[]
   /** freely positioned headings, figure letters, and captions */
   textAnnotations: TextAnnotation[]
+  /** freely drawn divider lines and simple shapes */
+  drawingElements: DrawingElement[]
+  /** stable display/authoring order for landmark groups, including empty groups */
+  landmarkGroupOrder: string[]
+  /** groups hidden from canvas markers (they remain editable in the panel) */
+  hiddenLandmarkGroups: string[]
 }
 
 /** A callout fully resolved against the active view, ready to render. */
@@ -227,6 +260,9 @@ export interface ResolvedCallout {
   anchorMarker: AnchorMarker
   leaderEnd: LeaderEnd
   dashed: boolean
+  leaderWidth: number
+  fontSize: number
+  fontWeight: FontWeight
   labelPos: Vec2
   elbow: Vec2 | null
   color: string

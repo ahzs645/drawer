@@ -2,6 +2,7 @@ import type {
   Anchor,
   BaseDrawing,
   Box,
+  DrawingElement,
   Landmark,
   ResolvedCallout,
   TextAnnotation,
@@ -208,7 +209,8 @@ export function calloutContentBounds(
   }
   for (const c of resolved) {
     if (!c.visible) continue
-    const geo = buildLeader(c, fontSize)
+    const cFontSize = c.fontSize || fontSize
+    const geo = buildLeader(c, cFontSize)
     expand(c.anchorPoint.x, c.anchorPoint.y)
     expand(c.labelPos.x - geo.radius, c.labelPos.y - geo.radius)
     expand(c.labelPos.x + geo.radius, c.labelPos.y + geo.radius)
@@ -216,9 +218,9 @@ export function calloutContentBounds(
     if (c.labelText) {
       const tp = labelTextPlacement(c, geo)
       // rough text width estimate (no DOM measurement in this pure module)
-      const tw = c.labelText.length * fontSize * 0.58
+      const tw = c.labelText.length * cFontSize * 0.58
       expand(tp.x, tp.y)
-      expand(tp.anchor === 'start' ? tp.x + tw : tp.x - tw, tp.y + fontSize)
+      expand(tp.anchor === 'start' ? tp.x + tw : tp.x - tw, tp.y + cFontSize)
     }
   }
   return { x: minX, y: minY, w: maxX - minX, h: maxY - minY }
@@ -242,6 +244,7 @@ export function diagramContentBounds(
   resolved: ResolvedCallout[],
   fontSize: number,
   textAnnotations: TextAnnotation[] = [],
+  drawingElements: DrawingElement[] = [],
 ): Box {
   const callouts = calloutContentBounds(contentBox, resolved, fontSize)
   let minX = callouts.x
@@ -254,6 +257,13 @@ export function diagramContentBounds(
     minY = Math.min(minY, b.y)
     maxX = Math.max(maxX, b.x + b.w)
     maxY = Math.max(maxY, b.y + b.h)
+  }
+  for (const item of drawingElements) {
+    const pad = Math.max(1, item.strokeWidth) / 2
+    minX = Math.min(minX, item.start.x - pad, item.end.x - pad)
+    minY = Math.min(minY, item.start.y - pad, item.end.y - pad)
+    maxX = Math.max(maxX, item.start.x + pad, item.end.x + pad)
+    maxY = Math.max(maxY, item.start.y + pad, item.end.y + pad)
   }
   return { x: minX, y: minY, w: maxX - minX, h: maxY - minY }
 }

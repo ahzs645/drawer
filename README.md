@@ -30,9 +30,9 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
 
 - **Load a body** — bundled views (standing front/back, back, half-body front/back,
   side-lying, seated wheelchair, plus a multi-part *torso organs* demo), or start a fresh
-  document with **New…**, which brings in any SVG three ways: **upload a file**, **paste
-  SVG markup**, or **fetch a URL**. Named elements in the imported SVG become landmarks
-  automatically.
+  document with **New…**. Upload SVG, PNG, JPEG, or WebP; paste SVG markup; or fetch an
+  SVG/raster URL. Raster images are embedded into an SVG base so all annotation and
+  export tools still work. Named elements in imported SVGs become landmarks automatically.
 - **Landmark catalog** — a predefined library of *named* body locations you pick from and
   snap to, instead of free-clicking a blank silhouette (the idea behind body-map libraries
   like *react-native-body-highlighter*, *MuscleMap*, *bodymap*). The catalog comes from two
@@ -46,12 +46,21 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
   Pick a landmark from the **Landmarks** panel (or click its ring on the body) to drop a
   named callout there; **hover** to locate it and **highlight** the region it belongs to.
   A free click *near* a landmark **auto-locks** onto it, and dragging an anchor **snaps**
-  to nearby landmarks. Build your own catalog on any body with **“Save as landmark.”**
+  to nearby landmarks. Use **Add landmark** to place and drag catalog points directly,
+  rename them, change their normalized coordinates or target part, and organize them into
+  user-created groups. Groups can be renamed, reordered, hidden, or deleted. Landmark
+  catalogs can be exported/imported as reusable JSON files.
 - **Add standalone text** — click anywhere to place a draggable heading, caption, or
   figure marker that is not tied to an anatomical point. Text can be aligned, resized,
   recolored, weighted, or styled as a textbook section heading with an adjustable
   horizontal rule. The front/back sample includes editable “Anterior”, “Posterior”, and
   “A” examples.
+- **Draw guide geometry** — add editable lines and rectangles for dividers, grouping
+  boxes, and other textbook layout marks. Change their coordinates, stroke, width, dash,
+  and rectangle fill. The geometry is included in SVG/PNG/PDF exports.
+- **Duplicate the base** — create a second copy to the right, or a mirrored copy, before
+  placing its own landmarks and callouts. This supports front/back and left/right figure
+  layouts without preparing a new source image.
 - **Add callout** — click the body to anchor a point. A free-clicked point drops as an
   **unnamed dot** and the inspector’s name field is focused so you can **type its name right
   away** (place a dot, name it, repeat). Clicking a *named part* of a multi-element SVG (e.g.
@@ -60,8 +69,8 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
   part” menu.
 - **Drag** the label (per-view position), the white anchor dot (body-locked, affects all
   views), or the small square to bend the leader into an elbow.
-- **Edit** label text, balloon shape (none / circle / hexagon), number/code, leader style
-  (straight / elbow), and color in the inspector.
+- **Edit** label text, balloon shape (none / circle / hexagon), number/code, label size and
+  weight, leader width/style (straight / elbow), and color in the inspector.
 - **Views (label sets)** — switch the whole diagram between modes:
   - **Names** — anatomical labels with leaders (like the original reference)
   - **Numbered** — SolidWorks-style numbered balloons + an auto legend
@@ -92,7 +101,7 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
 | --- | --- |
 | `⌘/Ctrl + Z` | Undo |
 | `⌘/Ctrl + Shift + Z` (or `Ctrl + Y`) | Redo |
-| `Delete` / `Backspace` | Delete the selected callout |
+| `Delete` / `Backspace` | Delete the selected callout, text, landmark, line, or shape |
 | `Esc` | Deselect |
 | `A` | Auto-arrange the current view's labels into non-overlapping side columns |
 | Mouse wheel | Zoom to cursor; drag empty space to pan |
@@ -121,8 +130,9 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
 | `Anchor` | a point locked to the body (`relative-bbox` \| `absolute` \| `path-offset`) |
 | `Landmark` | a named, reusable body location (`nx,ny` in a target/content box) — the catalog |
 | `Callout` | anchor + default label/balloon/leader/color |
+| `DrawingElement` | an editable line or rectangle on the guide-geometry layer |
 | `View` | a named label-set: `labelMode` (`names`/`numbers`/`blank`) + per-callout overrides |
-| `DrawerDoc` | the whole document: base + anchors + callouts + views + landmarks + standalone text |
+| `DrawerDoc` | the whole document: base + anchors + callouts + views + landmarks + standalone text + guide geometry |
 
 `resolve.ts` merges each callout with the active view to produce render-ready
 `ResolvedCallout`s, shared by the canvas and the SVG exporter.
@@ -151,8 +161,8 @@ src/
   store.ts            Zustand store (all document mutations)
   samples.ts          bundled bodies + demo landmark seeds
   landmarks.ts        the named landmark catalog (curated + auto-derived) + snap helpers
-  components/         Canvas, Callout, LandmarkLayer, LandmarkPanel, Toolbar, ViewBar, Inspector, Sidebar
-  export/             exportSvg (static + metadata), exportPng, projectIo (save/load)
+  components/         Canvas, Callout, landmark/drawing inspectors, Toolbar, ViewBar, Sidebar
+  export/             SVG/PNG/PDF export, project save/load, landmark catalog import/export
 public/samples/       the six body SVGs
 ```
 

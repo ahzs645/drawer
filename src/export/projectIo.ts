@@ -40,6 +40,13 @@ export function parseProject(text: string): DrawerDoc {
   if (!Array.isArray(doc.landmarks)) doc.landmarks = []
   // standalone text was added later; default for older project files
   if (!Array.isArray(doc.textAnnotations)) doc.textAnnotations = []
+  if (!Array.isArray(doc.drawingElements)) doc.drawingElements = []
+  if (!Array.isArray(doc.landmarkGroupOrder)) {
+    doc.landmarkGroupOrder = Array.from(
+      new Set(doc.landmarks.map((l) => l.group || 'Other')),
+    )
+  }
+  if (!Array.isArray(doc.hiddenLandmarkGroups)) doc.hiddenLandmarkGroups = []
   if (!doc.activeViewId || !doc.views.some((v) => v.id === doc.activeViewId)) {
     doc.activeViewId = doc.views[0].id
   }

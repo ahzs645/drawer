@@ -24,21 +24,22 @@ interface Props extends CalloutHandlers {
 /** Pure presentational callout: anchor marker + leader + balloon + label. */
 export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
   if (!c.visible) return null
-  const geo = buildLeader(c, fontSize)
+  const fs = c.fontSize || fontSize
+  const geo = buildLeader(c, fs)
   const anchor = c.anchorPoint
   const tp = labelTextPlacement(c, geo)
   const stroke = c.color
   const elbowPoint = c.leaderStyle === 'elbow' && geo.points.length >= 3 ? geo.points[1] : null
   // the leader segment that touches the body, used to orient markers/arrowheads
   const fromPoint = geo.points[1] ?? c.labelPos
-  const strokeW = selected ? 2.2 : 1.6
+  const strokeW = selected ? c.leaderWidth + 0.6 : c.leaderWidth
   const dash = c.dashed ? `${strokeW * 3} ${strokeW * 2.2}` : undefined
   // unit vector perpendicular to the leader, for the 'tick' marker
   const ldx = fromPoint.x - anchor.x
   const ldy = fromPoint.y - anchor.y
   const llen = Math.hypot(ldx, ldy) || 1
   const perp = { x: -ldy / llen, y: ldx / llen }
-  const tickLen = 5
+  const tickLen = fs * 0.32
 
   return (
     <g
@@ -62,7 +63,7 @@ export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
 
       {/* leader end decoration at the body */}
       {c.leaderEnd === 'arrow' && (
-        <polygon points={arrowHead(anchor, fromPoint, 9)} fill={stroke} pointerEvents="none" />
+        <polygon points={arrowHead(anchor, fromPoint, fs * 0.55)} fill={stroke} pointerEvents="none" />
       )}
       {c.leaderEnd === 'dot' && (
         <circle cx={anchor.x} cy={anchor.y} r={2.6} fill={stroke} pointerEvents="none" />
@@ -151,7 +152,8 @@ export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
             textAnchor="middle"
             dominantBaseline="central"
             className="balloon-text"
-            fontSize={fontSize * 0.82}
+            fontSize={fs * 0.82}
+            fontWeight={c.fontWeight}
             fill={stroke}
           >
             {c.balloonText}
@@ -165,7 +167,8 @@ export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
             textAnchor={tp.anchor}
             dominantBaseline="central"
             className="label-text"
-            fontSize={fontSize}
+            fontSize={fs}
+            fontWeight={c.fontWeight}
             fill="#111"
           >
             {c.labelText}

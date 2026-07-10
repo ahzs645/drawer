@@ -1,4 +1,4 @@
-import { boxForTarget, resolveAnchor } from './geometry'
+import { boxForTarget, fontSizeFor, resolveAnchor } from './geometry'
 import { DEFAULT_STYLE } from './types'
 import type { DrawerDoc, ResolvedCallout, View } from './types'
 
@@ -41,6 +41,9 @@ export function resolveCallouts(doc: DrawerDoc, viewId?: string): ResolvedCallou
     const anchorMarker = vs?.anchorMarker ?? c.anchorMarker ?? DEFAULT_STYLE.anchorMarker
     const leaderEnd = vs?.leaderEnd ?? c.leaderEnd ?? DEFAULT_STYLE.leaderEnd
     const dashed = vs?.dashed ?? c.dashed ?? DEFAULT_STYLE.dashed
+    const leaderWidth = vs?.leaderWidth ?? c.leaderWidth ?? DEFAULT_STYLE.leaderWidth ?? 1.6
+    const fontSize = vs?.fontSize ?? c.fontSize ?? fontSizeFor(doc.base.viewBox)
+    const fontWeight = vs?.fontWeight ?? c.fontWeight ?? DEFAULT_STYLE.fontWeight ?? 500
 
     switch (view.labelMode) {
       case 'names':
@@ -69,6 +72,9 @@ export function resolveCallouts(doc: DrawerDoc, viewId?: string): ResolvedCallou
       anchorMarker,
       leaderEnd,
       dashed,
+      leaderWidth,
+      fontSize,
+      fontWeight,
       labelPos,
       elbow,
       // a mono view renders every callout in ink black (per-callout colors kept in the model)

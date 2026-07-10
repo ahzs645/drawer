@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
-import { boxForTarget, resolveAnchor, round } from '../geometry'
+import { boxForTarget, fontSizeFor, resolveAnchor, round } from '../geometry'
 import { styleFromCallout } from '../presets'
 import { useStore } from '../store'
-import type { AnchorMarker, BalloonShape, LeaderEnd, LeaderStyle } from '../types'
+import type { AnchorMarker, BalloonShape, FontWeight, LeaderEnd, LeaderStyle } from '../types'
 import { CollapsiblePanel } from './CollapsiblePanel'
 
 /** Shared preset picker: choose which style new callouts start from. */
@@ -196,6 +196,52 @@ export function Inspector() {
             value={callout.balloonText}
             onFocus={record}
             onChange={(e) => updateBase(callout.id, { balloonText: e.target.value })}
+          />
+        </label>
+      </div>
+
+      <div className="row">
+        <label className="field">
+          Label size
+          <input
+            type="number"
+            min="6"
+            max="160"
+            step="1"
+            value={callout.fontSize ?? fontSizeFor(doc.base.viewBox)}
+            onFocus={record}
+            onChange={(e) =>
+              updateBase(callout.id, { fontSize: Math.max(6, Number(e.target.value) || 6) })
+            }
+          />
+        </label>
+        <label className="field">
+          Label weight
+          <select
+            value={String(callout.fontWeight ?? 500)}
+            onChange={(e) => {
+              record()
+              updateBase(callout.id, { fontWeight: Number(e.target.value) as FontWeight })
+            }}
+          >
+            <option value="400">Regular</option>
+            <option value="500">Medium</option>
+            <option value="600">Semibold</option>
+            <option value="700">Bold</option>
+          </select>
+        </label>
+        <label className="field">
+          Line width
+          <input
+            type="number"
+            min="0.5"
+            max="20"
+            step="0.5"
+            value={callout.leaderWidth ?? 1.6}
+            onFocus={record}
+            onChange={(e) =>
+              updateBase(callout.id, { leaderWidth: Math.max(0.5, Number(e.target.value) || 0.5) })
+            }
           />
         </label>
       </div>

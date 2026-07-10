@@ -158,6 +158,9 @@ export function styleFromCallout(c: {
   anchorMarker?: CalloutStyle['anchorMarker']
   leaderEnd?: CalloutStyle['leaderEnd']
   dashed?: boolean
+  leaderWidth?: number
+  fontSize?: number
+  fontWeight?: CalloutStyle['fontWeight']
 }): CalloutStyle {
   return {
     balloonShape: c.balloonShape,
@@ -165,5 +168,8 @@ export function styleFromCallout(c: {
     anchorMarker: c.anchorMarker ?? DEFAULT_STYLE.anchorMarker,
     leaderEnd: c.leaderEnd ?? DEFAULT_STYLE.leaderEnd,
     dashed: c.dashed ?? DEFAULT_STYLE.dashed,
+    leaderWidth: c.leaderWidth ?? DEFAULT_STYLE.leaderWidth,
+    fontSize: c.fontSize,
+    fontWeight: c.fontWeight ?? DEFAULT_STYLE.fontWeight,
   }
 }

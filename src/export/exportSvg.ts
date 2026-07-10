@@ -9,7 +9,7 @@ import {
   round,
 } from '../geometry'
 import { buildLegend, resolveCallouts } from '../resolve'
-import type { Anchor, Box, DrawerDoc, ResolvedCallout, TextAnnotation } from '../types'
+import type { Anchor, Box, DrawerDoc, DrawingElement, ResolvedCallout, TextAnnotation } from '../types'
 
 export interface ExportOptions {
   viewId?: string
@@ -43,6 +43,7 @@ function computeBounds(
     resolved,
     fontSize,
     doc.textAnnotations,
+    doc.drawingElements,
   )
   const m = fontSize
   // the legend grows downward from y = top + 1.5*fontSize; make sure the box is
@@ -76,6 +77,18 @@ function renderTextAnnotation(item: TextAnnotation): string {
   return `  <g class="text-annotation" data-text-id="${esc(item.id)}" data-text-style="${item.style}">\n    ${parts.join('\n    ')}\n  </g>`
 }
 
+function renderDrawingElement(item: DrawingElement): string {
+  const dash = item.dashed ? ` stroke-dasharray="${round(item.strokeWidth * 4)} ${round(item.strokeWidth * 3)}"` : ''
+  if (item.kind === 'line') {
+    return `  <line class="drawing-element" data-drawing-id="${esc(item.id)}" x1="${round(item.start.x)}" y1="${round(item.start.y)}" x2="${round(item.end.x)}" y2="${round(item.end.y)}" fill="none" stroke="${esc(item.stroke)}" stroke-width="${round(item.strokeWidth)}" stroke-linecap="round"${dash}/>`
+  }
+  const x = Math.min(item.start.x, item.end.x)
+  const y = Math.min(item.start.y, item.end.y)
+  const w = Math.abs(item.end.x - item.start.x)
+  const h = Math.abs(item.end.y - item.start.y)
+  return `  <rect class="drawing-element" data-drawing-id="${esc(item.id)}" x="${round(x)}" y="${round(y)}" width="${round(w)}" height="${round(h)}" fill="${item.fill ? esc(item.fill) : 'none'}" stroke="${esc(item.stroke)}" stroke-width="${round(item.strokeWidth)}"${dash}/>`
+}
+
 function renderCallout(
   c: ResolvedCallout,
   anchor: Anchor | undefined,
@@ -83,60 +96,61 @@ function renderCallout(
   fontSize: number,
   opts: ExportOptions,
 ): string {
-  const geo = buildLeader(c, fontSize)
+  const fs = c.fontSize || fontSize
+  const geo = buildLeader(c, fs)
   const tp = labelTextPlacement(c, geo)
   const col = esc(c.color)
   const parts: string[] = []
   const anc = c.anchorPoint
   const fromPoint = geo.points[1] ?? c.labelPos
-  const dashAttr = c.dashed ? ` stroke-dasharray="${round(fontSize * 0.5)} ${round(fontSize * 0.36)}"` : ''
+  const dashAttr = c.dashed ? ` stroke-dasharray="${round(fs * 0.5)} ${round(fs * 0.36)}"` : ''
 
   parts.push(
-    `<polyline points="${polylineToPoints(geo.points)}" fill="none" stroke="${col}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"${dashAttr}/>`,
+    `<polyline points="${polylineToPoints(geo.points)}" fill="none" stroke="${col}" stroke-width="${round(c.leaderWidth)}" stroke-linejoin="round" stroke-linecap="round"${dashAttr}/>`,
   )
   // leader end decoration at the body
   if (c.leaderEnd === 'arrow') {
-    parts.push(`<polygon points="${arrowHead(anc, fromPoint, fontSize * 0.55)}" fill="${col}"/>`)
+    parts.push(`<polygon points="${arrowHead(anc, fromPoint, fs * 0.55)}" fill="${col}"/>`)
   } else if (c.leaderEnd === 'dot') {
-    parts.push(`<circle cx="${round(anc.x)}" cy="${round(anc.y)}" r="${round(fontSize * 0.17)}" fill="${col}"/>`)
+    parts.push(`<circle cx="${round(anc.x)}" cy="${round(anc.y)}" r="${round(fs * 0.17)}" fill="${col}"/>`)
   }
   // anchor marker on the body (skipped entirely when anchors are excluded)
   if (opts.includeAnchors !== false) {
     if (c.anchorMarker === 'ring') {
       parts.push(
-        `<circle cx="${round(anc.x)}" cy="${round(anc.y)}" r="${round(fontSize * 0.32)}" fill="#fff" stroke="${col}" stroke-width="2"/>`,
-        `<circle cx="${round(anc.x)}" cy="${round(anc.y)}" r="${round(fontSize * 0.11)}" fill="${col}"/>`,
+        `<circle cx="${round(anc.x)}" cy="${round(anc.y)}" r="${round(fs * 0.32)}" fill="#fff" stroke="${col}" stroke-width="${round(c.leaderWidth)}"/>`,
+        `<circle cx="${round(anc.x)}" cy="${round(anc.y)}" r="${round(fs * 0.11)}" fill="${col}"/>`,
       )
     } else if (c.anchorMarker === 'dot') {
-      parts.push(`<circle cx="${round(anc.x)}" cy="${round(anc.y)}" r="${round(fontSize * 0.2)}" fill="${col}"/>`)
+      parts.push(`<circle cx="${round(anc.x)}" cy="${round(anc.y)}" r="${round(fs * 0.2)}" fill="${col}"/>`)
     } else if (c.anchorMarker === 'tick') {
       const ldx = fromPoint.x - anc.x
       const ldy = fromPoint.y - anc.y
       const llen = Math.hypot(ldx, ldy) || 1
-      const px = (-ldy / llen) * fontSize * 0.32
-      const py = (ldx / llen) * fontSize * 0.32
+      const px = (-ldy / llen) * fs * 0.32
+      const py = (ldx / llen) * fs * 0.32
       parts.push(
-        `<line x1="${round(anc.x - px)}" y1="${round(anc.y - py)}" x2="${round(anc.x + px)}" y2="${round(anc.y + py)}" stroke="${col}" stroke-width="2" stroke-linecap="round"/>`,
+        `<line x1="${round(anc.x - px)}" y1="${round(anc.y - py)}" x2="${round(anc.x + px)}" y2="${round(anc.y + py)}" stroke="${col}" stroke-width="${round(c.leaderWidth)}" stroke-linecap="round"/>`,
       )
     }
   }
   if (c.balloonShape === 'circle') {
     parts.push(
-      `<circle cx="${round(c.labelPos.x)}" cy="${round(c.labelPos.y)}" r="${round(geo.radius)}" fill="#fff" stroke="${col}" stroke-width="1.6"/>`,
+      `<circle cx="${round(c.labelPos.x)}" cy="${round(c.labelPos.y)}" r="${round(geo.radius)}" fill="#fff" stroke="${col}" stroke-width="${round(c.leaderWidth)}"/>`,
     )
   } else if (c.balloonShape === 'hex') {
     parts.push(
-      `<polygon points="${hexPoints(c.labelPos, geo.radius)}" fill="#fff" stroke="${col}" stroke-width="1.6"/>`,
+      `<polygon points="${hexPoints(c.labelPos, geo.radius)}" fill="#fff" stroke="${col}" stroke-width="${round(c.leaderWidth)}"/>`,
     )
   }
   if (c.balloonShape !== 'none' && c.balloonText) {
     parts.push(
-      `<text x="${round(c.labelPos.x)}" y="${round(c.labelPos.y)}" text-anchor="middle" dominant-baseline="central" font-size="${round(fontSize * 0.82)}" font-weight="600" fill="${col}">${esc(c.balloonText)}</text>`,
+      `<text x="${round(c.labelPos.x)}" y="${round(c.labelPos.y)}" text-anchor="middle" dominant-baseline="central" font-size="${round(fs * 0.82)}" font-weight="${c.fontWeight}" fill="${col}">${esc(c.balloonText)}</text>`,
     )
   }
   if (c.labelText) {
     parts.push(
-      `<text x="${round(tp.x)}" y="${round(tp.y)}" text-anchor="${tp.anchor}" dominant-baseline="central" font-size="${round(fontSize)}" fill="#111">${esc(c.labelText)}</text>`,
+      `<text x="${round(tp.x)}" y="${round(tp.y)}" text-anchor="${tp.anchor}" dominant-baseline="central" font-size="${round(fs)}" font-weight="${c.fontWeight}" fill="#111">${esc(c.labelText)}</text>`,
     )
   }
 
@@ -203,11 +217,13 @@ export function exportSvg(doc: DrawerDoc, opts: ExportOptions = {}): string {
 
   const legend = wantLegend ? renderLegend(doc, bounds, fontSize, opts.viewId) : ''
   const textAnnotations = doc.textAnnotations.map(renderTextAnnotation).join('\n')
+  const drawingElements = doc.drawingElements.map(renderDrawingElement).join('\n')
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="${bounds.x} ${bounds.y} ${bounds.w} ${bounds.h}" font-family="${FONT_FAMILY}" data-generator="drawer" data-doc-name="${esc(doc.name)}">
   <title>${esc(doc.name)}</title>
 ${bg}  <g class="body-layer">${doc.base.inner}</g>
+${drawingElements}
 ${textAnnotations}
 ${callouts}
 ${legend}

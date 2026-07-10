@@ -4,6 +4,26 @@ import { parseSvg } from '../svgParse'
 
 type Source = 'file' | 'paste' | 'url'
 
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result))
+    reader.onerror = () => reject(reader.error ?? new Error('Could not read image data.'))
+    reader.readAsDataURL(blob)
+  })
+}
+
+async function rasterToSvg(blob: Blob): Promise<string> {
+  const dataUrl = await blobToDataUrl(blob)
+  const size = await new Promise<{ width: number; height: number }>((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => resolve({ width: image.naturalWidth || 1, height: image.naturalHeight || 1 })
+    image.onerror = () => reject(new Error('The raster image could not be decoded.'))
+    image.src = dataUrl
+  })
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size.width} ${size.height}"><image href="${dataUrl}" x="0" y="0" width="${size.width}" height="${size.height}"/></svg>`
+}
+
 /**
  * "New diagram" flow: start a fresh document from an SVG brought in three ways —
  * a local file, pasted markup, or a URL. The SVG is validated before it replaces
@@ -34,7 +54,9 @@ export function NewDialog({ onClose }: { onClose: () => void }) {
   const onFile = async (file: File) => {
     setError(null)
     try {
-      loadRaw(name || file.name.replace(/\.svg$/i, ''), await file.text())
+      const isSvg = file.type === 'image/svg+xml' || /\.svg$/i.test(file.name)
+      const raw = isSvg ? await file.text() : await rasterToSvg(file)
+      loadRaw(name || file.name.replace(/\.(svg|png|jpe?g|webp)$/i, ''), raw)
     } catch (e) {
       setError(`Could not read the file: ${(e as Error).message}`)
     }
@@ -52,9 +74,11 @@ export function NewDialog({ onClose }: { onClose: () => void }) {
     try {
       const res = await fetch(url.trim())
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`)
-      const text = await res.text()
-      const fromUrl = url.split('/').pop()?.replace(/\.svg.*$/i, '') || 'Diagram'
-      loadRaw(name || fromUrl, text)
+      const type = res.headers.get('content-type') || ''
+      const isRaster = /^image\/(png|jpeg|webp)/i.test(type)
+      const raw = isRaster ? await rasterToSvg(await res.blob()) : await res.text()
+      const fromUrl = url.split('/').pop()?.replace(/\.(svg|png|jpe?g|webp).*$/i, '') || 'Diagram'
+      loadRaw(name || fromUrl, raw)
     } catch (e) {
       setError(
         `Couldn't fetch that URL (${(e as Error).message}). The site may block cross-origin ` +
@@ -82,7 +106,7 @@ export function NewDialog({ onClose }: { onClose: () => void }) {
         </div>
 
         <p className="hint">
-          Bring in a body or diagram SVG to annotate, then drop points and name them.
+          Bring in an SVG, PNG, JPEG, or WebP body/diagram to annotate, then drop points and name them.
           {hasWork && <> This replaces the diagram you have open.</>}
         </p>
 
@@ -110,10 +134,10 @@ export function NewDialog({ onClose }: { onClose: () => void }) {
 
         {source === 'file' && (
           <label className="field">
-            SVG file
+            Diagram file
             <input
               type="file"
-              accept=".svg,image/svg+xml"
+              accept=".svg,.png,.jpg,.jpeg,.webp,image/svg+xml,image/png,image/jpeg,image/webp"
               onChange={(e) => {
                 const f = e.target.files?.[0]
                 if (f) onFile(f)

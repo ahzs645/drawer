@@ -10,8 +10,9 @@ import {
 import { usePointerDrag } from '../hooks/usePointerDrag'
 import { resolveCallouts } from '../resolve'
 import { useStore } from '../store'
-import type { Box, DrawerDoc, Vec2 } from '../types'
+import type { Box, DrawerDoc, DrawingElement, Vec2 } from '../types'
 import { CalloutView } from './Callout'
+import { DrawingElementView } from './DrawingElement'
 import { LandmarkLayer, type LandmarkMark } from './LandmarkLayer'
 import { TextAnnotationView } from './TextAnnotation'
 
@@ -57,7 +58,13 @@ function padBox(b: Box, frac = 0.06): Box {
 function contentFitBox(doc: DrawerDoc): Box {
   const resolved = resolveCallouts(doc)
   const fs = fontSizeFor(doc.base.viewBox)
-  const box = diagramContentBounds(doc.base.contentBox, resolved, fs, doc.textAnnotations)
+  const box = diagramContentBounds(
+    doc.base.contentBox,
+    resolved,
+    fs,
+    doc.textAnnotations,
+    doc.drawingElements,
+  )
   return box.w > 0 && box.h > 0 ? box : doc.base.viewBox
 }
 
@@ -80,8 +87,12 @@ export function Canvas() {
   const tool = useStore((s) => s.tool)
   const selectedId = useStore((s) => s.selectedCalloutId)
   const selectedTextId = useStore((s) => s.selectedTextId)
+  const selectedLandmarkId = useStore((s) => s.selectedLandmarkId)
+  const selectedDrawingId = useStore((s) => s.selectedDrawingId)
   const select = useStore((s) => s.select)
   const selectText = useStore((s) => s.selectText)
+  const selectLandmark = useStore((s) => s.selectLandmark)
+  const selectDrawing = useStore((s) => s.selectDrawing)
   const addCalloutAt = useStore((s) => s.addCalloutAt)
   const addCalloutAtLandmark = useStore((s) => s.addCalloutAtLandmark)
   const moveLabel = useStore((s) => s.moveLabel)
@@ -89,6 +100,10 @@ export function Canvas() {
   const setElbow = useStore((s) => s.setElbow)
   const addTextAt = useStore((s) => s.addTextAt)
   const moveText = useStore((s) => s.moveText)
+  const addLandmarkAt = useStore((s) => s.addLandmarkAt)
+  const moveLandmark = useStore((s) => s.moveLandmark)
+  const addDrawingElement = useStore((s) => s.addDrawingElement)
+  const moveDrawingElement = useStore((s) => s.moveDrawingElement)
   const record = useStore((s) => s.record)
   const showLandmarks = useStore((s) => s.showLandmarks)
   const hoverLandmarkId = useStore((s) => s.hoverLandmarkId)
@@ -98,6 +113,7 @@ export function Canvas() {
   const [size, setSize] = useState({ w: 0, h: 0 })
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, w: 100 })
   const [highlightMarkup, setHighlightMarkup] = useState<string | null>(null)
+  const [draftDrawing, setDraftDrawing] = useState<DrawingElement | null>(null)
   const initedFor = useRef<string | null>(null)
 
   // track the rendered pixel size so the camera aspect can match it
@@ -153,8 +169,10 @@ export function Canvas() {
   // catalog markers resolved to user-space points (best-effort "used" by name)
   const usedNames = new Set(doc?.callouts.map((c) => c.labelText) ?? [])
   const marks: LandmarkMark[] =
-    doc && showLandmarks && tool === 'anchor'
-      ? doc.landmarks.map((lm) => {
+    doc && showLandmarks && (tool === 'anchor' || tool === 'landmark' || !!selectedLandmarkId)
+      ? doc.landmarks
+        .filter((lm) => !doc.hiddenLandmarkGroups.includes(lm.group || 'Other'))
+        .map((lm) => {
           const p = landmarkPoint(doc.base, lm)
           return { id: lm.id, name: lm.name, x: p.x, y: p.y, used: usedNames.has(lm.name) }
         })
@@ -175,6 +193,9 @@ export function Canvas() {
     const c = doc.callouts.find((x) => x.id === selectedId)
     const a = c && doc.anchors.find((x) => x.id === c.anchorId)
     highlightTargetId = a?.relative?.targetId ?? null
+  }
+  if (!highlightTargetId && selectedLandmarkId && doc) {
+    highlightTargetId = doc.landmarks.find((l) => l.id === selectedLandmarkId)?.targetId ?? null
   }
   useLayoutEffect(() => {
     setHighlightMarkup(elementMarkup(bodyRef.current, highlightTargetId))
@@ -210,6 +231,35 @@ export function Canvas() {
     const hit = (e.target as Element).closest('[data-drawer-el],[id]')
     const inBody = !!(e.target as Element).closest('.body-layer')
     const targetId = inBody && hit ? hit.id || hit.getAttribute('data-drawer-el') : null
+
+    if (tool === 'line' || tool === 'rect') {
+      let endPoint = downPoint
+      const kind = tool
+      setDraftDrawing({
+        id: 'draft',
+        kind,
+        start: downPoint,
+        end: downPoint,
+        stroke: '#111111',
+        strokeWidth: 2,
+        dashed: false,
+        fill: null,
+      })
+      begin({
+        onMove: (p) => {
+          endPoint = p
+          setDraftDrawing((draft) => draft ? { ...draft, end: p } : null)
+        },
+        onEnd: () => {
+          setDraftDrawing(null)
+          if (Math.hypot(endPoint.x - downPoint.x, endPoint.y - downPoint.y) > 2) {
+            addDrawingElement(kind, downPoint, endPoint)
+          }
+        },
+      })
+      return
+    }
+
     const rectW = svg.getBoundingClientRect().width || size.w || 1
     let lastX = e.clientX
     let lastY = e.clientY
@@ -235,6 +285,8 @@ export function Canvas() {
             else addCalloutAt(downPoint, targetId)
           } else if (tool === 'text') {
             addTextAt(downPoint)
+          } else if (tool === 'landmark') {
+            addLandmarkAt(downPoint, targetId)
           } else {
             select(null)
           }
@@ -252,11 +304,28 @@ export function Canvas() {
     if (id !== useStore.getState().hoverLandmarkId) setHoverLandmark(id)
   }
 
-  // click a catalog marker directly -> place a named callout there
+  // click a catalog marker to place a callout, or select/drag it while authoring
   const onLandmarkDown = (e: React.PointerEvent, id: string) => {
     if (e.button !== 0) return
     e.stopPropagation()
-    addCalloutAtLandmark(id)
+    if (tool === 'anchor') {
+      addCalloutAtLandmark(id)
+      return
+    }
+    if (!doc) return
+    selectLandmark(id)
+    const lm = doc.landmarks.find((l) => l.id === id)
+    if (!lm) return
+    const current = landmarkPoint(doc.base, lm)
+    const start = clientToSvg(svgRef.current!, e.clientX, e.clientY)
+    const offset = { x: current.x - start.x, y: current.y - start.y }
+    let rec = false
+    begin({
+      onMove: (p) => {
+        if (!rec) { rec = true; record() }
+        moveLandmark(id, { x: p.x + offset.x, y: p.y + offset.y })
+      },
+    })
   }
 
   // --- label/balloon drag (per-view position) ---
@@ -304,7 +373,7 @@ export function Canvas() {
     select(id)
     const c = resolved.find((r) => r.id === id)
     if (!c) return
-    const geo = buildLeader(c, fontSize)
+    const geo = buildLeader(c, c.fontSize || fontSize)
     const cur = geo.points.length >= 3 ? geo.points[1] : c.labelPos
     const start = clientToSvg(svgRef.current!, e.clientX, e.clientY)
     const offset: Vec2 = { x: cur.x - start.x, y: cur.y - start.y }
@@ -331,6 +400,21 @@ export function Canvas() {
       onMove: (p) => {
         if (!rec) { rec = true; record() }
         moveText(id, { x: p.x + offset.x, y: p.y + offset.y })
+      },
+    })
+  }
+
+  const onDrawingDown = (e: React.PointerEvent, id: string) => {
+    if (e.button !== 0) return
+    e.stopPropagation()
+    selectDrawing(id)
+    let previous = clientToSvg(svgRef.current!, e.clientX, e.clientY)
+    let rec = false
+    begin({
+      onMove: (p) => {
+        if (!rec) { rec = true; record() }
+        moveDrawingElement(id, { x: p.x - previous.x, y: p.y - previous.y })
+        previous = p
       },
     })
   }
@@ -362,6 +446,17 @@ export function Canvas() {
               className="body-layer"
               dangerouslySetInnerHTML={{ __html: doc.base.inner }}
             />
+
+            {/* freely drawn divider lines and simple shapes */}
+            {doc.drawingElements.map((item) => (
+              <DrawingElementView
+                key={item.id}
+                item={item}
+                selected={selectedDrawingId === item.id}
+                onPointerDown={onDrawingDown}
+              />
+            ))}
+            {draftDrawing && <DrawingElementView item={draftDrawing} selected={false} draft />}
 
             {/* region highlight: recolored clone of the active named part */}
             {highlightMarkup && (

@@ -113,6 +113,27 @@ export function Toolbar() {
           T Add text
         </button>
         <button
+          className={tool === 'landmark' ? 'active' : ''}
+          onClick={() => setTool('landmark')}
+          title="Click the figure to create a reusable landmark directly"
+        >
+          ◎ Add landmark
+        </button>
+        <button
+          className={tool === 'line' ? 'active' : ''}
+          onClick={() => setTool('line')}
+          title="Drag on the figure to draw a line or divider"
+        >
+          ╱ Line
+        </button>
+        <button
+          className={tool === 'rect' ? 'active' : ''}
+          onClick={() => setTool('rect')}
+          title="Drag on the figure to draw a rectangle"
+        >
+          □ Rectangle
+        </button>
+        <button
           className={tool === 'select' ? 'active' : ''}
           onClick={() => setTool('select')}
           title="Select / drag / pan"
