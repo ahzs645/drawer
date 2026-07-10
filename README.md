@@ -47,6 +47,11 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
   named callout there; **hover** to locate it and **highlight** the region it belongs to.
   A free click *near* a landmark **auto-locks** onto it, and dragging an anchor **snaps**
   to nearby landmarks. Build your own catalog on any body with **“Save as landmark.”**
+- **Add standalone text** — click anywhere to place a draggable heading, caption, or
+  figure marker that is not tied to an anatomical point. Text can be aligned, resized,
+  recolored, weighted, or styled as a textbook section heading with an adjustable
+  horizontal rule. The front/back sample includes editable “Anterior”, “Posterior”, and
+  “A” examples.
 - **Add callout** — click the body to anchor a point. A free-clicked point drops as an
   **unnamed dot** and the inspector’s name field is focused so you can **type its name right
   away** (place a dot, name it, repeat). Clicking a *named part* of a multi-element SVG (e.g.
@@ -117,7 +122,7 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
 | `Landmark` | a named, reusable body location (`nx,ny` in a target/content box) — the catalog |
 | `Callout` | anchor + default label/balloon/leader/color |
 | `View` | a named label-set: `labelMode` (`names`/`numbers`/`blank`) + per-callout overrides |
-| `DrawerDoc` | the whole document: base + anchors + callouts + views + landmarks |
+| `DrawerDoc` | the whole document: base + anchors + callouts + views + landmarks + standalone text |
 
 `resolve.ts` merges each callout with the active view to produce render-ready
 `ResolvedCallout`s, shared by the canvas and the SVG exporter.

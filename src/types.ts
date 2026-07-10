@@ -65,6 +65,27 @@ export interface Landmark {
   group?: string
 }
 
+export type TextAnnotationStyle = 'plain' | 'heading'
+export type TextAnnotationAlign = 'start' | 'middle' | 'end'
+
+/**
+ * Standalone figure text that is not tied to an anatomical point. This covers
+ * section headings (for example, "Anterior" / "Posterior"), figure letters,
+ * captions, and other freely positioned labels.
+ */
+export interface TextAnnotation {
+  id: string
+  text: string
+  pos: Vec2
+  style: TextAnnotationStyle
+  fontSize: number
+  fontWeight: 400 | 600 | 700
+  align: TextAnnotationAlign
+  color: string
+  /** width of the horizontal rule for the heading style, in SVG user units */
+  ruleWidth: number
+}
+
 export type BalloonShape = 'circle' | 'hex' | 'none'
 export type LeaderStyle = 'straight' | 'elbow'
 /** How the point ON the body is drawn (the end the leader lands on). */
@@ -190,6 +211,8 @@ export interface DrawerDoc {
   activeViewId: string
   /** named body locations to pick from / snap to (the catalog) */
   landmarks: Landmark[]
+  /** freely positioned headings, figure letters, and captions */
+  textAnnotations: TextAnnotation[]
 }
 
 /** A callout fully resolved against the active view, ready to render. */

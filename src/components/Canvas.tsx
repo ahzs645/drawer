@@ -1,8 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
   buildLeader,
-  calloutContentBounds,
   clientToSvg,
+  diagramContentBounds,
   fontSizeFor,
   landmarkPoint,
   nearestLandmark,
@@ -13,6 +13,7 @@ import { useStore } from '../store'
 import type { Box, DrawerDoc, Vec2 } from '../types'
 import { CalloutView } from './Callout'
 import { LandmarkLayer, type LandmarkMark } from './LandmarkLayer'
+import { TextAnnotationView } from './TextAnnotation'
 
 /** Screen-space snap radius (px) for catalog landmarks. */
 const SNAP_PX = 16
@@ -56,7 +57,7 @@ function padBox(b: Box, frac = 0.06): Box {
 function contentFitBox(doc: DrawerDoc): Box {
   const resolved = resolveCallouts(doc)
   const fs = fontSizeFor(doc.base.viewBox)
-  const box = calloutContentBounds(doc.base.contentBox, resolved, fs)
+  const box = diagramContentBounds(doc.base.contentBox, resolved, fs, doc.textAnnotations)
   return box.w > 0 && box.h > 0 ? box : doc.base.viewBox
 }
 
@@ -78,12 +79,16 @@ export function Canvas() {
   const doc = useStore((s) => s.doc)
   const tool = useStore((s) => s.tool)
   const selectedId = useStore((s) => s.selectedCalloutId)
+  const selectedTextId = useStore((s) => s.selectedTextId)
   const select = useStore((s) => s.select)
+  const selectText = useStore((s) => s.selectText)
   const addCalloutAt = useStore((s) => s.addCalloutAt)
   const addCalloutAtLandmark = useStore((s) => s.addCalloutAtLandmark)
   const moveLabel = useStore((s) => s.moveLabel)
   const moveAnchor = useStore((s) => s.moveAnchorForCallout)
   const setElbow = useStore((s) => s.setElbow)
+  const addTextAt = useStore((s) => s.addTextAt)
+  const moveText = useStore((s) => s.moveText)
   const record = useStore((s) => s.record)
   const showLandmarks = useStore((s) => s.showLandmarks)
   const hoverLandmarkId = useStore((s) => s.hoverLandmarkId)
@@ -228,6 +233,8 @@ export function Canvas() {
             const snap = snapAt(downPoint)
             if (snap) addCalloutAtLandmark(snap.landmark.id)
             else addCalloutAt(downPoint, targetId)
+          } else if (tool === 'text') {
+            addTextAt(downPoint)
           } else {
             select(null)
           }
@@ -310,6 +317,24 @@ export function Canvas() {
     })
   }
 
+  // --- standalone text drag ---
+  const onTextDown = (e: React.PointerEvent, id: string) => {
+    if (e.button !== 0 || !doc) return
+    e.stopPropagation()
+    selectText(id)
+    const item = doc.textAnnotations.find((t) => t.id === id)
+    if (!item) return
+    const start = clientToSvg(svgRef.current!, e.clientX, e.clientY)
+    const offset: Vec2 = { x: item.pos.x - start.x, y: item.pos.y - start.y }
+    let rec = false
+    begin({
+      onMove: (p) => {
+        if (!rec) { rec = true; record() }
+        moveText(id, { x: p.x + offset.x, y: p.y + offset.y })
+      },
+    })
+  }
+
   return (
     <>
       <svg
@@ -356,6 +381,16 @@ export function Canvas() {
               onEnter={(id) => setHoverLandmark(id)}
               onLeave={() => setHoverLandmark(null)}
             />
+
+            {/* standalone headings, figure letters, and captions */}
+            {doc.textAnnotations.map((item) => (
+              <TextAnnotationView
+                key={item.id}
+                item={item}
+                selected={selectedTextId === item.id}
+                onPointerDown={onTextDown}
+              />
+            ))}
 
             {/* callouts */}
             {resolved.map((c) => (

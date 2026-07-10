@@ -135,6 +135,9 @@ button:disabled {
 .canvas.tool-anchor {
   cursor: crosshair;
 }
+.canvas.tool-text {
+  cursor: text;
+}
 .canvas.tool-select {
   cursor: grab;
 }
@@ -182,6 +185,9 @@ button:disabled {
 }
 .balloon-text {
   font-weight: 600;
+  user-select: none;
+}
+.text-annotation text {
   user-select: none;
 }
 
@@ -283,7 +289,8 @@ button:disabled {
 }
 
 /* ---- callout list ---- */
-.callout-list ul {
+.callout-list ul,
+.text-list ul {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -291,7 +298,8 @@ button:disabled {
   flex-direction: column;
   gap: 2px;
 }
-.callout-list li {
+.callout-list li,
+.text-list li {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -300,11 +308,25 @@ button:disabled {
   cursor: pointer;
   font-size: 13px;
 }
-.callout-list li:hover {
+.callout-list li:hover,
+.text-list li:hover {
   background: #f0f2f5;
 }
-.callout-list li.selected {
+.callout-list li.selected,
+.text-list li.selected {
   background: #e7f0ff;
+}
+.text-kind {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 20px;
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
 }
 .swatch {
   width: 12px;

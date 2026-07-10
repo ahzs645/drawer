@@ -1,4 +1,6 @@
-// Registry of the bundled body drawings + demo landmark seeds.
+// Registry of the bundled body drawings + demo landmark/text seeds.
+
+import type { TextAnnotation } from './types'
 
 export interface SampleDef {
   key: string
@@ -39,16 +41,52 @@ export interface SeedDef {
 
 export const DIVIDER_SEEDS: SeedDef[] = [
   // Anterior (left figure) — labels to the left
-  { label: 'Chin', nx: 0.27, ny: 0.085, lx: 86, ly: 130 },
-  { label: 'Trochanter', nx: 0.225, ny: 0.455, lx: 60, ly: 640 },
-  { label: 'Knee', nx: 0.25, ny: 0.73, lx: 78, ly: 1010 },
-  { label: 'Pretibial crest', nx: 0.235, ny: 0.82, lx: 60, ly: 1130 },
+  // Coordinates deliberately land on the anatomy of this silhouette, rather
+  // than copying the reference image's page-relative percentages.
+  { label: 'Chin', nx: 0.437, ny: 0.147, lx: 86, ly: 205 },
+  { label: 'Trochanter', nx: 0.271, ny: 0.51, lx: 60, ly: 690 },
+  { label: 'Knee', nx: 0.271, ny: 0.73, lx: 78, ly: 1010 },
+  { label: 'Pretibial crest', nx: 0.363, ny: 0.82, lx: 60, ly: 1130 },
   // Posterior (right figure) — labels to the right
-  { label: 'Occiput', nx: 0.735, ny: 0.07, lx: 648, ly: 112 },
-  { label: 'Scapula', nx: 0.7, ny: 0.225, lx: 662, ly: 330 },
-  { label: 'Spinous process', nx: 0.735, ny: 0.305, lx: 672, ly: 430 },
-  { label: 'Elbow', nx: 0.83, ny: 0.43, lx: 676, ly: 520 },
-  { label: 'Ischium', nx: 0.735, ny: 0.52, lx: 666, ly: 720 },
-  { label: 'Malleolus', nx: 0.72, ny: 0.95, lx: 664, ly: 1270 },
-  { label: 'Heel', nx: 0.745, ny: 0.975, lx: 664, ly: 1322 },
+  { label: 'Occiput', nx: 0.56, ny: 0.088, lx: 648, ly: 135 },
+  { label: 'Scapula', nx: 0.632, ny: 0.233, lx: 662, ly: 330 },
+  { label: 'Spinous process', nx: 0.553, ny: 0.308, lx: 672, ly: 430 },
+  { label: 'Elbow', nx: 0.784, ny: 0.428, lx: 676, ly: 520 },
+  { label: 'Ischium', nx: 0.647, ny: 0.525, lx: 666, ly: 720 },
+  { label: 'Malleolus', nx: 0.702, ny: 0.899, lx: 664, ly: 1240 },
+  { label: 'Heel', nx: 0.676, ny: 0.966, lx: 664, ly: 1310 },
+]
+
+/** Editable standalone text that completes the classic reference layout. */
+export const DIVIDER_TEXT_SEEDS: Omit<TextAnnotation, 'id'>[] = [
+  {
+    text: 'Anterior',
+    pos: { x: 190, y: 28 },
+    style: 'heading',
+    fontSize: 28,
+    fontWeight: 600,
+    align: 'middle',
+    color: '#111111',
+    ruleWidth: 245,
+  },
+  {
+    text: 'Posterior',
+    pos: { x: 550, y: 28 },
+    style: 'heading',
+    fontSize: 28,
+    fontWeight: 600,
+    align: 'middle',
+    color: '#111111',
+    ruleWidth: 245,
+  },
+  {
+    text: 'A',
+    pos: { x: 28, y: 1342 },
+    style: 'plain',
+    fontSize: 32,
+    fontWeight: 600,
+    align: 'start',
+    color: '#111111',
+    ruleWidth: 120,
+  },
 ]

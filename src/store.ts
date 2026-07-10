@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { applyArrangement } from './autoLayout'
-import { boxForTarget, pointToNormalized, resolveAnchor } from './geometry'
+import { boxForTarget, fontSizeFor, pointToNormalized, resolveAnchor } from './geometry'
 import { uid } from './id'
 import { buildLandmarksFor } from './landmarks'
 import {
@@ -13,6 +13,7 @@ import {
 import {
   DEFAULT_SAMPLE_KEY,
   DIVIDER_SEEDS,
+  DIVIDER_TEXT_SEEDS,
   SAMPLES,
   sampleUrl,
 } from './samples'
@@ -31,11 +32,12 @@ import type {
   Landmark,
   LeaderStyle,
   StylePreset,
+  TextAnnotation,
   Vec2,
   View,
 } from './types'
 
-export type Tool = 'select' | 'anchor'
+export type Tool = 'select' | 'anchor' | 'text'
 
 const PALETTE = ['#1f6feb', '#d1242f', '#1a7f37', '#9a6700', '#8250df', '#bf3989']
 
@@ -70,6 +72,7 @@ function makeDoc(name: string, base: BaseDrawing, landmarks: Landmark[] = []): D
     views: [view],
     activeViewId: view.id,
     landmarks,
+    textAnnotations: [],
   }
 }
 
@@ -98,6 +101,7 @@ interface StoreState {
   doc: DrawerDoc | null
   tool: Tool
   selectedCalloutId: string | null
+  selectedTextId: string | null
   status: string
   past: DrawerDoc[]
   future: DrawerDoc[]
@@ -113,6 +117,7 @@ interface StoreState {
   fitRequest: number
   // bumped after placing a callout so the inspector focuses its label field for naming
   labelFocusRequest: number
+  textFocusRequest: number
   // lifecycle
   loadSampleKey: (key: string, withSeeds?: boolean) => Promise<void>
   importSvgText: (name: string, raw: string) => void
@@ -124,6 +129,7 @@ interface StoreState {
   // tools / selection
   setTool: (t: Tool) => void
   select: (id: string | null) => void
+  selectText: (id: string | null) => void
   // landmark catalog
   setShowLandmarks: (v: boolean) => void
   setHoverLandmark: (id: string | null) => void
@@ -148,6 +154,11 @@ interface StoreState {
   setAnchorTarget: (id: string, targetId: string | null) => void
   setElbow: (id: string, point: Vec2 | null) => void
   deleteCallout: (id: string) => void
+  // standalone text
+  addTextAt: (point: Vec2) => void
+  updateText: (id: string, patch: Partial<TextAnnotation>) => void
+  moveText: (id: string, pos: Vec2) => void
+  deleteText: (id: string) => void
   // views
   addView: (name: string, labelMode: LabelMode, copyFromActive?: boolean) => void
   setActiveView: (id: string) => void
@@ -178,6 +189,7 @@ export const useStore = create<StoreState>((set, get) => ({
   doc: null,
   tool: 'anchor',
   selectedCalloutId: null,
+  selectedTextId: null,
   status: 'Loading…',
   past: [],
   future: [],
@@ -188,6 +200,7 @@ export const useStore = create<StoreState>((set, get) => ({
   autoArrange: loadAutoArrange(),
   fitRequest: 0,
   labelFocusRequest: 0,
+  textFocusRequest: 0,
 
   loadSampleKey: async (key, withSeeds = false) => {
     const sample = SAMPLES.find((s) => s.key === key) ?? SAMPLES[0]
@@ -204,6 +217,7 @@ export const useStore = create<StoreState>((set, get) => ({
       set({
         doc,
         selectedCalloutId: null,
+        selectedTextId: null,
         status: '',
         tool: 'anchor',
         past: [],
@@ -224,6 +238,7 @@ export const useStore = create<StoreState>((set, get) => ({
       set({
         doc,
         selectedCalloutId: null,
+        selectedTextId: null,
         status: '',
         tool: 'anchor',
         past: [],
@@ -239,6 +254,7 @@ export const useStore = create<StoreState>((set, get) => ({
     set({
       doc,
       selectedCalloutId: null,
+      selectedTextId: null,
       status: '',
       tool: 'select',
       past: [],
@@ -277,7 +293,8 @@ export const useStore = create<StoreState>((set, get) => ({
   },
 
   setTool: (t) => set({ tool: t }),
-  select: (id) => set({ selectedCalloutId: id }),
+  select: (id) => set({ selectedCalloutId: id, selectedTextId: null }),
+  selectText: (id) => set({ selectedTextId: id, selectedCalloutId: null }),
 
   setShowLandmarks: (v) => set({ showLandmarks: v }),
   setHoverLandmark: (id) => set({ hoverLandmarkId: id }),
@@ -343,6 +360,7 @@ export const useStore = create<StoreState>((set, get) => ({
     set({
       doc: get().autoArrange ? applyArrangement(doc2) : doc2,
       selectedCalloutId: callout.id,
+      selectedTextId: null,
     })
   },
 
@@ -435,6 +453,7 @@ export const useStore = create<StoreState>((set, get) => ({
     set({
       doc: get().autoArrange ? applyArrangement(doc2) : doc2,
       selectedCalloutId: callout.id,
+      selectedTextId: null,
       // ask the inspector to focus the name field so you can type it immediately
       labelFocusRequest: get().labelFocusRequest + 1,
     })
@@ -549,6 +568,53 @@ export const useStore = create<StoreState>((set, get) => ({
     })
   },
 
+  addTextAt: (point) => {
+    const doc = get().doc
+    if (!doc) return
+    get().record()
+    const item: TextAnnotation = {
+      id: uid('text'),
+      text: 'Text',
+      pos: point,
+      style: 'plain',
+      fontSize: fontSizeFor(doc.base.viewBox),
+      fontWeight: 600,
+      align: 'middle',
+      color: '#111111',
+      ruleWidth: Math.max(120, doc.base.contentBox.w * 0.28),
+    }
+    set({
+      doc: { ...doc, textAnnotations: [...doc.textAnnotations, item] },
+      selectedTextId: item.id,
+      selectedCalloutId: null,
+      textFocusRequest: get().textFocusRequest + 1,
+      tool: 'select',
+    })
+  },
+
+  updateText: (id, patch) => {
+    const doc = get().doc
+    if (!doc) return
+    set({
+      doc: {
+        ...doc,
+        textAnnotations: doc.textAnnotations.map((t) => (t.id === id ? { ...t, ...patch } : t)),
+      },
+    })
+  },
+
+  moveText: (id, pos) => get().updateText(id, { pos }),
+
+  deleteText: (id) => {
+    const doc = get().doc
+    if (!doc || !doc.textAnnotations.some((t) => t.id === id)) return
+    get().record()
+    set({
+      doc: { ...doc, textAnnotations: doc.textAnnotations.filter((t) => t.id !== id) },
+      selectedTextId: get().selectedTextId === id ? null : get().selectedTextId,
+    })
+  },
+
   addView: (name, labelMode, copyFromActive = false) => {
     const doc = get().doc
     if (!doc) return
@@ -635,6 +701,9 @@ function seedDivider(doc: DrawerDoc) {
     }
     doc.anchors.push(anchor)
     doc.callouts.push(callout)
+  })
+  DIVIDER_TEXT_SEEDS.forEach((seed) => {
+    doc.textAnnotations.push({ id: uid('text'), ...seed })
   })
 }
 

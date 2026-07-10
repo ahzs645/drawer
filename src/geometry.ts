@@ -4,6 +4,7 @@ import type {
   Box,
   Landmark,
   ResolvedCallout,
+  TextAnnotation,
   Vec2,
 } from './types'
 
@@ -219,6 +220,40 @@ export function calloutContentBounds(
       expand(tp.x, tp.y)
       expand(tp.anchor === 'start' ? tp.x + tw : tp.x - tw, tp.y + fontSize)
     }
+  }
+  return { x: minX, y: minY, w: maxX - minX, h: maxY - minY }
+}
+
+/** Approximate the exported/editor bounds of one standalone text annotation. */
+export function textAnnotationBounds(item: TextAnnotation): Box {
+  const textWidth = Math.max(item.fontSize * 0.6, item.text.length * item.fontSize * 0.58)
+  const width = Math.max(textWidth, item.style === 'heading' ? item.ruleWidth : 0)
+  let x = item.pos.x
+  if (item.align === 'middle') x -= width / 2
+  else if (item.align === 'end') x -= width
+  const top = item.pos.y - item.fontSize * 0.65
+  const bottom = item.pos.y + (item.style === 'heading' ? item.fontSize * 0.95 : item.fontSize * 0.65)
+  return { x, y: top, w: width, h: bottom - top }
+}
+
+/** Union the body/callout bounds with standalone headings and figure text. */
+export function diagramContentBounds(
+  contentBox: Box,
+  resolved: ResolvedCallout[],
+  fontSize: number,
+  textAnnotations: TextAnnotation[] = [],
+): Box {
+  const callouts = calloutContentBounds(contentBox, resolved, fontSize)
+  let minX = callouts.x
+  let minY = callouts.y
+  let maxX = callouts.x + callouts.w
+  let maxY = callouts.y + callouts.h
+  for (const item of textAnnotations) {
+    const b = textAnnotationBounds(item)
+    minX = Math.min(minX, b.x)
+    minY = Math.min(minY, b.y)
+    maxX = Math.max(maxX, b.x + b.w)
+    maxY = Math.max(maxY, b.y + b.h)
   }
   return { x: minX, y: minY, w: maxX - minX, h: maxY - minY }
 }

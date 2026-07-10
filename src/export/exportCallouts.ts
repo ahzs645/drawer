@@ -60,6 +60,12 @@ export function exportCalloutsJson(doc: DrawerDoc, opts: CalloutsExportOptions =
     viewBox: doc.base.viewBox,
     view: { id: view.id, name: view.name, labelMode: view.labelMode },
     callouts,
+    textAnnotations: doc.textAnnotations.map((t) => ({
+      ...t,
+      pos: { x: round(t.pos.x), y: round(t.pos.y) },
+      fontSize: round(t.fontSize),
+      ruleWidth: round(t.ruleWidth),
+    })),
     legend: buildLegend(doc, opts.viewId),
   }
   return JSON.stringify(file, null, 2)

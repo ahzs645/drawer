@@ -86,9 +86,10 @@ export default function App() {
       } else if (e.key === 'Escape') {
         s.select(null)
       } else if (e.key === 'Delete' || e.key === 'Backspace') {
-        if (typing || !s.selectedCalloutId) return
+        if (typing || (!s.selectedCalloutId && !s.selectedTextId)) return
         e.preventDefault()
-        s.deleteCallout(s.selectedCalloutId)
+        if (s.selectedCalloutId) s.deleteCallout(s.selectedCalloutId)
+        else if (s.selectedTextId) s.deleteText(s.selectedTextId)
       } else if ((e.key === 'a' || e.key === 'A') && !mod && !e.altKey) {
         // auto-arrange the current view's labels into non-overlapping columns
         if (typing) return

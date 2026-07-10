@@ -38,6 +38,8 @@ export function parseProject(text: string): DrawerDoc {
   if (!doc.base.targetBoxes) doc.base.targetBoxes = {}
   // landmarks were added later; default for older project files
   if (!Array.isArray(doc.landmarks)) doc.landmarks = []
+  // standalone text was added later; default for older project files
+  if (!Array.isArray(doc.textAnnotations)) doc.textAnnotations = []
   if (!doc.activeViewId || !doc.views.some((v) => v.id === doc.activeViewId)) {
     doc.activeViewId = doc.views[0].id
   }

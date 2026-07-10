@@ -3,6 +3,7 @@ import { useStore } from '../store'
 import { CollapsiblePanel } from './CollapsiblePanel'
 import { Inspector } from './Inspector'
 import { LandmarkPanel } from './LandmarkPanel'
+import { TextInspector } from './TextInspector'
 import { ViewBar } from './ViewBar'
 
 function CalloutList() {
@@ -52,13 +53,41 @@ function CalloutList() {
   )
 }
 
+function TextList() {
+  const doc = useStore((s) => s.doc)
+  const selectedTextId = useStore((s) => s.selectedTextId)
+  const selectText = useStore((s) => s.selectText)
+
+  if (!doc || doc.textAnnotations.length === 0) return null
+  return (
+    <CollapsiblePanel title={`Text (${doc.textAnnotations.length})`} className="text-list">
+      <ul>
+        {doc.textAnnotations.map((item) => (
+          <li
+            key={item.id}
+            className={item.id === selectedTextId ? 'selected' : ''}
+            onClick={() => selectText(item.id)}
+          >
+            <span className="text-kind" aria-hidden="true">
+              {item.style === 'heading' ? 'H' : 'T'}
+            </span>
+            <span className="cl-name">{item.text || <span className="cl-unnamed">Empty text</span>}</span>
+          </li>
+        ))}
+      </ul>
+    </CollapsiblePanel>
+  )
+}
+
 export function Sidebar() {
   const status = useStore((s) => s.status)
+  const selectedTextId = useStore((s) => s.selectedTextId)
   return (
     <aside className="sidebar">
       {status && <div className="status">{status}</div>}
       <ViewBar />
-      <Inspector />
+      {selectedTextId ? <TextInspector /> : <Inspector />}
+      <TextList />
       <LandmarkPanel />
       <CalloutList />
     </aside>

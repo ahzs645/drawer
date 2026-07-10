@@ -1,7 +1,7 @@
 import {
   arrowHead,
   buildLeader,
-  calloutContentBounds,
+  diagramContentBounds,
   fontSizeFor,
   hexPoints,
   labelTextPlacement,
@@ -9,7 +9,7 @@ import {
   round,
 } from '../geometry'
 import { buildLegend, resolveCallouts } from '../resolve'
-import type { Anchor, Box, DrawerDoc, ResolvedCallout } from '../types'
+import type { Anchor, Box, DrawerDoc, ResolvedCallout, TextAnnotation } from '../types'
 
 export interface ExportOptions {
   viewId?: string
@@ -38,7 +38,12 @@ function computeBounds(
   legendWidth: number,
   legendCount: number,
 ): Box {
-  const raw = calloutContentBounds(doc.base.contentBox, resolved, fontSize)
+  const raw = diagramContentBounds(
+    doc.base.contentBox,
+    resolved,
+    fontSize,
+    doc.textAnnotations,
+  )
   const m = fontSize
   // the legend grows downward from y = top + 1.5*fontSize; make sure the box is
   // tall enough to contain it for callout-heavy documents.
@@ -49,6 +54,26 @@ function computeBounds(
     w: round(raw.w + m * 2 + legendWidth),
     h: round(Math.max(raw.h + m * 2, legendHeight)),
   }
+}
+
+function renderTextAnnotation(item: TextAnnotation): string {
+  const parts: string[] = []
+  if (item.style === 'heading') {
+    const center =
+      item.align === 'middle'
+        ? item.pos.x
+        : item.align === 'start'
+          ? item.pos.x + item.ruleWidth / 2
+          : item.pos.x - item.ruleWidth / 2
+    const y = item.pos.y + item.fontSize * 0.78
+    parts.push(
+      `<line x1="${round(center - item.ruleWidth / 2)}" y1="${round(y)}" x2="${round(center + item.ruleWidth / 2)}" y2="${round(y)}" stroke="${esc(item.color)}" stroke-width="${round(Math.max(1.5, item.fontSize * 0.065))}" stroke-linecap="round"/>`,
+    )
+  }
+  parts.unshift(
+    `<text x="${round(item.pos.x)}" y="${round(item.pos.y)}" text-anchor="${item.align}" dominant-baseline="central" font-size="${round(item.fontSize)}" font-weight="${item.fontWeight}" fill="${esc(item.color)}">${esc(item.text)}</text>`,
+  )
+  return `  <g class="text-annotation" data-text-id="${esc(item.id)}" data-text-style="${item.style}">\n    ${parts.join('\n    ')}\n  </g>`
 }
 
 function renderCallout(
@@ -177,11 +202,13 @@ export function exportSvg(doc: DrawerDoc, opts: ExportOptions = {}): string {
     .join('\n')
 
   const legend = wantLegend ? renderLegend(doc, bounds, fontSize, opts.viewId) : ''
+  const textAnnotations = doc.textAnnotations.map(renderTextAnnotation).join('\n')
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="${bounds.x} ${bounds.y} ${bounds.w} ${bounds.h}" font-family="${FONT_FAMILY}" data-generator="drawer" data-doc-name="${esc(doc.name)}">
   <title>${esc(doc.name)}</title>
 ${bg}  <g class="body-layer">${doc.base.inner}</g>
+${textAnnotations}
 ${callouts}
 ${legend}
 </svg>

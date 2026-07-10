@@ -106,6 +106,13 @@ export function Toolbar() {
           ✛ Add callout
         </button>
         <button
+          className={tool === 'text' ? 'active' : ''}
+          onClick={() => setTool('text')}
+          title="Click the figure to add a heading, caption, or figure letter"
+        >
+          T Add text
+        </button>
+        <button
           className={tool === 'select' ? 'active' : ''}
           onClick={() => setTool('select')}
           title="Select / drag / pan"
