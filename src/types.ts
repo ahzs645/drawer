@@ -33,9 +33,31 @@ export interface Box {
  */
 export type AnchorMode = 'relative-bbox' | 'absolute' | 'path-offset'
 
+/** An external application field, not an inferred or validated clinical code. */
+export interface AnchorMapping {
+  fieldKey: string
+  display?: string
+  system?: string
+  code?: string
+}
+
+/** Raster reference evidence; stored in the editable project, never in SVG exports. */
+export interface AnchorAttachment {
+  id: string
+  name: string
+  mimeType: 'image/png' | 'image/jpeg' | 'image/webp'
+  size: number
+  dataUrl: string
+}
+
+export type MappingMode = 'label' | 'mapped-label' | 'value' | 'label-value'
+export type MappingValue = string | number | boolean | null
+
 export interface Anchor {
   id: string
   mode: AnchorMode
+  mapping?: AnchorMapping
+  attachments?: AnchorAttachment[]
   /** present when mode === 'absolute' */
   absolute?: Vec2
   /** present when mode === 'relative-bbox' */
@@ -143,6 +165,9 @@ export interface StylePreset {
  * overrides (label position, text, etc.) live on the View.
  */
 export interface Callout {
+  /** Optional text-block offset from labelPos; lets a label sit above a leader. */
+  labelOffset?: Vec2
+  labelAlign?: TextAnnotationAlign
   id: string
   anchorId: string
   labelText: string
@@ -169,6 +194,9 @@ export interface Callout {
 export type LabelMode = 'names' | 'numbers' | 'blank'
 
 export interface CalloutOverride {
+  /** Optional text-block offset from labelPos; lets a label sit above a leader. */
+  labelOffset?: Vec2
+  labelAlign?: TextAnnotationAlign
   visible?: boolean
   labelPos?: Vec2
   labelText?: string
@@ -179,6 +207,7 @@ export interface CalloutOverride {
 
 /** A named label-set. Switching views re-skins every callout. */
 export interface View {
+  mappingMode?: MappingMode
   id: string
   name: string
   labelMode: LabelMode
@@ -229,6 +258,8 @@ export interface DrawingElement {
 }
 
 export interface DrawerDoc {
+  /** Flat external-field values. Treat downloaded projects/autosaves as data-bearing. */
+  mappingValues?: Record<string, MappingValue>
   id: string
   name: string
   base: BaseDrawing
@@ -250,6 +281,9 @@ export interface DrawerDoc {
 
 /** A callout fully resolved against the active view, ready to render. */
 export interface ResolvedCallout {
+  /** Optional text-block offset from labelPos; lets a label sit above a leader. */
+  labelOffset?: Vec2
+  labelAlign?: TextAnnotationAlign
   id: string
   anchorId: string
   anchorPoint: Vec2

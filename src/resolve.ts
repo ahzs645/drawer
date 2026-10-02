@@ -1,5 +1,6 @@
 import { boxForTarget, fontSizeFor, resolveAnchor } from './geometry'
 import { DEFAULT_STYLE } from './types'
+import { mappedLabel } from './diagramMappings'
 import type { DrawerDoc, ResolvedCallout, View } from './types'
 
 // ---------------------------------------------------------------------------
@@ -34,7 +35,7 @@ export function resolveCallouts(doc: DrawerDoc, viewId?: string): ResolvedCallou
     // a view can impose a style FORMAT on every callout; otherwise use the
     // callout's own base style. Per-callout overrides still win for balloonShape.
     const vs = view.style
-    let labelText = ov.labelText ?? c.labelText
+    let labelText = ov.labelText ?? mappedLabel(anchor, c.labelText, view.mappingMode, doc.mappingValues)
     let balloonShape = ov.balloonShape ?? vs?.balloonShape ?? c.balloonShape
     let balloonText = ov.balloonText ?? c.balloonText
     const leaderStyle = vs?.leaderStyle ?? c.leaderStyle
@@ -65,6 +66,8 @@ export function resolveCallouts(doc: DrawerDoc, viewId?: string): ResolvedCallou
       id: c.id,
       anchorId: c.anchorId,
       anchorPoint,
+      labelOffset: ov.labelOffset ?? c.labelOffset,
+      labelAlign: ov.labelAlign ?? c.labelAlign,
       labelText,
       balloonShape,
       balloonText,
