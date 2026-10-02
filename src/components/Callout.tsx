@@ -3,6 +3,7 @@ import {
   buildLeader,
   hexPoints,
   labelTextPlacement,
+  labelLines,
   polylineToPoints,
 } from '../geometry'
 import type { ResolvedCallout } from '../types'
@@ -33,7 +34,7 @@ export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
   // the leader segment that touches the body, used to orient markers/arrowheads
   const fromPoint = geo.points[1] ?? c.labelPos
   const strokeW = selected ? c.leaderWidth + 0.6 : c.leaderWidth
-  const dash = c.dashed ? `${strokeW * 3} ${strokeW * 2.2}` : undefined
+  const dash = c.dashed ? `${fs * 0.5} ${fs * 0.36}` : undefined
   // unit vector perpendicular to the leader, for the 'tick' marker
   const ldx = fromPoint.x - anchor.x
   const ldy = fromPoint.y - anchor.y
@@ -57,7 +58,7 @@ export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
         strokeLinejoin="round"
         strokeLinecap="round"
         strokeDasharray={dash}
-        opacity={0.95}
+        opacity={1}
         pointerEvents="none"
       />
 
@@ -66,7 +67,7 @@ export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
         <polygon points={arrowHead(anchor, fromPoint, fs * 0.55)} fill={stroke} pointerEvents="none" />
       )}
       {c.leaderEnd === 'dot' && (
-        <circle cx={anchor.x} cy={anchor.y} r={2.6} fill={stroke} pointerEvents="none" />
+        <circle cx={anchor.x} cy={anchor.y} r={fs * 0.17} fill={stroke} pointerEvents="none" />
       )}
 
       {/* anchor marker on the body — always draggable via an invisible hit pad */}
@@ -75,15 +76,15 @@ export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
         onPointerDown={(e) => h.onAnchorDown(e, c.id)}
         style={{ cursor: 'crosshair' }}
       >
-        <circle cx={anchor.x} cy={anchor.y} r={7} fill="transparent" />
+        <circle cx={anchor.x} cy={anchor.y} r={Math.max(7, fs * 0.5)} fill="transparent" />
         {c.anchorMarker === 'ring' && (
           <>
-            <circle cx={anchor.x} cy={anchor.y} r={5.5} fill="#fff" stroke={stroke} strokeWidth={2} />
-            <circle cx={anchor.x} cy={anchor.y} r={1.8} fill={stroke} />
+            <circle cx={anchor.x} cy={anchor.y} r={fs * 0.32} fill="#fff" stroke={stroke} strokeWidth={strokeW} />
+            <circle cx={anchor.x} cy={anchor.y} r={fs * 0.11} fill={stroke} />
           </>
         )}
         {c.anchorMarker === 'dot' && (
-          <circle cx={anchor.x} cy={anchor.y} r={3.2} fill={stroke} />
+          <circle cx={anchor.x} cy={anchor.y} r={fs * 0.2} fill={stroke} />
         )}
         {c.anchorMarker === 'tick' && (
           <line
@@ -92,7 +93,7 @@ export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
             x2={anchor.x + perp.x * tickLen}
             y2={anchor.y + perp.y * tickLen}
             stroke={stroke}
-            strokeWidth={2}
+            strokeWidth={strokeW}
             strokeLinecap="round"
           />
         )}
@@ -134,7 +135,7 @@ export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
             r={geo.radius}
             fill="#fff"
             stroke={stroke}
-            strokeWidth={selected ? 2.2 : 1.6}
+            strokeWidth={strokeW}
           />
         )}
         {c.balloonShape === 'hex' && (
@@ -142,7 +143,7 @@ export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
             points={hexPoints(c.labelPos, geo.radius)}
             fill="#fff"
             stroke={stroke}
-            strokeWidth={selected ? 2.2 : 1.6}
+            strokeWidth={strokeW}
           />
         )}
         {c.balloonShape !== 'none' && c.balloonText && (
@@ -171,7 +172,9 @@ export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
             fontWeight={c.fontWeight}
             fill="#111"
           >
-            {c.labelText}
+            {labelLines(c.labelText, fs).map((line, i) => (
+              <tspan key={i} x={tp.x} y={tp.y + line.dy}>{line.text}</tspan>
+            ))}
           </text>
         )}
       </g>

@@ -1,4 +1,5 @@
-import { sanitizeMarkup } from '../svgParse'
+import { sanitizeMarkup, measureGeometry } from '../svgParse'
+import { validateDiagramExtensions } from '../diagramMappings'
 import type { DrawerDoc } from '../types'
 
 const FORMAT = 'drawer-project'
@@ -22,6 +23,7 @@ export function parseProject(text: string): DrawerDoc {
   if (parsed.format !== FORMAT || !parsed.doc) {
     throw new Error('Not a valid Drawer project file.')
   }
+  if (parsed.version !== VERSION) throw new Error('Unsupported Drawer project version.')
   const doc = parsed.doc
   if (
     !doc.base ||
@@ -49,6 +51,12 @@ export function parseProject(text: string): DrawerDoc {
   if (!Array.isArray(doc.hiddenLandmarkGroups)) doc.hiddenLandmarkGroups = []
   if (!doc.activeViewId || !doc.views.some((v) => v.id === doc.activeViewId)) {
     doc.activeViewId = doc.views[0].id
+  }
+  validateDiagramExtensions(doc)
+  // Geometry is derived from sanitized artwork, not trusted from imported JSON.
+  // Re-measure named targets, but preserve contentBox for legacy normalized anchors.
+  if (typeof document !== 'undefined') {
+    doc.base.targetBoxes = measureGeometry(doc.base.inner, doc.base.viewBox).targetBoxes
   }
   return doc
 }

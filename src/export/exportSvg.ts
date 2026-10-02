@@ -5,6 +5,7 @@ import {
   fontSizeFor,
   hexPoints,
   labelTextPlacement,
+  labelLines,
   polylineToPoints,
   round,
 } from '../geometry'
@@ -12,6 +13,8 @@ import { buildLegend, resolveCallouts } from '../resolve'
 import type { Anchor, Box, DrawerDoc, DrawingElement, ResolvedCallout, TextAnnotation } from '../types'
 
 export interface ExportOptions {
+  /** Explicit output crop; callers must ensure it contains the labels/legend. */
+  viewBox?: Box
   viewId?: string
   includeMetadata?: boolean
   includeAnchors?: boolean
@@ -150,7 +153,7 @@ function renderCallout(
   }
   if (c.labelText) {
     parts.push(
-      `<text x="${round(tp.x)}" y="${round(tp.y)}" text-anchor="${tp.anchor}" dominant-baseline="central" font-size="${round(fs)}" font-weight="${c.fontWeight}" fill="#111">${esc(c.labelText)}</text>`,
+      `<text x="${round(tp.x)}" y="${round(tp.y)}" text-anchor="${tp.anchor}" dominant-baseline="central" font-size="${round(fs)}" font-weight="${c.fontWeight}" fill="#111">${labelLines(c.labelText, fs).map((line) => `<tspan x="${round(tp.x)}" y="${round(tp.y + line.dy)}">${esc(line.text)}</tspan>`).join('')}</text>`,
     )
   }
 
@@ -158,7 +161,13 @@ function renderCallout(
   if (opts.includeMetadata !== false) {
     attrs += ` data-name="${esc(baseName)}" data-anchor-x="${round(c.anchorPoint.x)}" data-anchor-y="${round(c.anchorPoint.y)}"`
     if (anchor) {
-      attrs += ` data-anchor-mode="${anchor.mode}"`
+      attrs += ` data-anchor-mode="${anchor.mode}" data-anchor-id="${esc(anchor.id)}"`
+      if (anchor.mapping) {
+        attrs += ` data-field-key="${esc(anchor.mapping.fieldKey)}"`
+        if (anchor.mapping.system) attrs += ` data-code-system="${esc(anchor.mapping.system)}"`
+        if (anchor.mapping.code) attrs += ` data-code="${esc(anchor.mapping.code)}"`
+      }
+      // Attached reference images remain in project JSON, not in published SVGs.
       if (anchor.mode === 'relative-bbox' && anchor.relative) {
         attrs += ` data-target="${esc(anchor.relative.targetId ?? '')}" data-nx="${round(anchor.relative.nx)}" data-ny="${round(anchor.relative.ny)}"`
       }
@@ -172,16 +181,21 @@ function renderLegend(
   bounds: Box,
   fontSize: number,
   viewId?: string,
+  legendWidth = fontSize * 12,
 ): string {
   const legend = buildLegend(doc, viewId)
   if (!legend.length) return ''
-  const x = bounds.x + bounds.w - fontSize * 11
+  const x = bounds.x + bounds.w - legendWidth + fontSize
   let y = bounds.y + fontSize * 1.5
   const lines = legend
     .map((l) => {
-      const line = `<text x="${round(x)}" y="${round(y)}" font-size="${round(fontSize * 0.85)}" fill="#111">${l.index}. ${esc(l.name)}</text>`
-      y += fontSize * 1.35
-      return line
+      const lines = l.name.replace(/\r\n?/g, '\n').split('\n').map((text, i) => {
+        const line = `<text x="${round(x)}" y="${round(y)}" font-size="${round(fontSize * 0.85)}" fill="#111">${i === 0 ? `${l.index}. ` : ''}${esc(text)}</text>`
+        y += fontSize * 1.1
+        return line
+      })
+      y += fontSize * 0.35
+      return lines.join('\n    ')
     })
     .join('\n    ')
   return `  <g class="legend">\n    ${lines}\n  </g>`
@@ -193,14 +207,20 @@ export function exportSvg(doc: DrawerDoc, opts: ExportOptions = {}): string {
   const fontSize = fontSizeFor(doc.base.viewBox)
   const wantLegend =
     opts.includeLegend ?? doc.views.find((v) => v.id === (opts.viewId ?? doc.activeViewId))?.labelMode !== 'names'
-  const legendCount = wantLegend ? buildLegend(doc, opts.viewId).length : 0
-  const legendWidth = legendCount ? fontSize * 12 : 0
-  const bounds = computeBounds(doc, resolved, fontSize, legendWidth, legendCount)
+  const legendItems = wantLegend ? buildLegend(doc, opts.viewId) : []
+  const legendLines = legendItems.flatMap((item) => item.name.replace(/\r\n?/g, '\n').split('\n'))
+  const legendCount = legendLines.length + legendItems.length * 0.35
+  const longestLegendLine = Math.max(0, ...legendLines.map((line) => line.length + 3))
+  const legendWidth = legendCount ? Math.max(fontSize * 12, longestLegendLine * fontSize * 0.85 * 0.66 + fontSize * 2) : 0
+  const bounds = opts.viewBox ?? computeBounds(doc, resolved, fontSize, legendWidth, legendCount)
+  if (![bounds.x, bounds.y, bounds.w, bounds.h].every(Number.isFinite) || bounds.w <= 0 || bounds.h <= 0) {
+    throw new Error('Invalid export viewBox.')
+  }
 
   const bg =
     opts.background === null
       ? ''
-      : `  <rect x="${bounds.x}" y="${bounds.y}" width="${bounds.w}" height="${bounds.h}" fill="${opts.background ?? '#ffffff'}"/>\n`
+      : `  <rect x="${bounds.x}" y="${bounds.y}" width="${bounds.w}" height="${bounds.h}" fill="${esc(opts.background ?? '#ffffff')}"/>\n`
 
   const callouts = resolved
     .filter((c) => c.visible)
@@ -215,7 +235,7 @@ export function exportSvg(doc: DrawerDoc, opts: ExportOptions = {}): string {
     )
     .join('\n')
 
-  const legend = wantLegend ? renderLegend(doc, bounds, fontSize, opts.viewId) : ''
+  const legend = wantLegend ? renderLegend(doc, bounds, fontSize, opts.viewId, legendWidth) : ''
   const textAnnotations = doc.textAnnotations.map(renderTextAnnotation).join('\n')
   const drawingElements = doc.drawingElements.map(renderDrawingElement).join('\n')
 

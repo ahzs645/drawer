@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Canvas } from './components/Canvas'
+import { DiagramMappingsPanel } from './components/DiagramMappingsPanel'
 import { Sidebar } from './components/Sidebar'
 import { Toolbar } from './components/Toolbar'
 import { parseProject, serializeProject } from './export/projectIo'
@@ -58,7 +59,7 @@ export default function App() {
         try {
           localStorage.setItem(AUTOSAVE_KEY, serializeProject(doc))
         } catch {
-          /* storage full / unavailable — best effort */
+          useStore.setState({ status: 'Autosave failed. Export the project to keep your mappings and attachments.' })
         }
       }, 500)
     })
@@ -109,6 +110,7 @@ export default function App() {
   return (
     <div className="app">
       <Toolbar />
+      <DiagramMappingsPanel />
       <div className="workspace">
         <main className="canvas-wrap">
           <Canvas />

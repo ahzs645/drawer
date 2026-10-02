@@ -20,7 +20,7 @@ import type {
  * One source of truth shared by the store, resolver, and landmark catalog.
  */
 export function boxForTarget(base: BaseDrawing, targetId: string | null | undefined): Box {
-  if (targetId && base.targetBoxes?.[targetId]) return base.targetBoxes[targetId]
+  if (targetId && Object.prototype.hasOwnProperty.call(base.targetBoxes ?? {}, targetId)) return base.targetBoxes[targetId]
   return base.contentBox
 }
 
@@ -176,7 +176,14 @@ export function buildLeader(c: ResolvedCallout, fontSize = 14): LeaderGeometry {
 export function labelTextPlacement(
   c: ResolvedCallout,
   geo: LeaderGeometry,
-): { x: number; y: number; anchor: 'start' | 'end' } {
+): { x: number; y: number; anchor: 'start' | 'middle' | 'end' } {
+  if (c.labelOffset) {
+    return {
+      x: c.labelPos.x + c.labelOffset.x,
+      y: c.labelPos.y + c.labelOffset.y,
+      anchor: c.labelAlign ?? (geo.side === 'left' ? 'start' : 'end'),
+    }
+  }
   // text goes on the side AWAY from the body anchor
   const away = geo.side === 'left' ? 'right' : 'left'
   const gap = geo.radius + 6
@@ -184,6 +191,13 @@ export function labelTextPlacement(
     return { x: c.labelPos.x + gap, y: c.labelPos.y, anchor: 'start' }
   }
   return { x: c.labelPos.x - gap, y: c.labelPos.y, anchor: 'end' }
+}
+
+/** Explicit line breaks, centered as a block; shared by React and SVG export. */
+export function labelLines(text: string, fontSize: number): { text: string; dy: number }[] {
+  const lines = text.replace(/\r\n?/g, '\n').split('\n')
+  const step = fontSize * 1.05
+  return lines.map((line, i) => ({ text: line, dy: (i - (lines.length - 1) / 2) * step }))
 }
 
 /**
@@ -217,10 +231,14 @@ export function calloutContentBounds(
     if (c.elbow) expand(c.elbow.x, c.elbow.y)
     if (c.labelText) {
       const tp = labelTextPlacement(c, geo)
-      // rough text width estimate (no DOM measurement in this pure module)
-      const tw = c.labelText.length * cFontSize * 0.58
-      expand(tp.x, tp.y)
-      expand(tp.anchor === 'start' ? tp.x + tw : tp.x - tw, tp.y + cFontSize)
+      // Conservative per-line estimate; unlike a single-line box this includes
+      // both the top and bottom of a multiline block.
+      for (const line of labelLines(c.labelText, cFontSize)) {
+        const tw = line.text.length * cFontSize * 0.66
+        const left = tp.anchor === 'start' ? tp.x : tp.anchor === 'middle' ? tp.x - tw / 2 : tp.x - tw
+        expand(left, tp.y + line.dy - cFontSize * 0.65)
+        expand(left + tw, tp.y + line.dy + cFontSize * 0.65)
+      }
     }
   }
   return { x: minX, y: minY, w: maxX - minX, h: maxY - minY }
