@@ -1,8 +1,10 @@
 /** Restricted, self-contained SVG subset for inline rendering. No network resources. */
 const NS = 'http://www.w3.org/2000/svg'
-const TAGS = new Set(['svg', 'g', 'defs', 'path', 'rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon', 'text', 'tspan', 'textPath', 'title', 'desc', 'clipPath', 'mask', 'linearGradient', 'radialGradient', 'stop', 'pattern', 'marker', 'use'])
+const TAGS = new Set(['svg', 'g', 'defs', 'path', 'rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon', 'text', 'tspan', 'textPath', 'title', 'desc', 'clipPath', 'mask', 'linearGradient', 'radialGradient', 'stop', 'pattern', 'marker', 'use', 'image'])
 const CSS = new Set(['fill', 'fill-opacity', 'fill-rule', 'stroke', 'stroke-width', 'stroke-opacity', 'stroke-linecap', 'stroke-linejoin', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-miterlimit', 'opacity', 'font-family', 'font-size', 'font-weight', 'font-style', 'text-anchor', 'dominant-baseline', 'letter-spacing', 'word-spacing', 'display', 'visibility', 'clip-path', 'vector-effect', 'paint-order'])
 const LOCAL_REF = /^#[A-Za-z_][A-Za-z0-9_.:-]*$/
+/** An embedded raster (Drawer's own PNG/JPEG/WebP import); never a network or SVG URL. */
+const RASTER_DATA = /^data:image\/(?:png|jpe?g|gif|webp);base64,[A-Za-z0-9+/=\s]+$/
 
 function safePaint(value: string): boolean {
   // Reject escaped/obfuscated CSS and all non-fragment URL references.
@@ -24,7 +26,8 @@ export function sanitizeSvgElement(root: Element): void {
       if (/^on/i.test(name) || ['src', 'srcset', 'base', 'tabindex'].includes(name.toLowerCase())) {
         el.removeAttributeNode(attr)
       } else if (name === 'href') {
-        if (!LOCAL_REF.test(attr.value.trim())) el.removeAttributeNode(attr)
+        const value = attr.value.trim()
+        if (!LOCAL_REF.test(value) && !(el.localName === 'image' && RASTER_DATA.test(value))) el.removeAttributeNode(attr)
       } else if (name === 'style') {
         const style = document.createElement('span').style
         style.cssText = attr.value

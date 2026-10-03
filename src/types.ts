@@ -318,6 +318,69 @@ export interface BaseDrawing {
   targetBoxes: Record<string, Box>
 }
 
+/**
+ * The shape of a selectable area, in its image's drawing space (or page space
+ * when the area has no imageId):
+ *  - 'part': a named element of the artwork (its id / data-drawer-el), so the
+ *    real outline is the click target — the most precise kind;
+ *  - 'rect' / 'ellipse' / 'polygon': a shape drawn over the artwork.
+ */
+export type AreaShape =
+  | { kind: 'part'; targetId: string }
+  | { kind: 'rect'; x: number; y: number; w: number; h: number }
+  | { kind: 'ellipse'; cx: number; cy: number; rx: number; ry: number }
+  | { kind: 'polygon'; points: Vec2[] }
+
+/**
+ * A selectable region of a drawing — a joint, a body part, a zone. Areas and
+ * sites are two kinds of target on the same surface: an area is a region you
+ * select, a site is a numbered point you mark. A form can use either or both.
+ */
+export interface Area {
+  id: string
+  label: string
+  /** image the shape is stored in; absent = page coordinates */
+  imageId?: string
+  shape: AreaShape
+  /** external application key, like Site.fieldKey (not a clinical code) */
+  fieldKey?: string
+}
+
+/**
+ * A named set of areas and/or sites that is counted together, e.g. the 28
+ * joints of a CDAI count. Mirrors a hotspot map's counter group.
+ */
+export interface SurfaceGroup {
+  id: string
+  label: string
+  areaIds: string[]
+  siteIds: string[]
+  /** show the running count beside the drawing (default true) */
+  showCount?: boolean
+}
+
+export type MarkSymbol = 'x' | 'circle' | 'triangle'
+
+/**
+ * Something the viewer placed on the drawing: a symbol where they clicked, or
+ * a freehand stroke. Points are in the image's drawing space (page space when
+ * imageId is absent), so a mark follows its image. A mark remembers the area
+ * and site it landed on, so marking "X on the left knee" can count as
+ * selecting the left knee.
+ */
+export interface SurfaceMark {
+  id: string
+  kind: 'symbol' | 'stroke'
+  symbol?: MarkSymbol
+  imageId?: string
+  points: Vec2[]
+  color: string
+  /** symbol size / stroke width basis, in the image's drawing units */
+  size: number
+  areaId?: string
+  siteId?: string
+}
+
 export type DrawingElementKind = 'line' | 'rect'
 
 /** A freely drawn line or rectangle layered over the imported base drawing. */
@@ -363,6 +426,10 @@ export interface DrawerDoc {
   textAnnotations: TextAnnotation[]
   /** freely drawn divider lines and simple shapes */
   drawingElements: DrawingElement[]
+  /** selectable regions (named parts or drawn shapes); optional, additive */
+  areas?: Area[]
+  /** counted sets of areas and sites; optional, additive */
+  groups?: SurfaceGroup[]
   /** stable display/authoring order for landmark groups, including empty groups */
   landmarkGroupOrder: string[]
   /** groups hidden from canvas markers (they remain editable in the panel) */
