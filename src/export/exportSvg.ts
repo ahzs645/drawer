@@ -75,6 +75,8 @@ export interface ExportOptions {
   scale?: number
   /** id on the root <svg>; scopes the state stylesheet */
   rootId?: string
+  /** return the state stylesheet as `css` instead of a <style> inside the SVG (live renderers) */
+  externalStyle?: boolean
 }
 
 export const DEFAULT_SELECTED_COLOR = '#c50f1f'
@@ -410,7 +412,7 @@ export function exportSvg(doc: DrawerDoc, opts: ExportOptions = {}): string {
 }
 
 /** exportSvg plus the viewBox and pixel size it chose. */
-export function renderSvg(doc: DrawerDoc, opts: ExportOptions = {}): { svg: string; viewBox: Box; width: number; height: number } {
+export function renderSvg(doc: DrawerDoc, opts: ExportOptions = {}): { svg: string; viewBox: Box; width: number; height: number; css: string } {
   const state = opts.state
   const surface = !!state || opts.showSiteMarkers === false || opts.showCallouts === false || opts.showTexts === false ||
     opts.showGuides === false || opts.showSiteLegend === false || opts.mono !== undefined || !!opts.frame
@@ -508,6 +510,7 @@ export function renderSvg(doc: DrawerDoc, opts: ExportOptions = {}): { svg: stri
   const areas = opts.showAreas === false ? [] : (doc.areas ?? []).filter((a) => isImageVisible(doc, a.imageId))
   let partTags: Map<string, Record<string, string>> | undefined
   let stateStyle = ''
+  let stateCss = ''
   if (state && areas.some((a) => a.shape.kind === 'part')) {
     partTags = new Map()
     const selectedAreas = new Set(state.selectedAreaIds ?? [])
@@ -525,7 +528,12 @@ export function renderSvg(doc: DrawerDoc, opts: ExportOptions = {}): { svg: stri
         rules.push(`${scope}[data-area-id="${a.id.replace(/["\\]/g, '')}"],${scope}[data-area-id="${a.id.replace(/["\\]/g, '')}"] *{fill:${colour}!important;fill-opacity:.45!important;stroke:${colour}!important}`)
       }
     }
-    if (rules.length) stateStyle = `  <style>${rules.join('')}</style>\n`
+    // CDATA keeps every parser (HTML innerHTML, XML, test DOMs) treating the
+    // rules as text
+    if (rules.length) {
+      stateCss = rules.join('')
+      if (!opts.externalStyle) stateStyle = `  <style><![CDATA[${stateCss}]]></style>\n`
+    }
   }
   const areaMarkup = surface || areas.length ? renderAreas(doc, state, areas) : ''
   const marks = (state?.marks ?? []).filter((m) => isImageVisible(doc, m.imageId)).map((m) => markMarkup(doc, m)).join('')
@@ -565,5 +573,5 @@ ${callouts}
 ${legend}
 ${marks ? `  <g class="drawer-marks">${marks}</g>\n` : ''}</svg>
 `
-  return { svg, viewBox: bounds, width, height }
+  return { svg, viewBox: bounds, width, height, css: stateCss }
 }

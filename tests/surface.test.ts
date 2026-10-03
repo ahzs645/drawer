@@ -75,7 +75,7 @@ test('export draws areas, selection state and marks; plain export is unchanged b
   })
   assert.match(svg, /data-area-id="torso" data-selected="true" role="button" tabindex="0"/)
   assert.match(svg, /<path id="left_hand" d="M10 10 L20 10 L20 20 Z" data-area-id="left_hand" data-selected="true" role="button"/)
-  assert.match(svg, /<style>#r1 \[data-area-id="left_hand"\]/)
+  assert.match(svg, /<style><!\[CDATA\[#r1 \[data-area-id="left_hand"\]/)
   assert.match(svg, /class="drawer-mark" data-mark-id="m1" data-area-id="torso"/)
   assert.equal((svg.match(/class="callout site-marker"[^>]*data-site-id="site-06"[^>]*data-selected="true"/g) ?? []).length, 2)
   assert.ok(standing)
