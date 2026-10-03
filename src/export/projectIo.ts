@@ -1,5 +1,7 @@
 import { sanitizeMarkup, measureGeometry } from '../svgParse'
 import { validateDiagramExtensions } from '../diagramMappings'
+import { normalizeDoc } from '../docModel'
+import { isSceneFile, sceneToDoc } from '../sceneImport'
 import type { DrawerDoc } from '../types'
 
 const FORMAT = 'drawer-project'
@@ -17,9 +19,21 @@ export function serializeProject(doc: DrawerDoc): string {
   return JSON.stringify(file, null, 2)
 }
 
-/** Parse a project file back into a document. Throws on malformed input. */
+const MAX_PROJECT_CHARS = 32_000_000
+
+/**
+ * Parse a project file back into a document. Throws on malformed input.
+ * Also accepts `drawer-scene` files (multi-image scenes from the former
+ * standalone composer), converted into a regular document.
+ */
 export function parseProject(text: string): DrawerDoc {
+  if (text.length > MAX_PROJECT_CHARS) throw new Error('Project file is too large.')
   const parsed = JSON.parse(text) as Partial<ProjectFile>
+  if (isSceneFile(parsed)) {
+    const scene = sceneToDoc(parsed)
+    validateDiagramExtensions(scene)
+    return scene
+  }
   if (parsed.format !== FORMAT || !parsed.doc) {
     throw new Error('Not a valid Drawer project file.')
   }
@@ -52,13 +66,26 @@ export function parseProject(text: string): DrawerDoc {
   if (!doc.activeViewId || !doc.views.some((v) => v.id === doc.activeViewId)) {
     doc.activeViewId = doc.views[0].id
   }
-  validateDiagramExtensions(doc)
+  if (doc.images !== undefined && !Array.isArray(doc.images)) throw new Error('Project images must be a list.')
+  for (const image of doc.images ?? []) {
+    if (!image?.drawing || typeof image.drawing.inner !== 'string') throw new Error('Project image is missing its drawing.')
+    image.drawing.inner = sanitizeMarkup(image.drawing.inner)
+    if (!image.drawing.targetBoxes) image.drawing.targetBoxes = {}
+  }
+  // older single-drawing files: the drawing becomes images[0], positions unchanged
+  const normalized = normalizeDoc(doc)
+  validateDiagramExtensions(normalized)
   // Geometry is derived from sanitized artwork, not trusted from imported JSON.
   // Re-measure named targets, but preserve contentBox for legacy normalized anchors.
   if (typeof document !== 'undefined') {
-    doc.base.targetBoxes = measureGeometry(doc.base.inner, doc.base.viewBox).targetBoxes
+    for (const image of normalized.images) {
+      image.drawing.targetBoxes = measureGeometry(image.drawing.inner, image.drawing.viewBox).targetBoxes
+    }
+    if (normalized.base.inner.trim()) {
+      normalized.base.targetBoxes = measureGeometry(normalized.base.inner, normalized.base.viewBox).targetBoxes
+    }
   }
-  return doc
+  return normalized
 }
 
 /** Trigger a browser download of arbitrary text content. */

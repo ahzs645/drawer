@@ -2,7 +2,9 @@ import type {
   Anchor,
   BaseDrawing,
   Box,
+  DrawerDoc,
   DrawingElement,
+  ImageInstance,
   Landmark,
   ResolvedCallout,
   TextAnnotation,
@@ -12,7 +14,14 @@ import type {
 // ---------------------------------------------------------------------------
 // Coordinate transforms + leader geometry. This module is pure (no React) so
 // it can be unit-tested and reused by the exporters.
+//
+// Two coordinate systems are in play:
+//   - page space: the document's user units (callout labels, text, shapes)
+//   - drawing space: each placed image's own SVG units. Anchors and landmarks
+//     with an imageId are stored here, so they follow the image around.
 // ---------------------------------------------------------------------------
+
+const own = (o: object, k: string) => Object.prototype.hasOwnProperty.call(o, k)
 
 /**
  * The bounding box a normalized position (anchor or landmark) is relative to:
@@ -20,29 +29,182 @@ import type {
  * One source of truth shared by the store, resolver, and landmark catalog.
  */
 export function boxForTarget(base: BaseDrawing, targetId: string | null | undefined): Box {
-  if (targetId && Object.prototype.hasOwnProperty.call(base.targetBoxes ?? {}, targetId)) return base.targetBoxes[targetId]
+  if (targetId && own(base.targetBoxes ?? {}, targetId)) return base.targetBoxes[targetId]
   return base.contentBox
 }
 
-/** Resolve a landmark to an absolute point in the drawing's user space. */
-export function landmarkPoint(base: BaseDrawing, lm: Landmark): Vec2 {
-  const box = boxForTarget(base, lm.targetId ?? null)
-  return { x: box.x + lm.nx * box.w, y: box.y + lm.ny * box.h }
+// --- placed images ---------------------------------------------------------
+
+export function findImage(doc: DrawerDoc, id: string | null | undefined): ImageInstance | undefined {
+  return id ? doc.images.find((i) => i.id === id) : undefined
+}
+
+/** The drawing an imageId refers to; the page itself when absent or unknown. */
+export function drawingFor(doc: DrawerDoc, imageId: string | null | undefined): BaseDrawing {
+  return findImage(doc, imageId)?.drawing ?? doc.base
+}
+
+export function isImageVisible(doc: DrawerDoc, imageId: string | null | undefined): boolean {
+  if (!imageId) return true
+  const image = findImage(doc, imageId)
+  return !!image && image.visible !== false
+}
+
+/** Drawing space -> page space. */
+export function imageToPage(image: ImageInstance, p: Vec2): Vec2 {
+  const vb = image.drawing.viewBox
+  const sx = (image.width / vb.w) * (image.flipX ? -1 : 1)
+  const sy = image.height / vb.h
+  const dx = (p.x - vb.x - vb.w / 2) * sx
+  const dy = (p.y - vb.y - vb.h / 2) * sy
+  const r = (image.rotation * Math.PI) / 180
+  const c = Math.cos(r)
+  const s = Math.sin(r)
+  return {
+    x: image.x + image.width / 2 + dx * c - dy * s,
+    y: image.y + image.height / 2 + dx * s + dy * c,
+  }
+}
+
+/** Page space -> drawing space (inverse of imageToPage). */
+export function pageToImage(image: ImageInstance, p: Vec2): Vec2 {
+  const vb = image.drawing.viewBox
+  const r = (-image.rotation * Math.PI) / 180
+  const c = Math.cos(r)
+  const s = Math.sin(r)
+  const ox = p.x - image.x - image.width / 2
+  const oy = p.y - image.y - image.height / 2
+  const dx = ox * c - oy * s
+  const dy = ox * s + oy * c
+  const sx = (image.width / vb.w) * (image.flipX ? -1 : 1)
+  const sy = image.height / vb.h
+  return { x: dx / sx + vb.x + vb.w / 2, y: dy / sy + vb.y + vb.h / 2 }
+}
+
+/** SVG transform attribute placing the drawing's markup on the page. */
+export function imageTransform(image: ImageInstance): string {
+  const vb = image.drawing.viewBox
+  const sx = (image.width / vb.w) * (image.flipX ? -1 : 1)
+  const sy = image.height / vb.h
+  return `translate(${round(image.x + image.width / 2)} ${round(image.y + image.height / 2)}) rotate(${round(image.rotation)}) scale(${roundScale(sx)} ${roundScale(sy)}) translate(${round(-(vb.x + vb.w / 2))} ${round(-(vb.y + vb.h / 2))})`
+}
+
+/**
+ * The placed box on the page, ignoring any mirror: center, rotation, and its
+ * corners in on-screen order (top-left, top-right, bottom-right, bottom-left
+ * before rotation). Used by the move / resize / rotate handles.
+ */
+export function imageFrame(image: ImageInstance): { center: Vec2; angle: number; corners: Vec2[] } {
+  const center = { x: image.x + image.width / 2, y: image.y + image.height / 2 }
+  const angle = (image.rotation * Math.PI) / 180
+  const c = Math.cos(angle)
+  const s = Math.sin(angle)
+  const at = (dx: number, dy: number) => ({ x: center.x + dx * c - dy * s, y: center.y + dx * s + dy * c })
+  const hw = image.width / 2
+  const hh = image.height / 2
+  return { center, angle, corners: [at(-hw, -hh), at(hw, -hh), at(hw, hh), at(-hw, hh)] }
+}
+
+/** Page-space corners of a box given in drawing space (TL, TR, BR, BL). */
+export function imageBoxCorners(image: ImageInstance, box: Box = image.drawing.viewBox): Vec2[] {
+  return [
+    { x: box.x, y: box.y },
+    { x: box.x + box.w, y: box.y },
+    { x: box.x + box.w, y: box.y + box.h },
+    { x: box.x, y: box.y + box.h },
+  ].map((p) => imageToPage(image, p))
+}
+
+export function boundsOfPoints(points: Vec2[]): Box {
+  const xs = points.map((p) => p.x)
+  const ys = points.map((p) => p.y)
+  const x = Math.min(...xs)
+  const y = Math.min(...ys)
+  return { x, y, w: Math.max(...xs) - x, h: Math.max(...ys) - y }
+}
+
+/** Axis-aligned page bounds of a drawing-space box (the whole frame by default). */
+export function imagePageBounds(image: ImageInstance, box: Box = image.drawing.viewBox): Box {
+  return boundsOfPoints(imageBoxCorners(image, box))
+}
+
+/** Is a page point inside the image's placed frame (rotation aware)? */
+export function imageContainsPoint(image: ImageInstance, p: Vec2): boolean {
+  const local = pageToImage(image, p)
+  const vb = image.drawing.viewBox
+  return local.x >= vb.x && local.x <= vb.x + vb.w && local.y >= vb.y && local.y <= vb.y + vb.h
+}
+
+/** Topmost visible image whose frame contains the page point. */
+export function imageAtPoint(doc: DrawerDoc, p: Vec2): ImageInstance | undefined {
+  for (let i = doc.images.length - 1; i >= 0; i--) {
+    const image = doc.images[i]
+    if (image.visible !== false && imageContainsPoint(image, p)) return image
+  }
+  return undefined
+}
+
+/** Page bounds of the drawn artwork: every visible image's content plus legacy base markup. */
+export function docContentBox(doc: DrawerDoc): Box {
+  const boxes: Box[] = doc.images
+    .filter((i) => i.visible !== false)
+    .map((i) => imagePageBounds(i, i.drawing.contentBox))
+  if (doc.base.inner.trim() || boxes.length === 0) boxes.push(doc.base.contentBox)
+  const points = boxes.flatMap((b) => [
+    { x: b.x, y: b.y },
+    { x: b.x + b.w, y: b.y + b.h },
+  ])
+  return boundsOfPoints(points)
+}
+
+// --- anchors & landmarks in page space -------------------------------------
+
+/** Resolve an anchor to a page-space point, through its image when it has one. */
+export function anchorPagePoint(doc: DrawerDoc, anchor: Anchor): Vec2 {
+  const image = findImage(doc, anchor.imageId)
+  const drawing = image?.drawing ?? doc.base
+  const local = resolveAnchor(anchor, boxForTarget(drawing, anchor.relative?.targetId ?? null))
+  return image ? imageToPage(image, local) : local
+}
+
+/**
+ * Normalized position of a page point inside an image's (or the page's) target
+ * box — the inverse of anchorPagePoint for 'relative-bbox' anchors.
+ */
+export function pageToRelative(
+  doc: DrawerDoc,
+  imageId: string | null | undefined,
+  targetId: string | null | undefined,
+  p: Vec2,
+): { nx: number; ny: number } {
+  const image = findImage(doc, imageId)
+  const local = image ? pageToImage(image, p) : p
+  return pointToNormalized(local, boxForTarget(image?.drawing ?? doc.base, targetId ?? null))
+}
+
+/** Resolve a landmark to an absolute point in page space. */
+export function landmarkPoint(doc: DrawerDoc, lm: Landmark): Vec2 {
+  const image = findImage(doc, lm.imageId)
+  const box = boxForTarget(image?.drawing ?? doc.base, lm.targetId ?? null)
+  const local = { x: box.x + lm.nx * box.w, y: box.y + lm.ny * box.h }
+  return image ? imageToPage(image, local) : local
 }
 
 /**
  * Nearest landmark to a point, within maxDist (user units). Returns the
  * landmark plus its resolved point, or null. Used for snap-to-catalog.
+ * Landmarks on hidden images are skipped.
  */
 export function nearestLandmark(
-  base: BaseDrawing,
+  doc: DrawerDoc,
   landmarks: Landmark[],
   p: Vec2,
   maxDist: number,
 ): { landmark: Landmark; point: Vec2; dist: number } | null {
   let best: { landmark: Landmark; point: Vec2; dist: number } | null = null
   for (const lm of landmarks) {
-    const pt = landmarkPoint(base, lm)
+    if (!isImageVisible(doc, lm.imageId)) continue
+    const pt = landmarkPoint(doc, lm)
     const dist = Math.hypot(pt.x - p.x, pt.y - p.y)
     if (dist <= maxDist && (!best || dist < best.dist)) {
       best = { landmark: lm, point: pt, dist }
@@ -147,6 +309,9 @@ export function buildLeader(c: ResolvedCallout, fontSize = 14): LeaderGeometry {
   const anchor = c.anchorPoint
   const radius = balloonRadius(c.balloonText, c.balloonShape, fontSize)
   const side: 'left' | 'right' = anchor.x <= center.x ? 'left' : 'right'
+
+  // the balloon sits on the point itself: no leader at all
+  if (c.leaderStyle === 'none') return { points: [], balloonCenter: center, radius, side }
 
   // 'straight' always renders straight — a stale elbow from a previous style
   // must not bend it.
@@ -320,4 +485,9 @@ export function hexPoints(center: Vec2, r: number): string {
 
 export function round(n: number): number {
   return Math.round(n * 100) / 100
+}
+
+/** Scale factors need more precision than coordinates. */
+function roundScale(n: number): number {
+  return Math.round(n * 1e6) / 1e6
 }

@@ -1,10 +1,13 @@
+import { calloutName } from '../docModel'
 import { resolveCallouts } from '../resolve'
 import { useStore } from '../store'
 import { CollapsiblePanel } from './CollapsiblePanel'
 import { DrawingInspector } from './DrawingInspector'
+import { ImageInspector, ImagesPanel } from './ImagesPanel'
 import { Inspector } from './Inspector'
 import { LandmarkInspector } from './LandmarkInspector'
 import { LandmarkPanel } from './LandmarkPanel'
+import { SiteInspector, SitesPanel } from './SitesPanel'
 import { TextInspector } from './TextInspector'
 import { ViewBar } from './ViewBar'
 
@@ -35,7 +38,7 @@ function CalloutList() {
               <span className="swatch" style={{ background: c.color }} />
               <span className="cl-index">{r?.visible ? r.index : '–'}</span>
               <span className="cl-name">
-                {c.labelText || <span className="cl-unnamed">Unnamed</span>}
+                {calloutName(doc, c) || <span className="cl-unnamed">Unnamed</span>}
               </span>
               <input
                 type="checkbox"
@@ -100,24 +103,14 @@ function DrawingList() {
   )
 }
 
-function BasePanel() {
-  const duplicate = useStore((s) => s.duplicateBaseRight)
-  return (
-    <CollapsiblePanel title="Base drawing" className="base-panel" defaultOpen={false}>
-      <p className="hint">Create a second instance to the right before placing its landmarks and callouts.</p>
-      <div className="row">
-        <button onClick={() => duplicate(false)}>Duplicate right</button>
-        <button onClick={() => duplicate(true)}>Mirror copy right</button>
-      </div>
-    </CollapsiblePanel>
-  )
-}
-
 export function Sidebar() {
   const status = useStore((s) => s.status)
   const selectedTextId = useStore((s) => s.selectedTextId)
   const selectedLandmarkId = useStore((s) => s.selectedLandmarkId)
   const selectedDrawingId = useStore((s) => s.selectedDrawingId)
+  const selectedImageId = useStore((s) => s.selectedImageId)
+  const selectedSiteId = useStore((s) => s.selectedSiteId)
+  const selectedCalloutId = useStore((s) => s.selectedCalloutId)
   return (
     <aside className="sidebar">
       {status && <div className="status">{status}</div>}
@@ -128,10 +121,15 @@ export function Sidebar() {
         <DrawingInspector />
       ) : selectedTextId ? (
         <TextInspector />
+      ) : selectedImageId ? (
+        <ImageInspector />
+      ) : selectedSiteId && !selectedCalloutId ? (
+        <SiteInspector />
       ) : (
         <Inspector />
       )}
-      <BasePanel />
+      <ImagesPanel />
+      <SitesPanel />
       <TextList />
       <DrawingList />
       <LandmarkPanel />

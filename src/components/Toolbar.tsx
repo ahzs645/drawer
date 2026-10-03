@@ -9,6 +9,8 @@ import {
   parseProject,
   serializeProject,
 } from '../export/projectIo'
+import { sitesCsv } from '../docModel'
+import { TEMPLATES } from '../samples'
 import { SAMPLES, useStore } from '../store'
 import { NewDialog } from './NewDialog'
 
@@ -17,6 +19,7 @@ export function Toolbar() {
   const tool = useStore((s) => s.tool)
   const setTool = useStore((s) => s.setTool)
   const loadSampleKey = useStore((s) => s.loadSampleKey)
+  const loadTemplate = useStore((s) => s.loadTemplate)
   const loadDoc = useStore((s) => s.loadDoc)
   const setDocName = useStore((s) => s.setDocName)
   const record = useStore((s) => s.record)
@@ -157,22 +160,37 @@ export function Toolbar() {
           <select
             value=""
             onChange={(e) => {
-              if (e.target.value) loadSampleKey(e.target.value, e.target.value === 'divider')
+              const value = e.target.value
               e.target.value = ''
+              if (!value) return
+              if (doc && doc.callouts.length > 0 && !window.confirm('Replace the open drawing? Save the project first to keep it.')) return
+              if (value.startsWith('template:')) void loadTemplate(value.slice('template:'.length))
+              else void loadSampleKey(value, value === 'divider')
             }}
           >
             <option value="">Load sample…</option>
-            {SAMPLES.map((s) => (
-              <option key={s.key} value={s.key}>
-                {s.label}
-              </option>
-            ))}
+            <optgroup label="Single drawings">
+              {SAMPLES.map((s) => (
+                <option key={s.key} value={s.key}>
+                  {s.label}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="Multi-image templates">
+              {TEMPLATES.map((t) => (
+                <option key={t.key} value={`template:${t.key}`}>
+                  {t.label}
+                </option>
+              ))}
+            </optgroup>
           </select>
         </label>
         <button onClick={() => setShowNew(true)} title="Start a new diagram from a file, pasted SVG, or a URL">
           New…
         </button>
-        <button onClick={() => projInput.current?.click()}>Open project</button>
+        <button onClick={() => projInput.current?.click()} title="Open a .drawer.json project or a .scene.json multi-image scene">
+          Open project
+        </button>
       </div>
 
       <label className="field name-field">
@@ -244,6 +262,17 @@ export function Toolbar() {
                 >
                   PDF <span className="menu-note">vector, this view</span>
                 </button>
+                {doc && (doc.sites?.length ?? 0) > 0 && (
+                  <button
+                    role="menuitem"
+                    onClick={() => {
+                      downloadText(`${doc.name || 'diagram'}-sites.csv`, sitesCsv(doc), 'text/csv;charset=utf-8')
+                      setExportOpen(false)
+                    }}
+                  >
+                    Sites CSV <span className="menu-note">markers per site, no values</span>
+                  </button>
+                )}
                 {doc && doc.views.length > 1 && (
                   <button
                     role="menuitem"

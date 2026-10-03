@@ -39,6 +39,8 @@ export function exportCalloutsJson(doc: DrawerDoc, opts: CalloutsExportOptions =
       color: r.color,
       visible: r.visible,
       index: r.index,
+      imageId: r.imageId ?? null,
+      siteId: r.siteId ?? null,
       style: styleFromCallout(r),
       anchor: {
         mode: anchor?.mode ?? 'relative-bbox',
@@ -58,6 +60,8 @@ export function exportCalloutsJson(doc: DrawerDoc, opts: CalloutsExportOptions =
     name: doc.name,
     svg: opts.svgFilename ?? null,
     viewBox: doc.base.viewBox,
+    images: doc.images.map((i) => ({ id: i.id, name: i.name, x: round(i.x), y: round(i.y), width: round(i.width), height: round(i.height), rotation: round(i.rotation), flipX: !!i.flipX, visible: i.visible !== false })),
+    sites: doc.sites ?? [],
     view: { id: view.id, name: view.name, labelMode: view.labelMode },
     callouts,
     textAnnotations: doc.textAnnotations.map((t) => ({

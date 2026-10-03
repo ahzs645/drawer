@@ -78,6 +78,18 @@ export const BUILTIN_PRESETS: StylePreset[] = [
     },
   },
   {
+    id: 'preset-badge',
+    name: 'Numbered badge (on point)',
+    builtin: true,
+    style: {
+      balloonShape: 'badge',
+      leaderStyle: 'none',
+      anchorMarker: 'none',
+      leaderEnd: 'none',
+      dashed: false,
+    },
+  },
+  {
     id: 'preset-hex',
     name: 'Hex balloon',
     builtin: true,

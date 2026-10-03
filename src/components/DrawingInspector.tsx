@@ -1,6 +1,7 @@
 import { useStore } from '../store'
 import type { DrawingElementKind } from '../types'
 import { CollapsiblePanel } from './CollapsiblePanel'
+import { AttachToImage } from './ImagesPanel'
 
 export function DrawingInspector() {
   const doc = useStore((s) => s.doc)
@@ -60,6 +61,7 @@ export function DrawingInspector() {
         <input type="checkbox" checked={item.dashed} onChange={(e) => { record(); update(item.id, { dashed: e.target.checked }) }} />
         Dashed
       </label>
+      <AttachToImage value={item.imageId} onChange={(imageId) => update(item.id, { imageId })} />
       <button className="danger block" onClick={() => remove(item.id)}>Delete line / shape</button>
     </CollapsiblePanel>
   )

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
-import { boxForTarget, fontSizeFor, resolveAnchor, round } from '../geometry'
+import { siteById, sortedSites } from '../docModel'
+import { anchorPagePoint, drawingFor, findImage, fontSizeFor, round } from '../geometry'
 import { styleFromCallout } from '../presets'
 import { useStore } from '../store'
 import type { AnchorMarker, BalloonShape, FontWeight, LeaderEnd, LeaderStyle } from '../types'
@@ -40,6 +41,9 @@ export function Inspector() {
   const saveStyleAsPreset = useStore((s) => s.saveStyleAsPreset)
   const deletePreset = useStore((s) => s.deletePreset)
   const labelFocusRequest = useStore((s) => s.labelFocusRequest)
+  const linkCalloutToSite = useStore((s) => s.linkCalloutToSite)
+  const updateSite = useStore((s) => s.updateSite)
+  const selectSite = useStore((s) => s.selectSite)
 
   // focus the name field right after a point is placed, so you can type its name
   const labelRef = useRef<HTMLInputElement>(null)
@@ -68,6 +72,9 @@ export function Inspector() {
   const ov = view.overrides[callout.id] ?? {}
   const visible = ov.visible ?? true
   const anchor = doc.anchors.find((a) => a.id === callout.anchorId)
+  const image = findImage(doc, anchor?.imageId)
+  const site = siteById(doc, callout.siteId)
+  const sites = sortedSites(doc)
 
   const onSavePreset = () => {
     const name = window.prompt('Name this style preset:', 'My style')
@@ -147,19 +154,51 @@ export function Inspector() {
         </label>
       )}
 
+      <p className="hint">
+        On {image ? <b>{image.name}</b> : 'the page'}
+        {site && (
+          <>
+            {' '}· marker of site{' '}
+            <button className="link" onClick={() => selectSite(site.id)}>
+              {site.number}. {site.label}
+            </button>
+          </>
+        )}
+      </p>
+
+      {(sites.length > 0 || site) && (
+        <label className="field">
+          Site
+          <select
+            value={site?.id ?? ''}
+            onChange={(e) => linkCalloutToSite(callout.id, e.target.value || null)}
+            title="A site marker shows its site's number and label; every marker of a site shares them"
+          >
+            <option value="">Not a site marker</option>
+            {sites.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.number}. {s.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+
       <label className="field">
-        Label text{doc.views.length > 1 ? ' (default)' : ''}
+        {site ? 'Site label (shared by all its markers)' : `Label text${doc.views.length > 1 ? ' (default)' : ''}`}
         <input
           ref={labelRef}
           type="text"
-          value={callout.labelText}
+          value={site ? site.label : callout.labelText}
           placeholder="Name this point…"
           onFocus={record}
-          onChange={(e) => updateBase(callout.id, { labelText: e.target.value })}
+          onChange={(e) =>
+            site ? updateSite(site.id, { label: e.target.value }) : updateBase(callout.id, { labelText: e.target.value })
+          }
         />
       </label>
 
-      {doc.views.length > 1 && view.labelMode === 'names' && (
+      {!site && doc.views.length > 1 && view.labelMode === 'names' && (
         <label className="field">
           Label in “{view.name}”
           <input
@@ -187,6 +226,7 @@ export function Inspector() {
             <option value="none">None</option>
             <option value="circle">Circle</option>
             <option value="hex">Hexagon</option>
+            <option value="badge">Badge (filled)</option>
           </select>
         </label>
         <label className="field">
@@ -290,6 +330,7 @@ export function Inspector() {
           >
             <option value="elbow">Elbow</option>
             <option value="straight">Straight</option>
+            <option value="none">None (marker on the point)</option>
           </select>
         </label>
         <label className="field">
@@ -347,8 +388,8 @@ export function Inspector() {
               value={anchor.relative.targetId ?? ''}
               onChange={(e) => setAnchorTarget(callout.id, e.target.value || null)}
             >
-              <option value="">Whole body (box)</option>
-              {Object.keys(doc.base.targetBoxes).map((k) => (
+              <option value="">Whole {image ? 'image' : 'page'} (box)</option>
+              {Object.keys(drawingFor(doc, anchor.imageId).targetBoxes).map((k) => (
                 <option key={k} value={k}>
                   {k}
                 </option>
@@ -357,15 +398,15 @@ export function Inspector() {
           </label>
           <p className="hint mono">
             {round(anchor.relative.nx * 100)}%, {round(anchor.relative.ny * 100)}% of{' '}
-            {anchor.relative.targetId ?? 'body'} box
+            {anchor.relative.targetId ?? (image ? image.name : 'body')} box
           </p>
           <button
             className="link"
             title="Add this point to the catalog so it can be reused"
             onClick={() => {
               const targetId = anchor.relative?.targetId ?? null
-              const pt = resolveAnchor(anchor, boxForTarget(doc.base, targetId))
-              addLandmark(callout.labelText || 'Landmark', pt, targetId)
+              const pt = anchorPagePoint(doc, anchor)
+              addLandmark(site?.label || callout.labelText || 'Landmark', pt, targetId, 'Custom', anchor.imageId ?? null)
             }}
           >
             + Save as landmark

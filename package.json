@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Semantic SVG annotation editor for medical/anatomy diagrams — draggable SolidWorks-style leader-line callouts with static export.",
+  "description": "Semantic SVG annotation editor for medical/anatomy diagrams \u2014 draggable SolidWorks-style leader-line callouts with static export.",
   "license": "AGPL-3.0-only",
   "repository": {
     "type": "git",
@@ -14,7 +14,8 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --no-warnings --import ./tests/register.mjs --test tests/*.test.ts"
   },
   "dependencies": {
     "jspdf": "^4.2.1",

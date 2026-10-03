@@ -85,17 +85,34 @@ export default function App() {
         e.preventDefault()
         s.redo()
       } else if (e.key === 'Escape') {
-        s.select(null)
+        if (s.pendingSiteId) s.startSitePlacement(null)
+        else s.select(null)
       } else if (e.key === 'Delete' || e.key === 'Backspace') {
         if (
           typing ||
-          (!s.selectedCalloutId && !s.selectedTextId && !s.selectedLandmarkId && !s.selectedDrawingId)
+          (!s.selectedCalloutId && !s.selectedTextId && !s.selectedLandmarkId && !s.selectedDrawingId && !s.selectedImageId)
         ) return
         e.preventDefault()
         if (s.selectedCalloutId) s.deleteCallout(s.selectedCalloutId)
         else if (s.selectedTextId) s.deleteText(s.selectedTextId)
         else if (s.selectedLandmarkId) s.removeLandmark(s.selectedLandmarkId)
         else if (s.selectedDrawingId) s.deleteDrawingElement(s.selectedDrawingId)
+        else if (s.selectedImageId) {
+          const image = s.doc?.images.find((i) => i.id === s.selectedImageId)
+          const attached = s.doc?.anchors.filter((a) => a.imageId === s.selectedImageId).length ?? 0
+          if (image && !image.locked && (!attached || window.confirm(`Delete ${image.name} and everything attached to it?`))) s.deleteImage(image.id)
+        }
+      } else if (e.key.startsWith('Arrow') && s.selectedImageId && !mod) {
+        // nudge the selected image (Shift = 10 units)
+        if (typing) return
+        const image = s.doc?.images.find((i) => i.id === s.selectedImageId)
+        if (!image || image.locked) return
+        e.preventDefault()
+        const step = e.shiftKey ? 10 : 1
+        const d = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key]
+        if (!d) return
+        s.record()
+        s.setImagePlacement(image.id, { x: image.x + d[0], y: image.y + d[1] })
       } else if ((e.key === 'a' || e.key === 'A') && !mod && !e.altKey) {
         // auto-arrange the current view's labels into non-overlapping columns
         if (typing) return

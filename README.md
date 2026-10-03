@@ -58,9 +58,18 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
 - **Draw guide geometry** — add editable lines and rectangles for dividers, grouping
   boxes, and other textbook layout marks. Change their coordinates, stroke, width, dash,
   and rectangle fill. The geometry is included in SVG/PNG/PDF exports.
-- **Duplicate the base** — create a second copy to the right, or a mirrored copy, before
-  placing its own landmarks and callouts. This supports front/back and left/right figure
-  layouts without preparing a new source image.
+- **Several images on one page** — add more bodies (bundled samples, files, pasted SVG,
+  URLs) next to the first, then move, resize, rotate, mirror, lock, hide or reorder each
+  one independently. Points, labels and attached text belong to their image and move
+  with it. **Duplicate** / **Mirror copy** copy an image with everything attached, for
+  front/back and left/right layouts. An optional session-only **reference overlay** helps
+  with tracing.
+- **Shared site tables** — numbered sites (e.g. “6. Sacrum”) that can be marked on several
+  images at once. Each site's markers share its number, label and field key. The Sites
+  panel is the table: place markers with a click, run a coverage check, export a CSV.
+  An on-page legend (drag to move) lists the sites. Markers default to filled numbered
+  badges sitting on the point. The **skin-assessment templates** (Load sample → Multi-image
+  templates) are full examples. See [docs/multi-image-pages.md](docs/multi-image-pages.md).
 - **Add callout** — click the body to anchor a point. A free-clicked point drops as an
   **unnamed dot** and the inspector’s name field is focused so you can **type its name right
   away** (place a dot, name it, repeat). Clicking a *named part* of a multi-element SVG (e.g.
@@ -101,8 +110,9 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
 | --- | --- |
 | `⌘/Ctrl + Z` | Undo |
 | `⌘/Ctrl + Shift + Z` (or `Ctrl + Y`) | Redo |
-| `Delete` / `Backspace` | Delete the selected callout, text, landmark, line, or shape |
-| `Esc` | Deselect |
+| `Delete` / `Backspace` | Delete the selected callout, text, landmark, line, shape, or image |
+| `Esc` | Deselect (or cancel placing a site marker) |
+| Arrow keys | Nudge the selected image (`Shift` = ×10) |
 | `A` | Auto-arrange the current view's labels into non-overlapping side columns |
 | Mouse wheel | Zoom to cursor; drag empty space to pan |
 
@@ -127,12 +137,14 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
 | Entity | Role |
 | --- | --- |
 | `BaseDrawing` | imported body markup + `viewBox` + tight `contentBox` (for normalization) |
-| `Anchor` | a point locked to the body (`relative-bbox` \| `absolute` \| `path-offset`) |
+| `ImageInstance` | a `BaseDrawing` placed on the page (position, size, rotation, mirror, lock, visibility) |
+| `Anchor` | a point locked to the body (`relative-bbox` \| `absolute` \| `path-offset`), stored in its image's coordinates |
 | `Landmark` | a named, reusable body location (`nx,ny` in a target/content box) — the catalog |
 | `Callout` | anchor + default label/balloon/leader/color |
 | `DrawingElement` | an editable line or rectangle on the guide-geometry layer |
-| `View` | a named label-set: `labelMode` (`names`/`numbers`/`blank`) + per-callout overrides |
-| `DrawerDoc` | the whole document: base + anchors + callouts + views + landmarks + standalone text + guide geometry |
+| `Site` | a numbered row of the shared site table; callouts with its `siteId` are its markers |
+| `View` | a named label-set: `labelMode` (`names`/`numbers`/`blank`), how site markers show, + per-callout overrides |
+| `DrawerDoc` | the whole document: page + images + anchors + callouts + sites + views + landmarks + standalone text + guide geometry |
 
 `resolve.ts` merges each callout with the active view to produce render-ready
 `ResolvedCallout`s, shared by the canvas and the SVG exporter.
@@ -143,6 +155,7 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
 pnpm install
 pnpm dev        # http://localhost:5173
 pnpm build      # typecheck + production build to dist/
+pnpm test       # model tests (Node 22+)
 pnpm preview    # serve the production build
 ```
 
@@ -157,13 +170,16 @@ src/
   types.ts            data model
   geometry.ts         coordinate transforms + leader/balloon geometry (pure)
   resolve.ts          callout × view -> ResolvedCallout (pure)
+  docModel.ts         images on the page, site table, migration, coverage, CSV (pure)
+  sceneImport.ts      .scene.json multi-image scenes -> DrawerDoc
   svgParse.ts         import SVG -> BaseDrawing (+ sanitization)
   store.ts            Zustand store (all document mutations)
   samples.ts          bundled bodies + demo landmark seeds
   landmarks.ts        the named landmark catalog (curated + auto-derived) + snap helpers
   components/         Canvas, Callout, landmark/drawing inspectors, Toolbar, ViewBar, Sidebar
   export/             SVG/PNG/PDF export, project save/load, landmark catalog import/export
-public/samples/       the six body SVGs
+public/samples/       the body SVGs; diorama/ holds the multi-image skin-assessment templates
+tests/                pure model tests (pnpm test)
 ```
 
 ## Roadmap

@@ -1,6 +1,34 @@
 import { create } from 'zustand'
 import { applyArrangement } from './autoLayout'
-import { boxForTarget, fontSizeFor, pointToNormalized, resolveAnchor } from './geometry'
+import {
+  anchorPagePoint,
+  docContentBox,
+  findImage,
+  fontSizeFor,
+  imageAtPoint,
+  imageContainsPoint,
+  imagePageBounds,
+  landmarkPoint,
+  pageToRelative,
+} from './geometry'
+import {
+  addImage as addImageToDoc,
+  addSite as addSiteToDoc,
+  addSitePlacement,
+  deleteImage as deleteImageFromDoc,
+  deleteSite as deleteSiteFromDoc,
+  duplicateImage as duplicateImageInDoc,
+  identityImage,
+  linkCalloutToSite as linkCalloutToSiteInDoc,
+  normalizeDoc,
+  pageDrawing,
+  reattachAnchor,
+  reorderImage as reorderImageInDoc,
+  setImagePlacement as setImagePlacementInDoc,
+  updateImageMeta as updateImageMetaInDoc,
+  updateSite as updateSiteInDoc,
+} from './docModel'
+import { parseProject } from './export/projectIo'
 import { uid } from './id'
 import { buildLandmarksFor } from './landmarks'
 import {
@@ -15,24 +43,27 @@ import {
   DIVIDER_SEEDS,
   DIVIDER_TEXT_SEEDS,
   SAMPLES,
+  TEMPLATES,
   sampleUrl,
 } from './samples'
-import { measureGeometry, parseSvg } from './svgParse'
+import { parseSvg } from './svgParse'
 import { DEFAULT_STYLE } from './types'
 import type {
   Anchor,
   BalloonShape,
   BaseDrawing,
-  Box,
   Callout,
   CalloutOverride,
   CalloutStyle,
   DrawerDoc,
   DrawingElement,
   DrawingElementKind,
+  ImageInstance,
   LabelMode,
   Landmark,
   LeaderStyle,
+  Site,
+  SiteLegend,
   StylePreset,
   TextAnnotation,
   Vec2,
@@ -63,18 +94,21 @@ function newView(name: string, labelMode: LabelMode): View {
   return { id: uid('view'), name, labelMode, overrides: {} }
 }
 
-function makeDoc(name: string, base: BaseDrawing, landmarks: Landmark[] = []): DrawerDoc {
+/** A one-image document: the page frame is the drawing's own viewBox. */
+function makeDoc(name: string, drawing: BaseDrawing, landmarks: Landmark[] = []): DrawerDoc {
   const view = newView('Names', 'names')
+  const image = identityImage(drawing, name)
   const landmarkGroupOrder = Array.from(new Set(landmarks.map((l) => l.group || 'Other')))
   return {
     id: uid('doc'),
     name,
-    base,
+    base: pageDrawing(drawing.viewBox),
+    images: [image],
     anchors: [],
     callouts: [],
     views: [view],
     activeViewId: view.id,
-    landmarks,
+    landmarks: landmarks.map((l) => ({ ...l, imageId: image.id })),
     textAnnotations: [],
     drawingElements: [],
     landmarkGroupOrder,
@@ -85,9 +119,11 @@ function makeDoc(name: string, base: BaseDrawing, landmarks: Landmark[] = []): D
 /**
  * Place a label/balloon outward from the body center on the nearer side, clearing
  * the body's silhouette by a gutter so the label doesn't sit on top of the drawing.
+ * On a page with several images, "the body" is the image the point is on.
  */
-function outwardLabelPos(base: BaseDrawing, point: Vec2): Vec2 {
-  const cb = base.contentBox
+function outwardLabelPos(doc: DrawerDoc, point: Vec2, imageId?: string | null): Vec2 {
+  const image = findImage(doc, imageId)
+  const cb = image ? imagePageBounds(image, image.drawing.contentBox) : docContentBox(doc)
   const gutter = Math.max(40, cb.w * 0.09)
   const center = cb.x + cb.w / 2
   const outX = point.x < center ? cb.x - gutter : cb.x + cb.w + gutter
@@ -103,6 +139,14 @@ function nextBalloonNumber(doc: DrawerDoc): number {
   return maxNum + 1
 }
 
+/** Session-only tracing aid drawn over the page; never saved or exported. */
+export interface ReferenceOverlay {
+  dataUrl: string
+  name: string
+  opacity: number
+  visible: boolean
+}
+
 interface StoreState {
   doc: DrawerDoc | null
   tool: Tool
@@ -110,6 +154,14 @@ interface StoreState {
   selectedTextId: string | null
   selectedLandmarkId: string | null
   selectedDrawingId: string | null
+  selectedImageId: string | null
+  /** highlighted site row (also set when one of its placements is selected) */
+  selectedSiteId: string | null
+  /** when set, the next click on the drawing places a marker for this site */
+  pendingSiteId: string | null
+  /** draw dashed lines from the selected site's markers to its legend row */
+  showSiteConnections: boolean
+  reference: ReferenceOverlay | null
   status: string
   past: DrawerDoc[]
   future: DrawerDoc[]
@@ -129,8 +181,31 @@ interface StoreState {
   landmarkFocusRequest: number
   // lifecycle
   loadSampleKey: (key: string, withSeeds?: boolean) => Promise<void>
+  loadTemplate: (key: string) => Promise<void>
   importSvgText: (name: string, raw: string) => void
   loadDoc: (doc: DrawerDoc) => void
+  // images on the page
+  addImageFromSvg: (name: string, raw: string, sampleKey?: string | null) => boolean
+  addSampleImage: (key: string) => Promise<void>
+  selectImage: (id: string | null) => void
+  setImagePlacement: (id: string, patch: Partial<Pick<ImageInstance, 'x' | 'y' | 'width' | 'height' | 'rotation' | 'flipX'>>) => void
+  updateImageMeta: (id: string, patch: Partial<Pick<ImageInstance, 'name' | 'visible' | 'locked' | 'source'>>) => void
+  duplicateImage: (id: string, mirror?: boolean) => void
+  deleteImage: (id: string) => void
+  reorderImage: (id: string, delta: -1 | 1) => void
+  setPageSize: (w: number, h: number) => void
+  setExportFrame: (frame: 'content' | 'page') => void
+  setReference: (reference: ReferenceOverlay | null) => void
+  // shared site table
+  selectSite: (id: string | null) => void
+  addSite: (label: string) => void
+  updateSite: (id: string, patch: Partial<Omit<Site, 'id'>>) => void
+  deleteSite: (id: string) => void
+  linkCalloutToSite: (calloutId: string, siteId: string | null) => void
+  startSitePlacement: (siteId: string | null) => void
+  updateSiteLegend: (patch: Partial<SiteLegend>) => void
+  setMappingValue: (fieldKey: string, value: string) => void
+  setShowSiteConnections: (v: boolean) => void
   // history
   record: () => void
   undo: () => void
@@ -144,8 +219,8 @@ interface StoreState {
   // landmark catalog
   setShowLandmarks: (v: boolean) => void
   setHoverLandmark: (id: string | null) => void
-  addLandmark: (name: string, point: Vec2, targetId?: string | null, group?: string) => void
-  addLandmarkAt: (point: Vec2, targetId?: string | null) => void
+  addLandmark: (name: string, point: Vec2, targetId?: string | null, group?: string, imageId?: string | null) => void
+  addLandmarkAt: (point: Vec2, targetId?: string | null, imageId?: string | null) => void
   updateLandmark: (id: string, patch: Partial<Landmark>) => void
   moveLandmark: (id: string, point: Vec2) => void
   setLandmarkTarget: (id: string, targetId: string | null) => void
@@ -164,7 +239,7 @@ interface StoreState {
   saveStyleAsPreset: (name: string, style: CalloutStyle) => string
   deletePreset: (id: string) => void
   // callouts
-  addCalloutAt: (point: Vec2, targetId?: string | null) => void
+  addCalloutAt: (point: Vec2, targetId?: string | null, imageId?: string | null) => void
   updateCalloutBase: (id: string, patch: Partial<Callout>) => void
   updateOverride: (id: string, patch: CalloutOverride) => void
   moveLabel: (id: string, pos: Vec2) => void
@@ -185,12 +260,10 @@ interface StoreState {
   updateDrawingElement: (id: string, patch: Partial<DrawingElement>) => void
   moveDrawingElement: (id: string, delta: Vec2) => void
   deleteDrawingElement: (id: string) => void
-  // imported base manipulation
-  duplicateBaseRight: (mirrored?: boolean) => void
   // views
   addView: (name: string, labelMode: LabelMode, copyFromActive?: boolean) => void
   setActiveView: (id: string) => void
-  updateViewMeta: (id: string, patch: Partial<Pick<View, 'name' | 'labelMode'>>) => void
+  updateViewMeta: (id: string, patch: Partial<Pick<View, 'name' | 'labelMode' | 'siteDisplay'>>) => void
   setViewStyle: (id: string, style: CalloutStyle | null) => void
   setViewMono: (id: string, mono: boolean) => void
   deleteView: (id: string) => void
@@ -201,11 +274,6 @@ function activeView(doc: DrawerDoc): View {
   return doc.views.find((v) => v.id === doc.activeViewId) ?? doc.views[0]
 }
 
-/** The bounding box an anchor is relative to: a targeted element, else content. */
-function targetBoxFor(doc: DrawerDoc, targetId: string | null): Box {
-  return boxForTarget(doc.base, targetId)
-}
-
 const HISTORY_LIMIT = 60
 
 /** The style new callouts should adopt, from the active default preset. */
@@ -213,75 +281,23 @@ function defaultStyle(presets: StylePreset[], defaultPresetId: string): CalloutS
   return presets.find((p) => p.id === defaultPresetId)?.style ?? DEFAULT_STYLE
 }
 
-function prefixedBaseMarkup(inner: string, prefix: string): string {
-  if (typeof document === 'undefined') return inner
-  const ns = 'http://www.w3.org/2000/svg'
-  const root = document.createElementNS(ns, 'g')
-  root.innerHTML = inner
-  const replacements = new Map<string, string>()
-  root.querySelectorAll<Element>('[id],[data-drawer-el]').forEach((el) => {
-    const oldId = el.id
-    if (oldId) {
-      const next = `${prefix}${oldId}`
-      replacements.set(oldId, next)
-      el.id = next
-    }
-    const oldHandle = el.getAttribute('data-drawer-el')
-    if (oldHandle) {
-      const next = `${prefix}${oldHandle}`
-      replacements.set(oldHandle, next)
-      el.setAttribute('data-drawer-el', next)
-    }
-  })
-  root.querySelectorAll<Element>('*').forEach((el) => {
-    for (const attr of Array.from(el.attributes)) {
-      let value = attr.value
-      for (const [from, to] of replacements) {
-        value = value.replaceAll(`url(#${from})`, `url(#${to})`).replaceAll(`#${from}`, `#${to}`)
-      }
-      if (value !== attr.value) el.setAttribute(attr.name, value)
-    }
-  })
-  return root.innerHTML
+/** Clear every selection kind except the one being set. */
+const NO_SELECTION = {
+  selectedCalloutId: null,
+  selectedTextId: null,
+  selectedLandmarkId: null,
+  selectedDrawingId: null,
+  selectedImageId: null,
+  selectedSiteId: null,
 }
 
-function duplicateBaseDocument(doc: DrawerDoc, mirrored: boolean): DrawerDoc {
-  const base = doc.base
-  const box = base.contentBox
-  const gap = Math.max(24, box.w * 0.08)
-  const prefix = `${mirrored ? 'mirror' : 'copy'}_${Date.now()}_`
-  const copy = prefixedBaseMarkup(base.inner, prefix)
-  const transform = mirrored
-    ? `translate(${2 * box.x + 2 * box.w + gap} 0) scale(-1 1)`
-    : `translate(${box.w + gap} 0)`
-  const inner = `<g data-drawer-base-instance="original">${base.inner}</g><g data-drawer-base-instance="${prefix}" transform="${transform}">${copy}</g>`
-  const viewBox: Box = {
-    x: base.viewBox.x,
-    y: base.viewBox.y,
-    w: base.viewBox.w * 2 + gap,
-    h: base.viewBox.h,
-  }
-  const measured = measureGeometry(inner, viewBox)
-  const nextBase: BaseDrawing = { inner, viewBox, ...measured }
-
-  // Whole-body-normalized anchors/landmarks must retain their current absolute
-  // positions when the content box grows to include the new instance.
-  const remap = (nx: number, ny: number) => {
-    const p = { x: box.x + nx * box.w, y: box.y + ny * box.h }
-    return pointToNormalized(p, measured.contentBox)
-  }
-  return {
-    ...doc,
-    base: nextBase,
-    anchors: doc.anchors.map((a) => {
-      if (a.mode !== 'relative-bbox' || !a.relative || a.relative.targetId) return a
-      return { ...a, relative: { ...a.relative, ...remap(a.relative.nx, a.relative.ny) } }
-    }),
-    landmarks: doc.landmarks.map((l) => {
-      if (l.targetId) return l
-      return { ...l, ...remap(l.nx, l.ny) }
-    }),
-  }
+/** Fresh-document state: no selection, no history, nothing pending. */
+const FRESH = {
+  ...NO_SELECTION,
+  pendingSiteId: null,
+  past: [] as DrawerDoc[],
+  future: [] as DrawerDoc[],
+  hoverLandmarkId: null,
 }
 
 export const useStore = create<StoreState>((set, get) => ({
@@ -291,6 +307,11 @@ export const useStore = create<StoreState>((set, get) => ({
   selectedTextId: null,
   selectedLandmarkId: null,
   selectedDrawingId: null,
+  selectedImageId: null,
+  selectedSiteId: null,
+  pendingSiteId: null,
+  showSiteConnections: false,
+  reference: null,
   status: 'Loading…',
   past: [],
   future: [],
@@ -316,20 +337,24 @@ export const useStore = create<StoreState>((set, get) => ({
       const landmarks = buildLandmarksFor(sample.key, base.targetBoxes)
       const doc = makeDoc(sample.label, base, landmarks)
       if (withSeeds && key === 'divider') seedDivider(doc)
-      set({
-        doc,
-        selectedCalloutId: null,
-        selectedTextId: null,
-        selectedLandmarkId: null,
-        selectedDrawingId: null,
-        status: '',
-        tool: 'anchor',
-        past: [],
-        future: [],
-        hoverLandmarkId: null,
-      })
+      set({ ...FRESH, doc, status: '', tool: 'anchor' })
     } catch (e) {
       set({ status: `Failed to load sample: ${(e as Error).message}` })
+    }
+  },
+
+  loadTemplate: async (key) => {
+    const template = TEMPLATES.find((t) => t.key === key)
+    if (!template) return
+    set({ status: `Loading ${template.label}…` })
+    try {
+      const text = await fetch(sampleUrl(template.file)).then((r) => {
+        if (!r.ok) throw new Error(`${r.status} ${r.statusText}`)
+        return r.text()
+      })
+      set({ ...FRESH, doc: parseProject(text), status: template.note, tool: 'select', showLandmarks: true })
+    } catch (e) {
+      set({ status: `Failed to load template: ${(e as Error).message}` })
     }
   },
 
@@ -339,36 +364,164 @@ export const useStore = create<StoreState>((set, get) => ({
       // imported SVGs get a catalog auto-derived from their named elements
       const landmarks = buildLandmarksFor(null, base.targetBoxes)
       const doc = makeDoc(name.replace(/\.svg$/i, ''), base, landmarks)
-      set({
-        doc,
-        selectedCalloutId: null,
-        selectedTextId: null,
-        selectedLandmarkId: null,
-        selectedDrawingId: null,
-        status: '',
-        tool: 'anchor',
-        past: [],
-        future: [],
-        hoverLandmarkId: null,
-      })
+      set({ ...FRESH, doc, status: '', tool: 'anchor' })
     } catch (e) {
       set({ status: `Import failed: ${(e as Error).message}` })
     }
   },
 
-  loadDoc: (doc) =>
-    set({
-      doc,
-      selectedCalloutId: null,
-      selectedTextId: null,
-      selectedLandmarkId: null,
-      selectedDrawingId: null,
-      status: '',
-      tool: 'select',
-      past: [],
-      future: [],
-      hoverLandmarkId: null,
-    }),
+  loadDoc: (doc) => set({ ...FRESH, doc: normalizeDoc(doc), status: '', tool: 'select' }),
+
+  // --- images on the page ---------------------------------------------------
+
+  addImageFromSvg: (name, raw, sampleKey = null) => {
+    const doc = get().doc
+    if (!doc) return false
+    try {
+      const drawing = parseSvg(raw)
+      const landmarks = buildLandmarksFor(sampleKey, drawing.targetBoxes)
+      get().record()
+      const result = addImageToDoc(doc, drawing, name.replace(/\.svg$/i, '') || 'Image', landmarks)
+      set({ doc: result.doc, ...NO_SELECTION, selectedImageId: result.imageId, tool: 'select', fitRequest: get().fitRequest + 1, status: '' })
+      return true
+    } catch (e) {
+      set({ status: `Could not add the image: ${(e as Error).message}` })
+      return false
+    }
+  },
+
+  addSampleImage: async (key) => {
+    const sample = SAMPLES.find((s) => s.key === key)
+    if (!sample || !get().doc) return
+    try {
+      const raw = await fetch(sampleUrl(sample.file)).then((r) => {
+        if (!r.ok) throw new Error(`${r.status} ${r.statusText}`)
+        return r.text()
+      })
+      get().addImageFromSvg(sample.label, raw, sample.key)
+    } catch (e) {
+      set({ status: `Failed to load sample: ${(e as Error).message}` })
+    }
+  },
+
+  selectImage: (id) => set({ ...NO_SELECTION, selectedImageId: id }),
+
+  setImagePlacement: (id, patch) => {
+    const doc = get().doc
+    if (!doc) return
+    const image = findImage(doc, id)
+    if (!image || image.locked) return
+    try {
+      set({ doc: setImagePlacementInDoc(doc, id, patch) })
+    } catch (e) {
+      set({ status: (e as Error).message })
+    }
+  },
+
+  updateImageMeta: (id, patch) => {
+    const doc = get().doc
+    if (!doc || !findImage(doc, id)) return
+    set({ doc: updateImageMetaInDoc(doc, id, patch) })
+  },
+
+  duplicateImage: (id, mirror = false) => {
+    const doc = get().doc
+    if (!doc || !findImage(doc, id)) return
+    get().record()
+    const result = duplicateImageInDoc(doc, id, mirror)
+    set({ doc: result.doc, ...NO_SELECTION, selectedImageId: result.imageId, fitRequest: get().fitRequest + 1 })
+  },
+
+  deleteImage: (id) => {
+    const doc = get().doc
+    const image = doc && findImage(doc, id)
+    if (!doc || !image || image.locked) return
+    get().record()
+    set({ doc: deleteImageFromDoc(doc, id), ...NO_SELECTION })
+  },
+
+  reorderImage: (id, delta) => {
+    const doc = get().doc
+    if (!doc) return
+    const next = reorderImageInDoc(doc, id, delta)
+    if (next === doc) return
+    get().record()
+    set({ doc: next })
+  },
+
+  setPageSize: (w, h) => {
+    const doc = get().doc
+    if (!doc || !(w > 0 && h > 0 && w <= 1e5 && h <= 1e5)) return
+    const viewBox = { ...doc.base.viewBox, w, h }
+    set({ doc: { ...doc, base: { ...doc.base, viewBox, contentBox: doc.base.inner.trim() ? doc.base.contentBox : viewBox } } })
+  },
+
+  setExportFrame: (frame) => {
+    const doc = get().doc
+    if (!doc) return
+    get().record()
+    set({ doc: { ...doc, exportFrame: frame } })
+  },
+
+  setReference: (reference) => set({ reference }),
+
+  // --- shared site table ------------------------------------------------------
+
+  selectSite: (id) => set({ ...NO_SELECTION, selectedSiteId: id }),
+
+  addSite: (label) => {
+    const doc = get().doc
+    if (!doc) return
+    try {
+      const result = addSiteToDoc(doc, label)
+      get().record()
+      set({ doc: result.doc, ...NO_SELECTION, selectedSiteId: result.siteId, status: '' })
+    } catch (e) {
+      set({ status: (e as Error).message })
+    }
+  },
+
+  updateSite: (id, patch) => {
+    const doc = get().doc
+    if (!doc) return
+    // throws on duplicate numbers/keys so the caller can show the reason
+    set({ doc: updateSiteInDoc(doc, id, patch) })
+  },
+
+  deleteSite: (id) => {
+    const doc = get().doc
+    if (!doc) return
+    get().record()
+    set({ doc: deleteSiteFromDoc(doc, id), ...NO_SELECTION, pendingSiteId: null })
+  },
+
+  linkCalloutToSite: (calloutId, siteId) => {
+    const doc = get().doc
+    if (!doc) return
+    get().record()
+    set({ doc: linkCalloutToSiteInDoc(doc, calloutId, siteId), selectedSiteId: siteId })
+  },
+
+  startSitePlacement: (siteId) =>
+    set(siteId ? { pendingSiteId: siteId, tool: 'anchor', ...NO_SELECTION, selectedSiteId: siteId } : { pendingSiteId: null }),
+
+  updateSiteLegend: (patch) => {
+    const doc = get().doc
+    if (!doc?.siteLegend) return
+    set({ doc: { ...doc, siteLegend: { ...doc.siteLegend, ...patch } } })
+  },
+
+  setShowSiteConnections: (v) => set({ showSiteConnections: v }),
+
+  // an empty entry removes the value (renders as an em dash)
+  setMappingValue: (fieldKey, value) => {
+    const doc = get().doc
+    if (!doc || ['__proto__', 'constructor', 'prototype'].includes(fieldKey)) return
+    const mappingValues = { ...(doc.mappingValues ?? {}) }
+    if (value === '') delete mappingValues[fieldKey]
+    else mappingValues[fieldKey] = value.slice(0, 4000)
+    set({ doc: { ...doc, mappingValues } })
+  },
 
   // snapshot the current doc onto the undo stack (call before a discrete edit,
   // or once at the start of a drag)
@@ -400,42 +553,27 @@ export const useStore = create<StoreState>((set, get) => ({
     })
   },
 
-  setTool: (t) => set({ tool: t }),
+  setTool: (t) => set(t === 'anchor' ? { tool: t } : { tool: t, pendingSiteId: null }),
   select: (id) => set({
+    ...NO_SELECTION,
     selectedCalloutId: id,
-    selectedTextId: null,
-    selectedLandmarkId: null,
-    selectedDrawingId: null,
+    // selecting a site placement also highlights its row
+    selectedSiteId: (id && get().doc?.callouts.find((c) => c.id === id)?.siteId) || null,
   }),
-  selectText: (id) => set({
-    selectedTextId: id,
-    selectedCalloutId: null,
-    selectedLandmarkId: null,
-    selectedDrawingId: null,
-  }),
-  selectLandmark: (id) => set({
-    selectedLandmarkId: id,
-    selectedCalloutId: null,
-    selectedTextId: null,
-    selectedDrawingId: null,
-  }),
-  selectDrawing: (id) => set({
-    selectedDrawingId: id,
-    selectedCalloutId: null,
-    selectedTextId: null,
-    selectedLandmarkId: null,
-  }),
+  selectText: (id) => set({ ...NO_SELECTION, selectedTextId: id }),
+  selectLandmark: (id) => set({ ...NO_SELECTION, selectedLandmarkId: id }),
+  selectDrawing: (id) => set({ ...NO_SELECTION, selectedDrawingId: id }),
 
   setShowLandmarks: (v) => set({ showLandmarks: v }),
   setHoverLandmark: (id) => set({ hoverLandmarkId: id }),
 
   // add a new named location to the catalog (e.g. "save as landmark" on an
   // imported body so the point can be reused later)
-  addLandmark: (name, point, targetId = null, group = 'Custom') => {
+  addLandmark: (name, point, targetId = null, group = 'Custom', imageId = null) => {
     const doc = get().doc
     if (!doc) return
     get().record()
-    const n = pointToNormalized(point, targetBoxFor(doc, targetId))
+    const n = pageToRelative(doc, imageId, targetId, point)
     const cleanGroup = group.trim() || 'Custom'
     const landmark: Landmark = {
       id: uid('lm'),
@@ -444,6 +582,7 @@ export const useStore = create<StoreState>((set, get) => ({
       ny: n.ny,
       targetId,
       group: cleanGroup,
+      ...(imageId ? { imageId } : {}),
     }
     set({
       doc: {
@@ -456,12 +595,13 @@ export const useStore = create<StoreState>((set, get) => ({
     })
   },
 
-  addLandmarkAt: (point, targetId = null) => {
+  addLandmarkAt: (point, targetId = null, imageId = null) => {
     const doc = get().doc
     if (!doc) return
     get().record()
-    const n = pointToNormalized(point, targetBoxFor(doc, targetId))
-    const group = doc.landmarkGroupOrder[0] || 'Custom'
+    const n = pageToRelative(doc, imageId, targetId, point)
+    // default to a group already used on this image
+    const group = doc.landmarks.find((l) => (l.imageId ?? null) === imageId)?.group || doc.landmarkGroupOrder[0] || 'Custom'
     const landmark: Landmark = {
       id: uid('lm'),
       name: 'Landmark',
@@ -469,6 +609,7 @@ export const useStore = create<StoreState>((set, get) => ({
       ny: n.ny,
       targetId,
       group,
+      ...(imageId ? { imageId } : {}),
     }
     set({
       doc: {
@@ -478,10 +619,8 @@ export const useStore = create<StoreState>((set, get) => ({
           ? doc.landmarkGroupOrder
           : [...doc.landmarkGroupOrder, group],
       },
+      ...NO_SELECTION,
       selectedLandmarkId: landmark.id,
-      selectedCalloutId: null,
-      selectedTextId: null,
-      selectedDrawingId: null,
       landmarkFocusRequest: get().landmarkFocusRequest + 1,
       tool: 'select',
     })
@@ -509,7 +648,7 @@ export const useStore = create<StoreState>((set, get) => ({
     if (!doc) return
     const lm = doc.landmarks.find((l) => l.id === id)
     if (!lm) return
-    const n = pointToNormalized(point, targetBoxFor(doc, lm.targetId ?? null))
+    const n = pageToRelative(doc, lm.imageId, lm.targetId, point)
     get().updateLandmark(id, { nx: n.nx, ny: n.ny })
   },
 
@@ -519,9 +658,7 @@ export const useStore = create<StoreState>((set, get) => ({
     const lm = doc.landmarks.find((l) => l.id === id)
     if (!lm) return
     get().record()
-    const currentBox = targetBoxFor(doc, lm.targetId ?? null)
-    const point = { x: currentBox.x + lm.nx * currentBox.w, y: currentBox.y + lm.ny * currentBox.h }
-    const n = pointToNormalized(point, targetBoxFor(doc, targetId))
+    const n = pageToRelative(doc, lm.imageId, targetId, landmarkPoint(doc, lm))
     get().updateLandmark(id, { targetId, nx: n.nx, ny: n.ny })
   },
 
@@ -634,14 +771,19 @@ export const useStore = create<StoreState>((set, get) => ({
     if (!doc) return
     const lm = doc.landmarks.find((l) => l.id === landmarkId)
     if (!lm) return
-    get().record()
     const targetId = lm.targetId ?? null
+    if (get().pendingSiteId) {
+      get().addCalloutAt(landmarkPoint(doc, lm), targetId, lm.imageId ?? null)
+      return
+    }
+    get().record()
     const anchor: Anchor = {
       id: uid('anchor'),
       mode: 'relative-bbox',
       relative: { targetId, nx: lm.nx, ny: lm.ny },
+      ...(lm.imageId ? { imageId: lm.imageId } : {}),
     }
-    const point = resolveAnchor(anchor, targetBoxFor(doc, targetId))
+    const point = anchorPagePoint(doc, anchor)
     const next = nextBalloonNumber(doc)
     const style = defaultStyle(get().presets, get().defaultPresetId)
     const callout: Callout = {
@@ -650,7 +792,7 @@ export const useStore = create<StoreState>((set, get) => ({
       labelText: lm.name,
       balloonText: String(next),
       ...style,
-      labelPos: outwardLabelPos(doc.base, point),
+      labelPos: outwardLabelPos(doc, point, lm.imageId),
       elbow: null,
       color: PALETTE[(next - 1) % PALETTE.length],
     }
@@ -661,10 +803,8 @@ export const useStore = create<StoreState>((set, get) => ({
     }
     set({
       doc: get().autoArrange ? applyArrangement(doc2) : doc2,
+      ...NO_SELECTION,
       selectedCalloutId: callout.id,
-      selectedTextId: null,
-      selectedLandmarkId: null,
-      selectedDrawingId: null,
     })
   },
 
@@ -726,16 +866,25 @@ export const useStore = create<StoreState>((set, get) => ({
     set({ presets, defaultPresetId })
   },
 
-  addCalloutAt: (point, targetId = null) => {
+  addCalloutAt: (point, targetId = null, imageId = null) => {
     const doc = get().doc
     if (!doc) return
     get().record()
-    const n = pointToNormalized(point, targetBoxFor(doc, targetId))
-    const anchor: Anchor = {
-      id: uid('anchor'),
-      mode: 'relative-bbox',
-      relative: { targetId, nx: n.nx, ny: n.ny },
+    const pendingSiteId = get().pendingSiteId
+    if (pendingSiteId) {
+      // placing a marker for a site row
+      try {
+        const result = addSitePlacement(doc, pendingSiteId, imageId, point, imageId ? targetId : null)
+        set({ doc: result.doc, ...NO_SELECTION, selectedCalloutId: result.calloutId, selectedSiteId: pendingSiteId, pendingSiteId: null, tool: 'select' })
+      } catch (e) {
+        set({ status: (e as Error).message, pendingSiteId: null })
+      }
+      return
     }
+    // a point on an image lives in that image's drawing space; elsewhere it is a page point
+    const anchor: Anchor = imageId
+      ? { id: uid('anchor'), mode: 'relative-bbox', imageId, relative: { targetId, ...pageToRelative(doc, imageId, targetId, point) } }
+      : { id: uid('anchor'), mode: 'absolute', absolute: point }
     const next = nextBalloonNumber(doc)
     const style = defaultStyle(get().presets, get().defaultPresetId)
     const callout: Callout = {
@@ -745,7 +894,7 @@ export const useStore = create<StoreState>((set, get) => ({
       labelText: '',
       balloonText: String(next),
       ...style,
-      labelPos: outwardLabelPos(doc.base, point),
+      labelPos: outwardLabelPos(doc, point, imageId),
       elbow: null,
       color: PALETTE[(next - 1) % PALETTE.length],
     }
@@ -756,10 +905,8 @@ export const useStore = create<StoreState>((set, get) => ({
     }
     set({
       doc: get().autoArrange ? applyArrangement(doc2) : doc2,
+      ...NO_SELECTION,
       selectedCalloutId: callout.id,
-      selectedTextId: null,
-      selectedLandmarkId: null,
-      selectedDrawingId: null,
       // ask the inspector to focus the name field so you can type it immediately
       labelFocusRequest: get().labelFocusRequest + 1,
     })
@@ -815,8 +962,23 @@ export const useStore = create<StoreState>((set, get) => ({
     const callout = doc.callouts.find((c) => c.id === id)
     if (!callout) return
     const anchor = doc.anchors.find((a) => a.id === callout.anchorId)
-    const targetId = anchor?.relative?.targetId ?? null
-    const n = pointToNormalized(point, targetBoxFor(doc, targetId))
+    if (!anchor) return
+    const own = findImage(doc, anchor.imageId)
+    if (own?.locked) return
+    // dragged off its image onto another one (or off a page point onto an image): re-home it
+    if (!own || !imageContainsPoint(own, point)) {
+      const other = imageAtPoint(doc, point)
+      if (other && other.id !== own?.id && !other.locked) {
+        set({ doc: reattachAnchor(doc, anchor.id, other.id, point) })
+        return
+      }
+      if (!own) {
+        set({ doc: reattachAnchor(doc, anchor.id, null, point) })
+        return
+      }
+    }
+    const targetId = anchor.relative?.targetId ?? null
+    const n = pageToRelative(doc, anchor.imageId, targetId, point)
     set({
       doc: {
         ...doc,
@@ -839,8 +1001,7 @@ export const useStore = create<StoreState>((set, get) => ({
     const anchor = doc.anchors.find((a) => a.id === callout.anchorId)
     if (!anchor) return
     get().record()
-    const current = resolveAnchor(anchor, targetBoxFor(doc, anchor.relative?.targetId ?? null))
-    const n = pointToNormalized(current, targetBoxFor(doc, targetId))
+    const n = pageToRelative(doc, anchor.imageId, targetId, anchorPagePoint(doc, anchor))
     set({
       doc: {
         ...doc,
@@ -887,14 +1048,15 @@ export const useStore = create<StoreState>((set, get) => ({
       fontWeight: 600,
       align: 'middle',
       color: '#111111',
-      ruleWidth: Math.max(120, doc.base.contentBox.w * 0.28),
+      ruleWidth: Math.max(120, docContentBox(doc).w * 0.28),
     }
+    // text placed on an image moves with it
+    const image = imageAtPoint(doc, point)
+    if (image) item.imageId = image.id
     set({
       doc: { ...doc, textAnnotations: [...doc.textAnnotations, item] },
+      ...NO_SELECTION,
       selectedTextId: item.id,
-      selectedCalloutId: null,
-      selectedLandmarkId: null,
-      selectedDrawingId: null,
       textFocusRequest: get().textFocusRequest + 1,
       tool: 'select',
     })
@@ -937,12 +1099,13 @@ export const useStore = create<StoreState>((set, get) => ({
       dashed: false,
       fill: null,
     }
+    // a shape drawn on an image moves with it
+    const image = imageAtPoint(doc, start)
+    if (image && imageAtPoint(doc, end)?.id === image.id) item.imageId = image.id
     set({
       doc: { ...doc, drawingElements: [...doc.drawingElements, item] },
+      ...NO_SELECTION,
       selectedDrawingId: item.id,
-      selectedCalloutId: null,
-      selectedTextId: null,
-      selectedLandmarkId: null,
       tool: 'select',
     })
   },
@@ -977,13 +1140,6 @@ export const useStore = create<StoreState>((set, get) => ({
       doc: { ...doc, drawingElements: doc.drawingElements.filter((d) => d.id !== id) },
       selectedDrawingId: get().selectedDrawingId === id ? null : get().selectedDrawingId,
     })
-  },
-
-  duplicateBaseRight: (mirrored = false) => {
-    const doc = get().doc
-    if (!doc) return
-    get().record()
-    set({ doc: duplicateBaseDocument(doc, mirrored), fitRequest: get().fitRequest + 1 })
   },
 
   addView: (name, labelMode, copyFromActive = false) => {
@@ -1053,10 +1209,12 @@ export const useStore = create<StoreState>((set, get) => ({
 }))
 
 function seedDivider(doc: DrawerDoc) {
+  const imageId = doc.images[0]?.id
   DIVIDER_SEEDS.forEach((s, i) => {
     const anchor: Anchor = {
       id: uid('anchor'),
       mode: 'relative-bbox',
+      imageId,
       relative: { targetId: null, nx: s.nx, ny: s.ny },
     }
     const callout: Callout = {
@@ -1074,7 +1232,7 @@ function seedDivider(doc: DrawerDoc) {
     doc.callouts.push(callout)
   })
   DIVIDER_TEXT_SEEDS.forEach((seed) => {
-    doc.textAnnotations.push({ id: uid('text'), ...seed })
+    doc.textAnnotations.push({ id: uid('text'), ...seed, imageId })
   })
 }
 

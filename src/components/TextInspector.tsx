@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useStore } from '../store'
 import type { TextAnnotationAlign, TextAnnotationStyle } from '../types'
 import { CollapsiblePanel } from './CollapsiblePanel'
+import { AttachToImage } from './ImagesPanel'
 
 export function TextInspector() {
   const doc = useStore((s) => s.doc)
@@ -127,6 +128,7 @@ export function TextInspector() {
         />
       </label>
 
+      <AttachToImage value={item.imageId} onChange={(imageId) => updateText(item.id, { imageId })} />
       <button className="danger block" onClick={() => deleteText(item.id)}>
         Delete text
       </button>

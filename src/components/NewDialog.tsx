@@ -28,10 +28,13 @@ async function rasterToSvg(blob: Blob): Promise<string> {
  * "New diagram" flow: start a fresh document from an SVG brought in three ways —
  * a local file, pasted markup, or a URL. The SVG is validated before it replaces
  * the current document so a bad paste/URL surfaces an error instead of wiping work.
+ * In 'add' mode the same sources add another image to the current page instead.
  */
-export function NewDialog({ onClose }: { onClose: () => void }) {
+export function NewDialog({ onClose, mode = 'new' }: { onClose: () => void; mode?: 'new' | 'add' }) {
   const importSvgText = useStore((s) => s.importSvgText)
+  const addImageFromSvg = useStore((s) => s.addImageFromSvg)
   const hasWork = useStore((s) => (s.doc?.callouts.length ?? 0) > 0)
+  const adding = mode === 'add'
 
   const [source, setSource] = useState<Source>('file')
   const [paste, setPaste] = useState('')
@@ -45,6 +48,11 @@ export function NewDialog({ onClose }: { onClose: () => void }) {
       parseSvg(raw) // validate first; throws on bad SVG
     } catch (e) {
       setError(`That doesn't look like a valid SVG: ${(e as Error).message}`)
+      return
+    }
+    if (adding) {
+      if (addImageFromSvg(docName.trim() || 'Image', raw)) onClose()
+      else setError(useStore.getState().status || 'The image could not be added.')
       return
     }
     importSvgText(docName.trim() || 'Untitled', raw)
@@ -95,20 +103,27 @@ export function NewDialog({ onClose }: { onClose: () => void }) {
         className="modal"
         role="dialog"
         aria-modal="true"
-        aria-label="New diagram"
+        aria-label={adding ? 'Add image' : 'New diagram'}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-head">
-          <div className="modal-title">New diagram</div>
+          <div className="modal-title">{adding ? 'Add image to the page' : 'New diagram'}</div>
           <button className="modal-close" aria-label="Close" onClick={onClose}>
             ✕
           </button>
         </div>
 
-        <p className="hint">
-          Bring in an SVG, PNG, JPEG, or WebP body/diagram to annotate, then drop points and name them.
-          {hasWork && <> This replaces the diagram you have open.</>}
-        </p>
+        {adding ? (
+          <p className="hint">
+            Add an SVG, PNG, JPEG, or WebP drawing next to the existing images. It can then be moved,
+            resized and rotated independently.
+          </p>
+        ) : (
+          <p className="hint">
+            Bring in an SVG, PNG, JPEG, or WebP body/diagram to annotate, then drop points and name them.
+            {hasWork && <> This replaces the diagram you have open.</>}
+          </p>
+        )}
 
         <div className="seg">
           <button className={source === 'file' ? 'active' : ''} onClick={() => setSource('file')}>
@@ -181,12 +196,12 @@ export function NewDialog({ onClose }: { onClose: () => void }) {
           <button onClick={onClose}>Cancel</button>
           {source === 'paste' && (
             <button className="primary" onClick={submitPaste}>
-              Create
+              {adding ? 'Add' : 'Create'}
             </button>
           )}
           {source === 'url' && (
             <button className="primary" onClick={submitUrl} disabled={busy}>
-              {busy ? 'Loading…' : 'Fetch & create'}
+              {busy ? 'Loading…' : adding ? 'Fetch & add' : 'Fetch & create'}
             </button>
           )}
         </div>

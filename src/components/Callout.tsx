@@ -41,26 +41,32 @@ export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
   const llen = Math.hypot(ldx, ldy) || 1
   const perp = { x: -ldy / llen, y: ldx / llen }
   const tickLen = fs * 0.32
+  // a marker sitting on its point (no leader): dragging it moves the point
+  const onPoint = c.leaderStyle === 'none'
+  const badge = c.balloonShape === 'badge'
 
   return (
     <g
-      className="callout"
+      className={`callout${c.siteId ? ' site-marker' : ''}`}
       data-callout-id={c.id}
+      data-site-id={c.siteId}
       data-anchor-x={anchor.x}
       data-anchor-y={anchor.y}
     >
       {/* leader line */}
-      <polyline
-        points={polylineToPoints(geo.points)}
-        fill="none"
-        stroke={stroke}
-        strokeWidth={strokeW}
-        strokeLinejoin="round"
-        strokeLinecap="round"
-        strokeDasharray={dash}
-        opacity={1}
-        pointerEvents="none"
-      />
+      {geo.points.length > 0 && (
+        <polyline
+          points={polylineToPoints(geo.points)}
+          fill="none"
+          stroke={stroke}
+          strokeWidth={strokeW}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          strokeDasharray={dash}
+          opacity={1}
+          pointerEvents="none"
+        />
+      )}
 
       {/* leader end decoration at the body */}
       {c.leaderEnd === 'arrow' && (
@@ -121,7 +127,7 @@ export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
       {/* balloon + label, draggable together */}
       <g
         className="callout-head"
-        onPointerDown={(e) => h.onLabelDown(e, c.id)}
+        onPointerDown={(e) => (onPoint ? h.onAnchorDown(e, c.id) : h.onLabelDown(e, c.id))}
         onClick={() => h.onSelect(c.id)}
         style={{ cursor: 'move' }}
       >
@@ -146,6 +152,16 @@ export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
             strokeWidth={strokeW}
           />
         )}
+        {badge && (
+          <circle
+            cx={c.labelPos.x}
+            cy={c.labelPos.y}
+            r={geo.radius}
+            fill={selected ? '#1c68a7' : stroke}
+            stroke="#fff"
+            strokeWidth={c.leaderWidth}
+          />
+        )}
         {c.balloonShape !== 'none' && c.balloonText && (
           <text
             x={c.labelPos.x}
@@ -153,9 +169,9 @@ export function CalloutView({ c, selected, editing, fontSize, ...h }: Props) {
             textAnchor="middle"
             dominantBaseline="central"
             className="balloon-text"
-            fontSize={fs * 0.82}
+            fontSize={fs * (badge ? 1.05 : 0.82)}
             fontWeight={c.fontWeight}
-            fill={stroke}
+            fill={badge ? '#fff' : stroke}
           >
             {c.balloonText}
           </text>

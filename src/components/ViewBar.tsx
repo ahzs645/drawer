@@ -1,6 +1,14 @@
 import { useStore } from '../store'
-import type { LabelMode } from '../types'
+import { siteDisplayFor } from '../resolve'
+import type { LabelMode, SiteDisplay } from '../types'
 import { CollapsiblePanel } from './CollapsiblePanel'
+
+const SITE_DISPLAYS: { value: SiteDisplay; label: string }[] = [
+  { value: 'numbers', label: 'Numbers' },
+  { value: 'names', label: 'Numbers + names' },
+  { value: 'values', label: 'Numbers + values' },
+  { value: 'blank', label: 'Blank markers' },
+]
 
 const MODES: { value: LabelMode; label: string }[] = [
   { value: 'names', label: 'Names' },
@@ -91,6 +99,24 @@ export function ViewBar() {
             {activeFormatId === '__custom' && <option value="__custom">Custom</option>}
           </select>
         </label>
+        {(doc.sites?.length ?? 0) > 0 && (
+          <label className="field" title="How site markers render in this view; other callouts follow Mode">
+            Site markers
+            <select
+              value={siteDisplayFor(active)}
+              onChange={(e) => {
+                record()
+                updateViewMeta(active.id, { siteDisplay: e.target.value as SiteDisplay })
+              }}
+            >
+              {SITE_DISPLAYS.map((m) => (
+                <option key={m.value} value={m.value}>
+                  {m.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <button
           className="danger"
           disabled={doc.views.length <= 1}

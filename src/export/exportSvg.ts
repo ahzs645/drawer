@@ -2,15 +2,19 @@ import {
   arrowHead,
   buildLeader,
   diagramContentBounds,
+  docContentBox,
   fontSizeFor,
   hexPoints,
+  imageTransform,
+  isImageVisible,
   labelTextPlacement,
   labelLines,
   polylineToPoints,
   round,
 } from '../geometry'
+import { siteById, siteLegendBox, siteLegendLayout } from '../docModel'
 import { buildLegend, resolveCallouts } from '../resolve'
-import type { Anchor, Box, DrawerDoc, DrawingElement, ResolvedCallout, TextAnnotation } from '../types'
+import type { Anchor, Box, DrawerDoc, DrawingElement, ResolvedCallout, Site, TextAnnotation } from '../types'
 
 export interface ExportOptions {
   /** Explicit output crop; callers must ensure it contains the labels/legend. */
@@ -42,12 +46,21 @@ function computeBounds(
   legendCount: number,
 ): Box {
   const raw = diagramContentBounds(
-    doc.base.contentBox,
+    docContentBox(doc),
     resolved,
     fontSize,
-    doc.textAnnotations,
-    doc.drawingElements,
+    doc.textAnnotations.filter((t) => isImageVisible(doc, t.imageId)),
+    doc.drawingElements.filter((d) => isImageVisible(doc, d.imageId)),
   )
+  const legend = siteLegendBox(doc)
+  if (legend) {
+    const x2 = Math.max(raw.x + raw.w, legend.x + legend.w)
+    const y2 = Math.max(raw.y + raw.h, legend.y + legend.h)
+    raw.x = Math.min(raw.x, legend.x)
+    raw.y = Math.min(raw.y, legend.y)
+    raw.w = x2 - raw.x
+    raw.h = y2 - raw.y
+  }
   const m = fontSize
   // the legend grows downward from y = top + 1.5*fontSize; make sure the box is
   // tall enough to contain it for callout-heavy documents.
@@ -98,6 +111,7 @@ function renderCallout(
   baseName: string,
   fontSize: number,
   opts: ExportOptions,
+  site?: Site,
 ): string {
   const fs = c.fontSize || fontSize
   const geo = buildLeader(c, fs)
@@ -108,9 +122,11 @@ function renderCallout(
   const fromPoint = geo.points[1] ?? c.labelPos
   const dashAttr = c.dashed ? ` stroke-dasharray="${round(fs * 0.5)} ${round(fs * 0.36)}"` : ''
 
-  parts.push(
-    `<polyline points="${polylineToPoints(geo.points)}" fill="none" stroke="${col}" stroke-width="${round(c.leaderWidth)}" stroke-linejoin="round" stroke-linecap="round"${dashAttr}/>`,
-  )
+  if (geo.points.length) {
+    parts.push(
+      `<polyline points="${polylineToPoints(geo.points)}" fill="none" stroke="${col}" stroke-width="${round(c.leaderWidth)}" stroke-linejoin="round" stroke-linecap="round"${dashAttr}/>`,
+    )
+  }
   // leader end decoration at the body
   if (c.leaderEnd === 'arrow') {
     parts.push(`<polygon points="${arrowHead(anc, fromPoint, fs * 0.55)}" fill="${col}"/>`)
@@ -145,10 +161,15 @@ function renderCallout(
     parts.push(
       `<polygon points="${hexPoints(c.labelPos, geo.radius)}" fill="#fff" stroke="${col}" stroke-width="${round(c.leaderWidth)}"/>`,
     )
+  } else if (c.balloonShape === 'badge') {
+    parts.push(
+      `<circle cx="${round(c.labelPos.x)}" cy="${round(c.labelPos.y)}" r="${round(geo.radius)}" fill="${col}" stroke="#fff" stroke-width="${round(c.leaderWidth)}"/>`,
+    )
   }
   if (c.balloonShape !== 'none' && c.balloonText) {
+    const badge = c.balloonShape === 'badge'
     parts.push(
-      `<text x="${round(c.labelPos.x)}" y="${round(c.labelPos.y)}" text-anchor="middle" dominant-baseline="central" font-size="${round(fs * 0.82)}" font-weight="${c.fontWeight}" fill="${col}">${esc(c.balloonText)}</text>`,
+      `<text x="${round(c.labelPos.x)}" y="${round(c.labelPos.y)}" text-anchor="middle" dominant-baseline="central" font-size="${round(fs * (badge ? 1.05 : 0.82))}" font-weight="${c.fontWeight}" fill="${badge ? '#fff' : col}">${esc(c.balloonText)}</text>`,
     )
   }
   if (c.labelText) {
@@ -160,9 +181,11 @@ function renderCallout(
   let attrs = `class="callout" data-callout-id="${esc(c.id)}"`
   if (opts.includeMetadata !== false) {
     attrs += ` data-name="${esc(baseName)}" data-anchor-x="${round(c.anchorPoint.x)}" data-anchor-y="${round(c.anchorPoint.y)}"`
+    if (c.imageId) attrs += ` data-image-id="${esc(c.imageId)}"`
+    if (site) attrs += ` data-site-id="${esc(site.id)}" data-site-number="${site.number}" data-field-key="${esc(site.fieldKey)}"`
     if (anchor) {
       attrs += ` data-anchor-mode="${anchor.mode}" data-anchor-id="${esc(anchor.id)}"`
-      if (anchor.mapping) {
+      if (anchor.mapping && !site) {
         attrs += ` data-field-key="${esc(anchor.mapping.fieldKey)}"`
         if (anchor.mapping.system) attrs += ` data-code-system="${esc(anchor.mapping.system)}"`
         if (anchor.mapping.code) attrs += ` data-code="${esc(anchor.mapping.code)}"`
@@ -201,6 +224,26 @@ function renderLegend(
   return `  <g class="legend">\n    ${lines}\n  </g>`
 }
 
+/** The numbered site list, positioned where the editor shows it. */
+function renderSiteLegend(doc: DrawerDoc): string {
+  const layout = siteLegendLayout(doc)
+  if (!layout) return ''
+  const h = layout.heading
+  const lines = [
+    `<text x="${round(h.x)}" y="${round(h.y)}" font-size="${round(h.fontSize)}" font-weight="700" fill="#181818">${esc(h.text)}</text>`,
+    ...layout.rows.map((r) => `<text x="${round(r.x)}" y="${round(r.y)}" font-size="${round(r.fontSize)}" fill="#181818" data-site-id="${esc(r.siteId)}">${esc(r.text)}</text>`),
+  ]
+  return `  <g class="site-legend">\n    ${lines.join('\n    ')}\n  </g>`
+}
+
+/** Placed images, bottom to top, each in its own transformed group. */
+function renderImages(doc: DrawerDoc): string {
+  return doc.images
+    .filter((i) => i.visible !== false)
+    .map((i) => `<g class="image" data-image-id="${esc(i.id)}" data-image-name="${esc(i.name)}" transform="${imageTransform(i)}">${i.drawing.inner}</g>`)
+    .join('')
+}
+
 /** Serialize the document (for a given view) into a standalone static SVG. */
 export function exportSvg(doc: DrawerDoc, opts: ExportOptions = {}): string {
   const resolved = resolveCallouts(doc, opts.viewId)
@@ -212,7 +255,7 @@ export function exportSvg(doc: DrawerDoc, opts: ExportOptions = {}): string {
   const legendCount = legendLines.length + legendItems.length * 0.35
   const longestLegendLine = Math.max(0, ...legendLines.map((line) => line.length + 3))
   const legendWidth = legendCount ? Math.max(fontSize * 12, longestLegendLine * fontSize * 0.85 * 0.66 + fontSize * 2) : 0
-  const bounds = opts.viewBox ?? computeBounds(doc, resolved, fontSize, legendWidth, legendCount)
+  const bounds = opts.viewBox ?? (doc.exportFrame === 'page' && !legendCount ? doc.base.viewBox : computeBounds(doc, resolved, fontSize, legendWidth, legendCount))
   if (![bounds.x, bounds.y, bounds.w, bounds.h].every(Number.isFinite) || bounds.w <= 0 || bounds.h <= 0) {
     throw new Error('Invalid export viewBox.')
   }
@@ -231,20 +274,23 @@ export function exportSvg(doc: DrawerDoc, opts: ExportOptions = {}): string {
         doc.callouts.find((b) => b.id === c.id)?.labelText ?? c.labelText,
         fontSize,
         opts,
+        siteById(doc, c.siteId),
       ),
     )
     .join('\n')
 
   const legend = wantLegend ? renderLegend(doc, bounds, fontSize, opts.viewId, legendWidth) : ''
-  const textAnnotations = doc.textAnnotations.map(renderTextAnnotation).join('\n')
-  const drawingElements = doc.drawingElements.map(renderDrawingElement).join('\n')
+  const textAnnotations = doc.textAnnotations.filter((t) => isImageVisible(doc, t.imageId)).map(renderTextAnnotation).join('\n')
+  const drawingElements = doc.drawingElements.filter((d) => isImageVisible(doc, d.imageId)).map(renderDrawingElement).join('\n')
+  const siteLegend = renderSiteLegend(doc)
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="${bounds.x} ${bounds.y} ${bounds.w} ${bounds.h}" font-family="${FONT_FAMILY}" data-generator="drawer" data-doc-name="${esc(doc.name)}">
   <title>${esc(doc.name)}</title>
-${bg}  <g class="body-layer">${doc.base.inner}</g>
+${bg}  <g class="body-layer">${doc.base.inner}${renderImages(doc)}</g>
 ${drawingElements}
 ${textAnnotations}
+${siteLegend}
 ${callouts}
 ${legend}
 </svg>
