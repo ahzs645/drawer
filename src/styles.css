@@ -140,7 +140,8 @@ button:disabled {
 }
 .canvas.tool-landmark,
 .canvas.tool-line,
-.canvas.tool-rect {
+.canvas.tool-rect,
+.canvas.tool-area {
   cursor: crosshair;
 }
 .canvas.tool-select {
@@ -1024,4 +1025,129 @@ details.subsection > * + * {
 }
 .view-controls .field:nth-child(4) {
   grid-column: 1 / -1;
+}
+
+/* ---- areas (selectable regions) ---- */
+.area-shape {
+  fill: var(--accent);
+  fill-opacity: 0.06;
+  stroke: var(--accent);
+  stroke-width: 1.5px;
+  stroke-dasharray: 5 3;
+}
+/* a part area is a clone of the artwork element, outlined over the original */
+.area-part,
+.area-part * {
+  fill: var(--accent) !important;
+  fill-opacity: 0.05 !important;
+  stroke: var(--accent) !important;
+  stroke-width: 1.5px !important;
+  stroke-dasharray: 5 3;
+  vector-effect: non-scaling-stroke;
+}
+.area-shape.in-group,
+.area-part.in-group * {
+  fill-opacity: 0.16 !important;
+  stroke: #8250df !important;
+}
+.area-shape.selected,
+.area-part.selected,
+.area-part.selected * {
+  fill-opacity: 0.24 !important;
+  stroke-width: 2.5px !important;
+  stroke-dasharray: none;
+}
+.area-shape.in-group {
+  fill: #8250df;
+}
+.area-layer.interactive .area-shape,
+.area-layer.interactive .area-part * {
+  pointer-events: all;
+  cursor: pointer;
+}
+.area-label {
+  fill: #1f3d7a;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  user-select: none;
+}
+.area-label.selected {
+  fill: var(--accent);
+}
+.area-shape.draft {
+  fill-opacity: 0.12;
+  stroke-dasharray: none;
+}
+.area-vertex {
+  fill: #fff;
+  stroke: var(--accent);
+  stroke-width: 1.5px;
+}
+.area-vertex.first {
+  fill: var(--accent);
+}
+.toolbar .area-modes {
+  display: inline-flex;
+  gap: 2px;
+}
+.toolbar .area-modes button {
+  padding-inline: 6px;
+}
+.area-list li .area-kind,
+.part-list li .area-kind {
+  flex: none;
+  width: 18px;
+  text-align: center;
+  color: var(--muted);
+}
+.area-image-head {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-top: 4px;
+}
+.part-list li label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  cursor: pointer;
+}
+.part-list li.taken {
+  color: var(--muted);
+}
+.part-picker,
+.group-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fafbfc;
+}
+.member-list {
+  max-height: 180px;
+  overflow: auto;
+}
+.member-list li {
+  cursor: default;
+}
+.member-list li label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  cursor: pointer;
+}
+.group-count {
+  flex: none;
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }

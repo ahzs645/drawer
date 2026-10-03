@@ -90,10 +90,11 @@ export default function App() {
       } else if (e.key === 'Delete' || e.key === 'Backspace') {
         if (
           typing ||
-          (!s.selectedCalloutId && !s.selectedTextId && !s.selectedLandmarkId && !s.selectedDrawingId && !s.selectedImageId)
+          (!s.selectedCalloutId && !s.selectedTextId && !s.selectedLandmarkId && !s.selectedDrawingId && !s.selectedImageId && !s.selectedAreaId)
         ) return
         e.preventDefault()
         if (s.selectedCalloutId) s.deleteCallout(s.selectedCalloutId)
+        else if (s.selectedAreaId) s.deleteArea(s.selectedAreaId)
         else if (s.selectedTextId) s.deleteText(s.selectedTextId)
         else if (s.selectedLandmarkId) s.removeLandmark(s.selectedLandmarkId)
         else if (s.selectedDrawingId) s.deleteDrawingElement(s.selectedDrawingId)

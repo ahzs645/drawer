@@ -1,3 +1,4 @@
+import { sanitizeSurface } from '../areaModel'
 import { sanitizeMarkup, measureGeometry } from '../svgParse'
 import { validateDiagramExtensions } from '../diagramMappings'
 import { normalizeDoc } from '../docModel'
@@ -30,7 +31,7 @@ export function parseProject(text: string): DrawerDoc {
   if (text.length > MAX_PROJECT_CHARS) throw new Error('Project file is too large.')
   const parsed = JSON.parse(text) as Partial<ProjectFile>
   if (isSceneFile(parsed)) {
-    const scene = sceneToDoc(parsed)
+    const scene = sanitizeSurface(sceneToDoc(parsed))
     validateDiagramExtensions(scene)
     return scene
   }
@@ -73,7 +74,8 @@ export function parseProject(text: string): DrawerDoc {
     if (!image.drawing.targetBoxes) image.drawing.targetBoxes = {}
   }
   // older single-drawing files: the drawing becomes images[0], positions unchanged
-  const normalized = normalizeDoc(doc)
+  // areas and groups: malformed entries and dangling references are dropped, not fatal
+  const normalized = sanitizeSurface(normalizeDoc(doc))
   validateDiagramExtensions(normalized)
   // Geometry is derived from sanitized artwork, not trusted from imported JSON.
   // Re-measure named targets, but preserve contentBox for legacy normalized anchors.

@@ -1,6 +1,7 @@
 import { calloutName } from '../docModel'
 import { resolveCallouts } from '../resolve'
 import { useStore } from '../store'
+import { AreaInspector, AreasPanel } from './AreasPanel'
 import { CollapsiblePanel } from './CollapsiblePanel'
 import { DrawingInspector } from './DrawingInspector'
 import { ImageInspector, ImagesPanel } from './ImagesPanel'
@@ -111,11 +112,14 @@ export function Sidebar() {
   const selectedImageId = useStore((s) => s.selectedImageId)
   const selectedSiteId = useStore((s) => s.selectedSiteId)
   const selectedCalloutId = useStore((s) => s.selectedCalloutId)
+  const selectedAreaId = useStore((s) => s.selectedAreaId)
   return (
     <aside className="sidebar">
       {status && <div className="status">{status}</div>}
       <ViewBar />
-      {selectedLandmarkId ? (
+      {selectedAreaId ? (
+        <AreaInspector />
+      ) : selectedLandmarkId ? (
         <LandmarkInspector />
       ) : selectedDrawingId ? (
         <DrawingInspector />
@@ -130,6 +134,7 @@ export function Sidebar() {
       )}
       <ImagesPanel />
       <SitesPanel />
+      <AreasPanel />
       <TextList />
       <DrawingList />
       <LandmarkPanel />

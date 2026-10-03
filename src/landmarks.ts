@@ -15,6 +15,7 @@
 
 import { uid } from './id'
 import { DIVIDER_SEEDS } from './samples'
+import { prettyName } from './text'
 import type { Box, Landmark } from './types'
 
 /** A catalog entry before it gets a runtime id. */
@@ -80,11 +81,8 @@ export const LANDMARK_CATALOGS: Record<string, LandmarkDef[]> = {
 /** Auto-generated element handles look like "el12"; those aren't real names. */
 const AUTO_ID = /^el\d+$/
 
-/** Turn an element id/slug into a display name: "lung_right" -> "Lung right". */
-export function prettyName(id: string): string {
-  const s = id.replace(/[_-]+/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').trim()
-  return s ? s.charAt(0).toUpperCase() + s.slice(1) : id
-}
+/** Re-exported for older callers; the helper lives in text.ts (core-safe). */
+export { prettyName }
 
 /**
  * Derive landmarks from a body's *named* elements: one per element, at the

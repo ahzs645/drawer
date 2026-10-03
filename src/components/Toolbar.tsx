@@ -11,13 +11,15 @@ import {
 } from '../export/projectIo'
 import { sitesCsv } from '../docModel'
 import { TEMPLATES } from '../samples'
-import { SAMPLES, useStore } from '../store'
+import { SAMPLES, useStore, type AreaMode } from '../store'
 import { NewDialog } from './NewDialog'
 
 export function Toolbar() {
   const doc = useStore((s) => s.doc)
   const tool = useStore((s) => s.tool)
   const setTool = useStore((s) => s.setTool)
+  const areaMode = useStore((s) => s.areaMode)
+  const setAreaMode = useStore((s) => s.setAreaMode)
   const loadSampleKey = useStore((s) => s.loadSampleKey)
   const loadTemplate = useStore((s) => s.loadTemplate)
   const loadDoc = useStore((s) => s.loadDoc)
@@ -136,6 +138,33 @@ export function Toolbar() {
         >
           □ Rectangle
         </button>
+        <button
+          className={tool === 'area' ? 'active' : ''}
+          onClick={() => setTool('area')}
+          title="Draw a selectable area (a region a form can select) over an image"
+        >
+          ⬚ Area
+        </button>
+        {tool === 'area' && (
+          <span className="area-modes" role="group" aria-label="Area shape">
+            {([
+              ['rect', '▭', 'Rectangle: drag on an image'],
+              ['ellipse', '◯', 'Ellipse: drag on an image'],
+              ['polygon', '⬠', 'Polygon: click each corner; double-click or Enter to finish'],
+            ] as [AreaMode, string, string][]).map(([mode, icon, title]) => (
+              <button
+                key={mode}
+                className={areaMode === mode ? 'active' : ''}
+                aria-pressed={areaMode === mode}
+                aria-label={`${mode[0].toUpperCase()}${mode.slice(1)} area`}
+                title={title}
+                onClick={() => setAreaMode(mode)}
+              >
+                {icon}
+              </button>
+            ))}
+          </span>
+        )}
         <button
           className={tool === 'select' ? 'active' : ''}
           onClick={() => setTool('select')}

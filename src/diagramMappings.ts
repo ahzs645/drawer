@@ -51,7 +51,7 @@ export function attachAnchorToTarget(doc: DrawerDoc, id: string, targetId: strin
 }
 
 /**
- * Targets referenced by points/landmarks on one image (or, with imageId
+ * Targets referenced by points/landmarks/part areas on one image (or, with imageId
  * undefined, on any image) that its drawing does not contain. `drawing`
  * substitutes a candidate replacement artwork for that image.
  */
@@ -65,6 +65,7 @@ export function missingTargets(doc: DrawerDoc, imageId?: string | null, drawing?
   }
   for (const a of doc.anchors) check(a.imageId, a.mode === 'path-offset' ? a.pathOffset?.targetId : a.relative?.targetId)
   for (const l of doc.landmarks) check(l.imageId, l.targetId)
+  for (const a of doc.areas ?? []) if (a.shape.kind === 'part') check(a.imageId, a.shape.targetId)
   return [...missing]
 }
 

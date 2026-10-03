@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { closePolygon, ellipseFromCorners, rectFromCorners } from '../areaModel'
 import { calloutName, siteById, siteLegendBox } from '../docModel'
 import {
   boundsOfPoints,
@@ -14,11 +15,14 @@ import {
   isImageVisible,
   landmarkPoint,
   nearestLandmark,
+  pageToImage,
 } from '../geometry'
 import { usePointerDrag } from '../hooks/usePointerDrag'
 import { resolveCallouts } from '../resolve'
 import { useStore } from '../store'
-import type { Box, DrawerDoc, DrawingElement, Vec2 } from '../types'
+import { imageScale } from '../surface'
+import type { AreaShape, Box, DrawerDoc, DrawingElement, ImageInstance, Vec2 } from '../types'
+import { AreaDraftView, AreaLayer } from './AreaLayer'
 import { CalloutView } from './Callout'
 import { DrawingElementView } from './DrawingElement'
 import { ImageChrome, PlacedImage } from './ImageLayer'
@@ -28,6 +32,14 @@ import { TextAnnotationView } from './TextAnnotation'
 
 /** Screen-space snap radius (px) for catalog landmarks. */
 const SNAP_PX = 16
+/** Screen-space radius (px) around a polygon's first point that closes it. */
+const CLOSE_PX = 8
+
+/** A polygon area being drawn: its owner image and points in that image's drawing space. */
+interface PolygonDraft {
+  imageId: string | null
+  points: Vec2[]
+}
 
 /** Read a body element's markup for the highlight overlay, stripping its id so
  * the clone doesn't collide with the original. Searches only the given image,
@@ -140,11 +152,30 @@ export function Canvas() {
   const hoverLandmarkId = useStore((s) => s.hoverLandmarkId)
   const setHoverLandmark = useStore((s) => s.setHoverLandmark)
   const fitRequest = useStore((s) => s.fitRequest)
+  const selectedAreaId = useStore((s) => s.selectedAreaId)
+  const selectedGroupId = useStore((s) => s.selectedGroupId)
+  const areaMode = useStore((s) => s.areaMode)
+  const showAreas = useStore((s) => s.showAreas)
+  const hoverPart = useStore((s) => s.hoverPart)
+  const selectArea = useStore((s) => s.selectArea)
+  const addArea = useStore((s) => s.addArea)
 
   const [size, setSize] = useState({ w: 0, h: 0 })
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, w: 100 })
   const [highlightMarkup, setHighlightMarkup] = useState<string | null>(null)
   const [draftDrawing, setDraftDrawing] = useState<DrawingElement | null>(null)
+  // Area tool drafts: a rect/ellipse being dragged, or a polygon being clicked out
+  const [areaDraft, setAreaDraft] = useState<{ imageId: string | null; shape: AreaShape } | null>(null)
+  const [polyDraft, setPolyDraftState] = useState<PolygonDraft | null>(null)
+  const [polyCursor, setPolyCursor] = useState<Vec2 | null>(null)
+  const polyRef = useRef<PolygonDraft | null>(null)
+  const setPolyDraft = (d: PolygonDraft | null) => {
+    polyRef.current = d
+    setPolyDraftState(d)
+    if (!d) setPolyCursor(null)
+  }
+  // outline markup of every part area's element, read from the rendered artwork
+  const [partMarkup, setPartMarkup] = useState<Record<string, string>>({})
   const initedFor = useRef<string | null>(null)
 
   // track the rendered pixel size so the camera aspect can match it
@@ -219,6 +250,10 @@ export function Canvas() {
   const hoverLm = doc?.landmarks.find((l) => l.id === hoverLandmarkId)
   let highlightTargetId: string | null = hoverLm?.targetId ?? null
   let highlightImageId: string | null = hoverLm?.imageId ?? null
+  if (!highlightTargetId && hoverPart) {
+    highlightTargetId = hoverPart.targetId
+    highlightImageId = hoverPart.imageId
+  }
   if (!highlightTargetId && selectedId && doc) {
     const c = doc.callouts.find((x) => x.id === selectedId)
     const a = c && doc.anchors.find((x) => x.id === c.anchorId)
@@ -234,6 +269,29 @@ export function Canvas() {
   useLayoutEffect(() => {
     setHighlightMarkup(elementMarkup(bodyRef.current, highlightImageId, highlightTargetId))
   }, [highlightTargetId, highlightImageId, doc?.id])
+
+  // part areas are outlined with a clone of their element; re-read only when
+  // the parts or the artwork change (not on every move of an image)
+  const partKey = doc
+    ? (doc.areas ?? []).map((a) => (a.shape.kind === 'part' ? `${a.id}:${a.imageId ?? ''}:${a.shape.targetId}` : '')).join('|') +
+      '#' + doc.images.map((i) => `${i.id}:${i.drawing.inner.length}:${i.visible !== false}`).join('|')
+    : ''
+  useLayoutEffect(() => {
+    const out: Record<string, string> = {}
+    for (const a of doc?.areas ?? []) {
+      if (a.shape.kind !== 'part') continue
+      const markup = elementMarkup(bodyRef.current, a.imageId ?? null, a.shape.targetId)
+      if (markup) out[a.id] = markup
+    }
+    setPartMarkup(out)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [partKey])
+
+  // a half-drawn polygon is dropped when the tool, mode or document changes
+  useEffect(() => {
+    setPolyDraft(null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tool, areaMode, doc?.id])
 
   const fitView = () => {
     if (doc && size.w) setCamera(initCamera(contentFitBox(doc), size))
@@ -252,6 +310,97 @@ export function Canvas() {
       const cyc = c.y + (c.w * aspect) / 2
       return { x: cx - w / 2, y: cyc - (w * aspect) / 2, w }
     })
+  }
+
+  // --- areas: drawing-space conversion, polygon drafting -------------------
+
+  /** Page point -> the owner image's drawing space (identity for page areas). */
+  const toLocal = (imageId: string | null, p: Vec2): Vec2 => {
+    const image = doc ? findImage(doc, imageId) : undefined
+    return image ? pageToImage(image, p) : p
+  }
+
+  /** Drawing units per screen pixel on an image, for click tolerances. */
+  const localPerPx = (imageId: string | null) => (doc ? unitsPerPx() / imageScale(doc, imageId ?? undefined) : 1)
+
+  const finishPolygon = () => {
+    const draft = polyRef.current
+    if (!draft) return
+    const shape = closePolygon(draft.points, 3 * localPerPx(draft.imageId))
+    if (!shape) {
+      useStore.setState({ status: 'A polygon needs at least 3 points. Keep clicking, or press Esc to cancel.' })
+      return
+    }
+    setPolyDraft(null)
+    addArea(shape, draft.imageId)
+  }
+
+  const addPolygonVertex = (page: Vec2, imageId: string | null) => {
+    const draft = polyRef.current
+    if (!draft) {
+      // the polygon belongs to the image under its first point
+      setPolyDraft({ imageId, points: [toLocal(imageId, page)] })
+      return
+    }
+    const p = toLocal(draft.imageId, page)
+    const first = draft.points[0]
+    if (draft.points.length >= 3 && Math.hypot(p.x - first.x, p.y - first.y) <= CLOSE_PX * localPerPx(draft.imageId)) {
+      finishPolygon()
+      return
+    }
+    setPolyDraft({ ...draft, points: [...draft.points, p] })
+  }
+
+  // Enter closes the polygon, Esc cancels it, Backspace drops the last point.
+  // Capture phase, so the app's own Esc / Delete shortcuts don't also fire.
+  useEffect(() => {
+    if (!polyDraft) return
+    const onKey = (e: KeyboardEvent) => {
+      const t = document.activeElement as HTMLElement | null
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return
+      if (e.key === 'Enter') finishPolygon()
+      else if (e.key === 'Escape') setPolyDraft(null)
+      else if (e.key === 'Backspace' || e.key === 'Delete') {
+        const d = polyRef.current
+        if (d) setPolyDraft(d.points.length > 1 ? { ...d, points: d.points.slice(0, -1) } : null)
+      } else return
+      e.preventDefault()
+      e.stopPropagation()
+    }
+    window.addEventListener('keydown', onKey, true)
+    return () => window.removeEventListener('keydown', onKey, true)
+  })
+
+  /** Drag an image by its body (Select tool); a tiny jitter is not a move. */
+  const beginImageMove = (image: ImageInstance, downPoint: Vec2) => {
+    const start = { x: image.x, y: image.y }
+    let rec = false
+    begin({
+      onMove: (p, ev) => {
+        let x = start.x + p.x - downPoint.x
+        let y = start.y + p.y - downPoint.y
+        if (ev.shiftKey) {
+          x = Math.round(x / 8) * 8
+          y = Math.round(y / 8) * 8
+        }
+        if (!rec) {
+          if (Math.hypot(p.x - downPoint.x, p.y - downPoint.y) < 2 * unitsPerPx()) return
+          rec = true
+          record()
+        }
+        setImagePlacement(image.id, { x, y })
+      },
+    })
+  }
+
+  // click an area to select it (Select tool); dragging still moves its image
+  const onAreaDown = (e: React.PointerEvent, id: string) => {
+    if (e.button !== 0 || !doc) return
+    e.stopPropagation()
+    selectArea(id)
+    const area = doc.areas?.find((a) => a.id === id)
+    const image = findImage(doc, area?.imageId)
+    if (image && !image.locked) beginImageMove(image, clientToSvg(svgRef.current!, e.clientX, e.clientY))
   }
 
   // --- canvas background/body: place (anchor tool) or pan ---
@@ -274,26 +423,36 @@ export function Canvas() {
     if (tool === 'select' && image) {
       selectImage(image.id)
       if (!image.locked) {
-        const start = { x: image.x, y: image.y }
-        let rec = false
-        begin({
-          onMove: (p, ev) => {
-            let x = start.x + p.x - downPoint.x
-            let y = start.y + p.y - downPoint.y
-            if (ev.shiftKey) {
-              x = Math.round(x / 8) * 8
-              y = Math.round(y / 8) * 8
-            }
-            if (!rec) {
-              if (Math.hypot(p.x - downPoint.x, p.y - downPoint.y) < 2 * unitsPerPx()) return
-              rec = true
-              record()
-            }
-            setImagePlacement(image.id, { x, y })
-          },
-        })
+        beginImageMove(image, downPoint)
         return
       }
+    }
+
+    // Area tool, rectangle / ellipse: drag out the shape in the image's own
+    // drawing space (Shift keeps it square / circular)
+    if (tool === 'area' && areaMode !== 'polygon') {
+      const a = toLocal(imageId, downPoint)
+      const shapeTo = (p: Vec2, square: boolean): AreaShape => {
+        let b = toLocal(imageId, p)
+        if (square) {
+          const d = Math.max(Math.abs(b.x - a.x), Math.abs(b.y - a.y))
+          b = { x: a.x + Math.sign(b.x - a.x || 1) * d, y: a.y + Math.sign(b.y - a.y || 1) * d }
+        }
+        return areaMode === 'rect' ? rectFromCorners(a, b) : ellipseFromCorners(a, b)
+      }
+      let last: { p: Vec2; square: boolean } = { p: downPoint, square: false }
+      setAreaDraft({ imageId, shape: shapeTo(downPoint, false) })
+      begin({
+        onMove: (p, ev) => {
+          last = { p, square: ev.shiftKey }
+          setAreaDraft({ imageId, shape: shapeTo(p, ev.shiftKey) })
+        },
+        onEnd: () => {
+          setAreaDraft(null)
+          if (Math.hypot(last.p.x - downPoint.x, last.p.y - downPoint.y) > 3 * unitsPerPx()) addArea(shapeTo(last.p, last.square), imageId)
+        },
+      })
+      return
     }
 
     if (tool === 'line' || tool === 'rect') {
@@ -351,6 +510,9 @@ export function Canvas() {
             addTextAt(downPoint)
           } else if (tool === 'landmark') {
             addLandmarkAt(downPoint, targetId, imageId)
+          } else if (tool === 'area') {
+            // polygon mode: each click adds a point (dragging pans)
+            addPolygonVertex(downPoint, imageId)
           } else if (!image) {
             select(null)
           }
@@ -361,6 +523,10 @@ export function Canvas() {
 
   // hover preview: in the Add-callout tool, highlight the nearest snap target
   const onCanvasMove = (e: React.PointerEvent) => {
+    if (doc && tool === 'area' && polyRef.current) {
+      setPolyCursor(toLocal(polyRef.current.imageId, clientToSvg(svgRef.current!, e.clientX, e.clientY)))
+      return
+    }
     if (!doc || tool !== 'anchor') return
     const p = clientToSvg(svgRef.current!, e.clientX, e.clientY)
     const snap = snapAt(p)
@@ -556,6 +722,7 @@ export function Canvas() {
         preserveAspectRatio="xMidYMid meet"
         onPointerDown={onCanvasDown}
         onPointerMove={onCanvasMove}
+        onDoubleClick={() => tool === 'area' && polyRef.current && finishPolygon()}
       >
         {doc && (
           <>
@@ -618,6 +785,29 @@ export function Canvas() {
             ))}
             {draftDrawing && <DrawingElementView item={draftDrawing} selected={false} draft />}
 
+            {/* selectable areas: drawn shapes and named-part outlines */}
+            {(showAreas || selectedAreaId) && (
+              <AreaLayer
+                doc={showAreas ? doc : { ...doc, areas: doc.areas?.filter((a) => a.id === selectedAreaId) }}
+                selectedAreaId={selectedAreaId}
+                groupAreaIds={new Set(doc.groups?.find((g) => g.id === selectedGroupId)?.areaIds ?? [])}
+                partMarkup={partMarkup}
+                fontSize={fontSize}
+                interactive={tool === 'select'}
+                onDown={onAreaDown}
+              />
+            )}
+            {areaDraft && <AreaDraftView doc={doc} imageId={areaDraft.imageId} shape={areaDraft.shape} unit={unitsPerPx()} />}
+            {polyDraft && (
+              <AreaDraftView
+                doc={doc}
+                imageId={polyDraft.imageId}
+                shape={{ kind: 'polygon', points: polyDraft.points }}
+                cursor={polyCursor}
+                unit={unitsPerPx()}
+              />
+            )}
+
             {/* region highlight: recolored clone of the active named part */}
             {highlightMarkup && (
               <g
@@ -667,7 +857,11 @@ export function Canvas() {
                 key={c.id}
                 c={c}
                 fontSize={fontSize}
-                selected={selectedId === c.id || (!!selectedSiteId && c.siteId === selectedSiteId)}
+                selected={
+                  selectedId === c.id ||
+                  (!!selectedSiteId && c.siteId === selectedSiteId) ||
+                  (!!c.siteId && !!doc.groups?.find((g) => g.id === selectedGroupId)?.siteIds.includes(c.siteId))
+                }
                 editing={selectedId === c.id}
                 onSelect={select}
                 onLabelDown={onLabelDown}
@@ -699,6 +893,15 @@ export function Canvas() {
         <div className="canvas-hint" role="status">
           Click an image to place site {siteById(doc, pendingSiteId)?.number}
           {siteById(doc, pendingSiteId) ? ` (${siteById(doc, pendingSiteId)!.label})` : ''}. Esc cancels.
+        </div>
+      )}
+      {doc && tool === 'area' && !pendingSiteId && (
+        <div className="canvas-hint" role="status">
+          {areaMode === 'polygon'
+            ? polyDraft
+              ? `${polyDraft.points.length} point${polyDraft.points.length === 1 ? '' : 's'}. Double-click, Enter or click the first point to finish; Backspace removes a point; Esc cancels.`
+              : 'Click on an image to start a polygon area, one click per corner.'
+            : `Drag on an image to draw ${areaMode === 'rect' ? 'a rectangle' : 'an ellipse'} area (Shift keeps it ${areaMode === 'rect' ? 'square' : 'circular'}).`}
         </div>
       )}
       {!doc && <div className="canvas-empty">No drawing loaded.</div>}

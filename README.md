@@ -70,6 +70,11 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
   An on-page legend (drag to move) lists the sites. Markers default to filled numbered
   badges sitting on the point. The **skin-assessment templates** (Load sample → Multi-image
   templates) are full examples. See [docs/multi-image-pages.md](docs/multi-image-pages.md).
+- **Areas and groups** — regions a form can select: a *named part* of the artwork
+  (pick them from a list), or a rectangle, ellipse or polygon drawn over an image.
+  Areas follow their image. **Groups** count areas and sites together (e.g. a 28-joint
+  count). With sites and marks they form one selection surface that forms use, such as
+  Webforms' Drawer diagram field. See [docs/areas.md](docs/areas.md).
 - **Add callout** — click the body to anchor a point. A free-clicked point drops as an
   **unnamed dot** and the inspector’s name field is focused so you can **type its name right
   away** (place a dot, name it, repeat). Clicking a *named part* of a multi-element SVG (e.g.
@@ -110,8 +115,9 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
 | --- | --- |
 | `⌘/Ctrl + Z` | Undo |
 | `⌘/Ctrl + Shift + Z` (or `Ctrl + Y`) | Redo |
-| `Delete` / `Backspace` | Delete the selected callout, text, landmark, line, shape, or image |
-| `Esc` | Deselect (or cancel placing a site marker) |
+| `Delete` / `Backspace` | Delete the selected callout, text, landmark, line, shape, area, or image |
+| `Esc` | Deselect (or cancel placing a site marker or a polygon area) |
+| `Enter` | Finish the polygon area being drawn |
 | Arrow keys | Nudge the selected image (`Shift` = ×10) |
 | `A` | Auto-arrange the current view's labels into non-overlapping side columns |
 | Mouse wheel | Zoom to cursor; drag empty space to pan |
@@ -143,6 +149,8 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
 | `Callout` | anchor + default label/balloon/leader/color |
 | `DrawingElement` | an editable line or rectangle on the guide-geometry layer |
 | `Site` | a numbered row of the shared site table; callouts with its `siteId` are its markers |
+| `Area` | a selectable region: a named part of an image's artwork, or a rect / ellipse / polygon in its drawing space |
+| `SurfaceGroup` | a counted set of areas and sites |
 | `View` | a named label-set: `labelMode` (`names`/`numbers`/`blank`), how site markers show, + per-callout overrides |
 | `DrawerDoc` | the whole document: page + images + anchors + callouts + sites + views + landmarks + standalone text + guide geometry |
 
@@ -171,6 +179,8 @@ src/
   geometry.ts         coordinate transforms + leader/balloon geometry (pure)
   resolve.ts          callout × view -> ResolvedCallout (pure)
   docModel.ts         images on the page, site table, migration, coverage, CSV (pure)
+  areaModel.ts        areas and counter groups: edits, cascades, load-time cleaning (pure)
+  surface.ts          selection-surface geometry: area outlines, hit-testing, group totals (pure)
   sceneImport.ts      .scene.json multi-image scenes -> DrawerDoc
   svgParse.ts         import SVG -> BaseDrawing (+ sanitization)
   store.ts            Zustand store (all document mutations)

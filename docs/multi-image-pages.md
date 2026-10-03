@@ -35,6 +35,10 @@ their points where they were.
 - **Delete**: removes the image and everything attached to it. Site rows stay, and
   the coverage check reports any site that lost its last visible marker.
 
+Images can also carry **areas**, regions a form can select. They are stored in the
+image's drawing space, so they follow the image, and duplicates and deletes cascade
+to them. See [areas.md](areas.md).
+
 Points belong to the image you click. Their coordinates are stored in that image's
 own drawing space (`Anchor.imageId`), so they follow every move, resize, rotation
 or mirror. Callout labels and elbows, and text or shapes attached to an image

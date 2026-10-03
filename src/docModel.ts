@@ -11,6 +11,7 @@ import {
   pointToNormalized,
   boxForTarget,
 } from './geometry'
+import { copyAreasToImage, dropFromGroups, removeAreasOnImage } from './areaModel'
 import { uid } from './id'
 import type {
   Anchor,
@@ -235,33 +236,35 @@ export function duplicateImage(doc: DrawerDoc, imageId: string, mirror = false):
   const at = doc.images.findIndex((i) => i.id === imageId)
   const images = [...doc.images]
   images.splice(at + 1, 0, copy)
-  return {
-    doc: {
-      ...doc,
-      images,
-      anchors: [...doc.anchors, ...anchors],
-      callouts: [...doc.callouts, ...callouts],
-      views,
-      landmarks: [...doc.landmarks, ...landmarks],
-      landmarkGroupOrder: order,
-      textAnnotations: [
-        ...doc.textAnnotations,
-        ...doc.textAnnotations.filter((t) => t.imageId === imageId).map((t) => ({ ...t, id: uid('text'), imageId: copy.id, pos: map(t.pos) })),
-      ],
-      drawingElements: [
-        ...doc.drawingElements,
-        ...doc.drawingElements.filter((d) => d.imageId === imageId).map((d) => ({ ...d, id: uid('drawing'), imageId: copy.id, start: map(d.start), end: map(d.end) })),
-      ],
-    },
-    imageId: copy.id,
+  const next: DrawerDoc = {
+    ...doc,
+    images,
+    anchors: [...doc.anchors, ...anchors],
+    callouts: [...doc.callouts, ...callouts],
+    views,
+    landmarks: [...doc.landmarks, ...landmarks],
+    landmarkGroupOrder: order,
+    textAnnotations: [
+      ...doc.textAnnotations,
+      ...doc.textAnnotations.filter((t) => t.imageId === imageId).map((t) => ({ ...t, id: uid('text'), imageId: copy.id, pos: map(t.pos) })),
+    ],
+    drawingElements: [
+      ...doc.drawingElements,
+      ...doc.drawingElements.filter((d) => d.imageId === imageId).map((d) => ({ ...d, id: uid('drawing'), imageId: copy.id, start: map(d.start), end: map(d.end) })),
+    ],
   }
+  // areas are in drawing space, so they copy without remapping (not into groups)
+  return { doc: copyAreasToImage(next, imageId, copy.id), imageId: copy.id }
 }
 
-/** Remove an image and everything attached to it. Site rows stay, so lost coverage is reported. */
+/**
+ * Remove an image and everything attached to it, including its areas (and
+ * their group entries). Site rows stay, so lost coverage is reported.
+ */
 export function deleteImage(doc: DrawerDoc, imageId: string): DrawerDoc {
   if (!findImage(doc, imageId)) throw new Error('Image not found.')
   const callouts = calloutsOnImage(doc, imageId)
-  return {
+  return removeAreasOnImage({
     ...doc,
     images: doc.images.filter((i) => i.id !== imageId),
     anchors: doc.anchors.filter((a) => a.imageId !== imageId),
@@ -274,7 +277,7 @@ export function deleteImage(doc: DrawerDoc, imageId: string): DrawerDoc {
     landmarks: doc.landmarks.filter((l) => l.imageId !== imageId),
     textAnnotations: doc.textAnnotations.filter((t) => t.imageId !== imageId),
     drawingElements: doc.drawingElements.filter((d) => d.imageId !== imageId),
-  }
+  }, imageId)
 }
 
 /** Move an image one layer up (+1) or down (-1). */
@@ -422,11 +425,11 @@ export function removeCallouts(doc: DrawerDoc, ids: Set<string>): DrawerDoc {
   }
 }
 
-/** Delete a site row and all of its placements. */
+/** Delete a site row, all of its placements, and its group entries. */
 export function deleteSite(doc: DrawerDoc, siteId: string): DrawerDoc {
   const placements = new Set(sitePlacements(doc, siteId).map((c) => c.id))
   const next = removeCallouts(doc, placements)
-  return { ...next, sites: (doc.sites ?? []).filter((s) => s.id !== siteId) }
+  return dropFromGroups({ ...next, sites: (doc.sites ?? []).filter((s) => s.id !== siteId) }, { siteIds: [siteId] })
 }
 
 /** Link a callout to a site (or unlink with null); its label and number follow the site. */

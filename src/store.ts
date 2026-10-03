@@ -1,4 +1,14 @@
 import { create } from 'zustand'
+import {
+  addArea as addAreaToDoc,
+  addGroup as addGroupToDoc,
+  addPartAreas as addPartAreasToDoc,
+  deleteArea as deleteAreaFromDoc,
+  deleteGroup as deleteGroupFromDoc,
+  setGroupMember as setGroupMemberInDoc,
+  updateArea as updateAreaInDoc,
+  updateGroup as updateGroupInDoc,
+} from './areaModel'
 import { applyArrangement } from './autoLayout'
 import {
   anchorPagePoint,
@@ -50,6 +60,8 @@ import { parseSvg } from './svgParse'
 import { DEFAULT_STYLE } from './types'
 import type {
   Anchor,
+  Area,
+  AreaShape,
   BalloonShape,
   BaseDrawing,
   Callout,
@@ -65,12 +77,15 @@ import type {
   Site,
   SiteLegend,
   StylePreset,
+  SurfaceGroup,
   TextAnnotation,
   Vec2,
   View,
 } from './types'
 
-export type Tool = 'select' | 'anchor' | 'landmark' | 'text' | 'line' | 'rect'
+export type Tool = 'select' | 'anchor' | 'landmark' | 'text' | 'line' | 'rect' | 'area'
+/** What the Area tool draws. */
+export type AreaMode = 'rect' | 'ellipse' | 'polygon'
 
 const PALETTE = ['#1f6feb', '#d1242f', '#1a7f37', '#9a6700', '#8250df', '#bf3989']
 
@@ -161,6 +176,14 @@ interface StoreState {
   pendingSiteId: string | null
   /** draw dashed lines from the selected site's markers to its legend row */
   showSiteConnections: boolean
+  selectedAreaId: string | null
+  /** selected counter group (its member areas are highlighted) */
+  selectedGroupId: string | null
+  areaMode: AreaMode
+  /** outline and label areas on the canvas (they stay selectable from the panel) */
+  showAreas: boolean
+  /** named part to highlight while hovering it in the Areas panel */
+  hoverPart: { imageId: string; targetId: string } | null
   reference: ReferenceOverlay | null
   status: string
   past: DrawerDoc[]
@@ -206,6 +229,20 @@ interface StoreState {
   updateSiteLegend: (patch: Partial<SiteLegend>) => void
   setMappingValue: (fieldKey: string, value: string) => void
   setShowSiteConnections: (v: boolean) => void
+  // areas and counter groups (the selection surface)
+  setAreaMode: (mode: AreaMode) => void
+  setShowAreas: (v: boolean) => void
+  setHoverPart: (part: { imageId: string; targetId: string } | null) => void
+  selectArea: (id: string | null) => void
+  addArea: (shape: AreaShape, imageId: string | null) => void
+  addPartAreas: (imageId: string, targetIds: string[]) => void
+  updateArea: (id: string, patch: Partial<Pick<Area, 'label' | 'fieldKey'>>) => void
+  deleteArea: (id: string) => void
+  selectGroup: (id: string | null) => void
+  addGroup: (label: string) => void
+  updateGroup: (id: string, patch: Partial<Pick<SurfaceGroup, 'label' | 'showCount'>>) => void
+  deleteGroup: (id: string) => void
+  setGroupMember: (groupId: string, kind: 'area' | 'site', id: string, member: boolean) => void
   // history
   record: () => void
   undo: () => void
@@ -289,6 +326,8 @@ const NO_SELECTION = {
   selectedDrawingId: null,
   selectedImageId: null,
   selectedSiteId: null,
+  selectedAreaId: null,
+  selectedGroupId: null,
 }
 
 /** Fresh-document state: no selection, no history, nothing pending. */
@@ -298,6 +337,7 @@ const FRESH = {
   past: [] as DrawerDoc[],
   future: [] as DrawerDoc[],
   hoverLandmarkId: null,
+  hoverPart: null,
 }
 
 export const useStore = create<StoreState>((set, get) => ({
@@ -311,6 +351,11 @@ export const useStore = create<StoreState>((set, get) => ({
   selectedSiteId: null,
   pendingSiteId: null,
   showSiteConnections: false,
+  selectedAreaId: null,
+  selectedGroupId: null,
+  areaMode: 'rect',
+  showAreas: true,
+  hoverPart: null,
   reference: null,
   status: 'Loading…',
   past: [],
@@ -521,6 +566,105 @@ export const useStore = create<StoreState>((set, get) => ({
     if (value === '') delete mappingValues[fieldKey]
     else mappingValues[fieldKey] = value.slice(0, 4000)
     set({ doc: { ...doc, mappingValues } })
+  },
+
+  // --- areas and counter groups -----------------------------------------------
+
+  setAreaMode: (mode) => set({ areaMode: mode, tool: 'area', pendingSiteId: null }),
+  setShowAreas: (v) => set({ showAreas: v }),
+  setHoverPart: (part) => set({ hoverPart: part }),
+  selectArea: (id) => set({ ...NO_SELECTION, selectedAreaId: id }),
+
+  addArea: (shape, imageId) => {
+    const doc = get().doc
+    if (!doc) return
+    try {
+      const result = addAreaToDoc(doc, { shape, imageId })
+      get().record()
+      // stay in the Area tool so several areas can be drawn in a row
+      set({ doc: result.doc, ...NO_SELECTION, selectedAreaId: result.areaId, status: '' })
+    } catch (e) {
+      set({ status: (e as Error).message })
+    }
+  },
+
+  addPartAreas: (imageId, targetIds) => {
+    const doc = get().doc
+    if (!doc) return
+    try {
+      const result = addPartAreasToDoc(doc, imageId, targetIds)
+      if (!result.areaIds.length) return
+      get().record()
+      set({
+        doc: result.doc,
+        ...NO_SELECTION,
+        selectedAreaId: result.areaIds.length === 1 ? result.areaIds[0] : null,
+        status: `Added ${result.areaIds.length} part area${result.areaIds.length === 1 ? '' : 's'}.`,
+      })
+    } catch (e) {
+      set({ status: (e as Error).message })
+    }
+  },
+
+  // no history step here: inspector fields record on focus, like other text edits
+  updateArea: (id, patch) => {
+    const doc = get().doc
+    if (!doc) return
+    try {
+      set({ doc: updateAreaInDoc(doc, id, patch) })
+    } catch (e) {
+      set({ status: (e as Error).message })
+    }
+  },
+
+  deleteArea: (id) => {
+    const doc = get().doc
+    if (!doc || !doc.areas?.some((a) => a.id === id)) return
+    get().record()
+    set({ doc: deleteAreaFromDoc(doc, id), selectedAreaId: get().selectedAreaId === id ? null : get().selectedAreaId })
+  },
+
+  selectGroup: (id) => set({ ...NO_SELECTION, selectedGroupId: id }),
+
+  addGroup: (label) => {
+    const doc = get().doc
+    if (!doc) return
+    try {
+      const result = addGroupToDoc(doc, label)
+      get().record()
+      set({ doc: result.doc, ...NO_SELECTION, selectedGroupId: result.groupId, status: '' })
+    } catch (e) {
+      set({ status: (e as Error).message })
+    }
+  },
+
+  updateGroup: (id, patch) => {
+    const doc = get().doc
+    if (!doc) return
+    try {
+      set({ doc: updateGroupInDoc(doc, id, patch) })
+    } catch (e) {
+      set({ status: (e as Error).message })
+    }
+  },
+
+  deleteGroup: (id) => {
+    const doc = get().doc
+    if (!doc || !doc.groups?.some((g) => g.id === id)) return
+    get().record()
+    set({ doc: deleteGroupFromDoc(doc, id), selectedGroupId: get().selectedGroupId === id ? null : get().selectedGroupId })
+  },
+
+  setGroupMember: (groupId, kind, id, member) => {
+    const doc = get().doc
+    if (!doc) return
+    try {
+      const next = setGroupMemberInDoc(doc, groupId, kind, id, member)
+      get().record()
+      set({ doc: next })
+    } catch (e) {
+      set({ status: (e as Error).message })
+    }
   },
 
   // snapshot the current doc onto the undo stack (call before a discrete edit,
