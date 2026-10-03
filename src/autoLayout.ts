@@ -1,6 +1,6 @@
-import { fontSizeFor } from './geometry'
+import { docContentBox, findImage, fontSizeFor, imagePageBounds } from './geometry'
 import { getView, resolveCallouts } from './resolve'
-import type { DrawerDoc, Vec2 } from './types'
+import type { Box, DrawerDoc, ResolvedCallout, Vec2 } from './types'
 
 // ---------------------------------------------------------------------------
 // Auto label layout — "boundary labeling".
@@ -27,11 +27,26 @@ import type { DrawerDoc, Vec2 } from './types'
  */
 export function computeArrangement(doc: DrawerDoc, viewId?: string): Record<string, Vec2> {
   const view = getView(doc, viewId)
-  const resolved = resolveCallouts(doc, view.id).filter((r) => r.visible)
+  // markers that sit on their point (no leader) have no label to arrange
+  const resolved = resolveCallouts(doc, view.id).filter((r) => r.visible && r.leaderStyle !== 'none')
   const out: Record<string, Vec2> = {}
   if (resolved.length === 0) return out
 
-  const box = doc.base.contentBox
+  // arrange each image's labels around that image; page-level callouts around the content
+  const groups = new Map<string, typeof resolved>()
+  for (const r of resolved) {
+    const key = r.imageId ?? ''
+    groups.set(key, [...(groups.get(key) ?? []), r])
+  }
+  for (const [imageId, list] of groups) {
+    const image = findImage(doc, imageId)
+    arrangeAround(image ? imagePageBounds(image, image.drawing.contentBox) : docContentBox(doc), list, out)
+  }
+  return out
+}
+
+/** Spread one group's labels into side columns clear of `box`. */
+function arrangeAround(box: Box, resolved: ResolvedCallout[], out: Record<string, Vec2>) {
   const centerX = box.x + box.w / 2
   // park the label columns well clear of the silhouette so balloons/text don't
   // sit on top of the body (true per-row silhouette avoidance is future work —
@@ -79,7 +94,6 @@ export function computeArrangement(doc: DrawerDoc, viewId?: string): Record<stri
     resolved.filter((r) => r.anchorPoint.x >= centerX),
     colRight,
   )
-  return out
 }
 
 /**

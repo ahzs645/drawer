@@ -10,6 +10,7 @@ pnpm install
 pnpm dev         # http://localhost:5173
 pnpm typecheck   # tsc --noEmit
 pnpm build       # typecheck + production build
+pnpm test        # pure model tests (Node 22+)
 ```
 
 ## Project shape
@@ -19,6 +20,7 @@ The model is the source of truth and is **framework-agnostic** — keep it that 
 - `src/types.ts` — data model (`DrawerDoc`, `Anchor`, `Callout`, `View`, …)
 - `src/geometry.ts` — pure coordinate transforms + leader/balloon geometry
 - `src/resolve.ts` — pure `callout × view → ResolvedCallout`
+- `src/docModel.ts` — pure multi-image page and site-table operations
 - `src/svgParse.ts` — import/sanitize SVG into a `BaseDrawing`
 - `src/store.ts` — Zustand store; all document mutations + undo/redo history
 - `src/components/` — the React/SVG canvas, toolbar, inspector, views

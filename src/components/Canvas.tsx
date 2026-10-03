@@ -1,9 +1,17 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { calloutName, siteById, siteLegendBox } from '../docModel'
 import {
+  boundsOfPoints,
   buildLeader,
   clientToSvg,
   diagramContentBounds,
+  docContentBox,
+  findImage,
   fontSizeFor,
+  imageAtPoint,
+  imageFrame,
+  imageTransform,
+  isImageVisible,
   landmarkPoint,
   nearestLandmark,
 } from '../geometry'
@@ -13,19 +21,23 @@ import { useStore } from '../store'
 import type { Box, DrawerDoc, DrawingElement, Vec2 } from '../types'
 import { CalloutView } from './Callout'
 import { DrawingElementView } from './DrawingElement'
+import { ImageChrome, PlacedImage } from './ImageLayer'
 import { LandmarkLayer, type LandmarkMark } from './LandmarkLayer'
+import { SiteLegendView } from './SiteLegend'
 import { TextAnnotationView } from './TextAnnotation'
 
 /** Screen-space snap radius (px) for catalog landmarks. */
 const SNAP_PX = 16
 
 /** Read a body element's markup for the highlight overlay, stripping its id so
- * the clone doesn't collide with the original. */
-function elementMarkup(root: SVGGElement | null, id: string | null): string | null {
+ * the clone doesn't collide with the original. Searches only the given image,
+ * since copies of one drawing share element ids. */
+function elementMarkup(root: SVGGElement | null, imageId: string | null, id: string | null): string | null {
   if (!root || !id) return null
   let el: Element | null = null
   try {
-    el = root.querySelector(`#${CSS.escape(id)}, [data-drawer-el="${CSS.escape(id)}"]`)
+    const scope = imageId ? root.querySelector(`[data-image-id="${CSS.escape(imageId)}"]`) : root
+    el = scope?.querySelector(`#${CSS.escape(id)}, [data-drawer-el="${CSS.escape(id)}"]`) ?? null
   } catch {
     return null
   }
@@ -59,13 +71,23 @@ function contentFitBox(doc: DrawerDoc): Box {
   const resolved = resolveCallouts(doc)
   const fs = fontSizeFor(doc.base.viewBox)
   const box = diagramContentBounds(
-    doc.base.contentBox,
+    docContentBox(doc),
     resolved,
     fs,
-    doc.textAnnotations,
-    doc.drawingElements,
+    doc.textAnnotations.filter((t) => isImageVisible(doc, t.imageId)),
+    doc.drawingElements.filter((d) => isImageVisible(doc, d.imageId)),
   )
-  return box.w > 0 && box.h > 0 ? box : doc.base.viewBox
+  const extra: Box[] = [box]
+  const legend = siteLegendBox(doc)
+  if (legend) extra.push(legend)
+  if (doc.exportFrame === 'page') extra.push(doc.base.viewBox)
+  const all = boundsOfPoints(extra.flatMap((b) => [{ x: b.x, y: b.y }, { x: b.x + b.w, y: b.y + b.h }]))
+  return all.w > 0 && all.h > 0 ? all : doc.base.viewBox
+}
+
+/** Zoom limits scale with whichever is larger: the page or the content. */
+function zoomSpan(doc: DrawerDoc): number {
+  return Math.max(doc.base.viewBox.w, docContentBox(doc).w)
 }
 
 /** Initial camera that contains the (padded) drawing within the viewport aspect. */
@@ -89,7 +111,16 @@ export function Canvas() {
   const selectedTextId = useStore((s) => s.selectedTextId)
   const selectedLandmarkId = useStore((s) => s.selectedLandmarkId)
   const selectedDrawingId = useStore((s) => s.selectedDrawingId)
+  const selectedImageId = useStore((s) => s.selectedImageId)
+  const selectedSiteId = useStore((s) => s.selectedSiteId)
+  const pendingSiteId = useStore((s) => s.pendingSiteId)
+  const showSiteConnections = useStore((s) => s.showSiteConnections)
+  const reference = useStore((s) => s.reference)
   const select = useStore((s) => s.select)
+  const selectImage = useStore((s) => s.selectImage)
+  const selectSite = useStore((s) => s.selectSite)
+  const setImagePlacement = useStore((s) => s.setImagePlacement)
+  const updateSiteLegend = useStore((s) => s.updateSiteLegend)
   const selectText = useStore((s) => s.selectText)
   const selectLandmark = useStore((s) => s.selectLandmark)
   const selectDrawing = useStore((s) => s.selectDrawing)
@@ -149,10 +180,8 @@ export function Canvas() {
       const factor = e.deltaY > 0 ? 1.1 : 1 / 1.1
       const p = clientToSvg(el, e.clientX, e.clientY)
       setCamera((c) => {
-        const w = Math.min(
-          Math.max(c.w * factor, d.base.viewBox.w * 0.05),
-          d.base.viewBox.w * 8,
-        )
+        const span = zoomSpan(d)
+        const w = Math.min(Math.max(c.w * factor, span * 0.05), span * 8)
         const k = w / c.w
         return { x: p.x - (p.x - c.x) * k, y: p.y - (p.y - c.y) * k, w }
       })
@@ -167,13 +196,13 @@ export function Canvas() {
   const camH = camera.w * aspect
 
   // catalog markers resolved to user-space points (best-effort "used" by name)
-  const usedNames = new Set(doc?.callouts.map((c) => c.labelText) ?? [])
+  const usedNames = new Set(doc?.callouts.map((c) => calloutName(doc, c)) ?? [])
   const marks: LandmarkMark[] =
     doc && showLandmarks && (tool === 'anchor' || tool === 'landmark' || !!selectedLandmarkId)
       ? doc.landmarks
-        .filter((lm) => !doc.hiddenLandmarkGroups.includes(lm.group || 'Other'))
+        .filter((lm) => !doc.hiddenLandmarkGroups.includes(lm.group || 'Other') && isImageVisible(doc, lm.imageId))
         .map((lm) => {
-          const p = landmarkPoint(doc.base, lm)
+          const p = landmarkPoint(doc, lm)
           return { id: lm.id, name: lm.name, x: p.x, y: p.y, used: usedNames.has(lm.name) }
         })
       : []
@@ -183,23 +212,28 @@ export function Canvas() {
 
   /** nearest catalog landmark to an svg point, within the screen snap radius */
   const snapAt = (p: Vec2) =>
-    doc ? nearestLandmark(doc.base, doc.landmarks, p, SNAP_PX * unitsPerPx()) : null
+    doc ? nearestLandmark(doc, doc.landmarks, p, SNAP_PX * unitsPerPx()) : null
 
   // region highlight: the named part under the hovered landmark, else the part
   // the selected callout is anchored to. Recolored clone overlays the original.
   const hoverLm = doc?.landmarks.find((l) => l.id === hoverLandmarkId)
   let highlightTargetId: string | null = hoverLm?.targetId ?? null
+  let highlightImageId: string | null = hoverLm?.imageId ?? null
   if (!highlightTargetId && selectedId && doc) {
     const c = doc.callouts.find((x) => x.id === selectedId)
     const a = c && doc.anchors.find((x) => x.id === c.anchorId)
     highlightTargetId = a?.relative?.targetId ?? null
+    highlightImageId = a?.imageId ?? null
   }
   if (!highlightTargetId && selectedLandmarkId && doc) {
-    highlightTargetId = doc.landmarks.find((l) => l.id === selectedLandmarkId)?.targetId ?? null
+    const lm = doc.landmarks.find((l) => l.id === selectedLandmarkId)
+    highlightTargetId = lm?.targetId ?? null
+    highlightImageId = lm?.imageId ?? null
   }
+  const highlightImage = doc ? findImage(doc, highlightImageId) : undefined
   useLayoutEffect(() => {
-    setHighlightMarkup(elementMarkup(bodyRef.current, highlightTargetId))
-  }, [highlightTargetId, doc?.id])
+    setHighlightMarkup(elementMarkup(bodyRef.current, highlightImageId, highlightTargetId))
+  }, [highlightTargetId, highlightImageId, doc?.id])
 
   const fitView = () => {
     if (doc && size.w) setCamera(initCamera(contentFitBox(doc), size))
@@ -211,11 +245,9 @@ export function Canvas() {
   }, [fitRequest])
   const zoomBy = (factor: number) => {
     if (!doc) return
+    const span = zoomSpan(doc)
     setCamera((c) => {
-      const w = Math.min(
-        Math.max(c.w * factor, doc.base.viewBox.w * 0.05),
-        doc.base.viewBox.w * 8,
-      )
+      const w = Math.min(Math.max(c.w * factor, span * 0.05), span * 8)
       const cx = c.x + c.w / 2
       const cyc = c.y + (c.w * aspect) / 2
       return { x: cx - w / 2, y: cyc - (w * aspect) / 2, w }
@@ -227,10 +259,42 @@ export function Canvas() {
     if (e.button !== 0 || !doc) return
     const svg = svgRef.current!
     const downPoint = clientToSvg(svg, e.clientX, e.clientY)
-    // which body element (if any) was clicked, so the anchor can target that part
+    // which image, and which named part of it (if any), was clicked, so the
+    // anchor can live on that image and target that part
+    const imageEl = (e.target as Element).closest('.body-layer [data-image-id]')
     const hit = (e.target as Element).closest('[data-drawer-el],[id]')
+    const inImage = !!imageEl && !!hit && imageEl.contains(hit) && hit !== imageEl
     const inBody = !!(e.target as Element).closest('.body-layer')
-    const targetId = inBody && hit ? hit.id || hit.getAttribute('data-drawer-el') : null
+    const targetId = (imageEl ? inImage : inBody) && hit ? hit.id || hit.getAttribute('data-drawer-el') : null
+    // line art is mostly empty: anywhere inside an image's frame counts as that image
+    const image = findImage(doc, imageEl?.getAttribute('data-image-id')) ?? imageAtPoint(doc, downPoint)
+    const imageId = image?.id ?? null
+
+    // Select tool: grab an image to move it (locked images just get selected)
+    if (tool === 'select' && image) {
+      selectImage(image.id)
+      if (!image.locked) {
+        const start = { x: image.x, y: image.y }
+        let rec = false
+        begin({
+          onMove: (p, ev) => {
+            let x = start.x + p.x - downPoint.x
+            let y = start.y + p.y - downPoint.y
+            if (ev.shiftKey) {
+              x = Math.round(x / 8) * 8
+              y = Math.round(y / 8) * 8
+            }
+            if (!rec) {
+              if (Math.hypot(p.x - downPoint.x, p.y - downPoint.y) < 2 * unitsPerPx()) return
+              rec = true
+              record()
+            }
+            setImagePlacement(image.id, { x, y })
+          },
+        })
+        return
+      }
+    }
 
     if (tool === 'line' || tool === 'rect') {
       let endPoint = downPoint
@@ -282,12 +346,12 @@ export function Canvas() {
             // a click near a catalog landmark snaps to it (named + locked)
             const snap = snapAt(downPoint)
             if (snap) addCalloutAtLandmark(snap.landmark.id)
-            else addCalloutAt(downPoint, targetId)
+            else addCalloutAt(downPoint, targetId, imageId)
           } else if (tool === 'text') {
             addTextAt(downPoint)
           } else if (tool === 'landmark') {
-            addLandmarkAt(downPoint, targetId)
-          } else {
+            addLandmarkAt(downPoint, targetId, imageId)
+          } else if (!image) {
             select(null)
           }
         }
@@ -316,7 +380,7 @@ export function Canvas() {
     selectLandmark(id)
     const lm = doc.landmarks.find((l) => l.id === id)
     if (!lm) return
-    const current = landmarkPoint(doc.base, lm)
+    const current = landmarkPoint(doc, lm)
     const start = clientToSvg(svgRef.current!, e.clientX, e.clientY)
     const offset = { x: current.x - start.x, y: current.y - start.y }
     let rec = false
@@ -386,6 +450,70 @@ export function Canvas() {
     })
   }
 
+  // --- image resize: bottom-right corner, top-left stays put ---
+  const onResizeDown = (e: React.PointerEvent, id: string) => {
+    if (e.button !== 0 || !doc) return
+    e.stopPropagation()
+    const image = findImage(doc, id)
+    if (!image || image.locked) return
+    const { angle, corners } = imageFrame(image)
+    const tl = corners[0]
+    const c = Math.cos(angle)
+    const s = Math.sin(angle)
+    let rec = false
+    begin({
+      onMove: (p, ev) => {
+        if (!rec) { rec = true; record() }
+        const wx = p.x - tl.x
+        const wy = p.y - tl.y
+        const w = Math.max(10, wx * c + wy * s)
+        // Alt frees the aspect ratio
+        const h = ev.altKey ? Math.max(10, -wx * s + wy * c) : (w * image.height) / image.width
+        const cx = tl.x + (w / 2) * c - (h / 2) * s
+        const cy = tl.y + (w / 2) * s + (h / 2) * c
+        setImagePlacement(id, { x: cx - w / 2, y: cy - h / 2, width: w, height: h })
+      },
+    })
+  }
+
+  // --- image rotate: about the box center ---
+  const onRotateDown = (e: React.PointerEvent, id: string) => {
+    if (e.button !== 0 || !doc) return
+    e.stopPropagation()
+    const image = findImage(doc, id)
+    if (!image || image.locked) return
+    const { center } = imageFrame(image)
+    let rec = false
+    begin({
+      onMove: (p, ev) => {
+        if (!rec) { rec = true; record() }
+        let deg = (Math.atan2(p.y - center.y, p.x - center.x) * 180) / Math.PI + 90
+        if (ev.shiftKey) deg = Math.round(deg / 15) * 15
+        deg = ((deg + 540) % 360) - 180
+        setImagePlacement(id, { rotation: Math.round(deg * 10) / 10 })
+      },
+    })
+  }
+
+  // --- site legend: drag to move, click a row to select its site ---
+  const onLegendDown = (e: React.PointerEvent) => {
+    if (e.button !== 0 || !doc?.siteLegend) return
+    e.stopPropagation()
+    const start = clientToSvg(svgRef.current!, e.clientX, e.clientY)
+    const origin = doc.siteLegend.pos
+    let rec = false
+    begin({
+      onMove: (p) => {
+        if (!rec) {
+          if (Math.hypot(p.x - start.x, p.y - start.y) < 3 * unitsPerPx()) return
+          rec = true
+          record()
+        }
+        updateSiteLegend({ pos: { x: origin.x + p.x - start.x, y: origin.y + p.y - start.y } })
+      },
+    })
+  }
+
   // --- standalone text drag ---
   const onTextDown = (e: React.PointerEvent, id: string) => {
     if (e.button !== 0 || !doc) return
@@ -440,15 +568,47 @@ export function Canvas() {
               fill="#ffffff"
             />
 
-            {/* base body drawing */}
-            <g
-              ref={bodyRef}
-              className="body-layer"
-              dangerouslySetInnerHTML={{ __html: doc.base.inner }}
-            />
+            {/* page frame (the export crop when exporting the page) */}
+            {doc.exportFrame === 'page' && (
+              <rect
+                className="page-frame"
+                x={doc.base.viewBox.x}
+                y={doc.base.viewBox.y}
+                width={doc.base.viewBox.w}
+                height={doc.base.viewBox.h}
+                fill="none"
+                stroke="#c3ccd6"
+                strokeWidth={unitsPerPx()}
+                strokeDasharray={`${6 * unitsPerPx()} ${4 * unitsPerPx()}`}
+                pointerEvents="none"
+              />
+            )}
+
+            {/* artwork: legacy base markup (normally empty) + placed images */}
+            <g ref={bodyRef} className="body-layer">
+              {doc.base.inner && <g dangerouslySetInnerHTML={{ __html: doc.base.inner }} />}
+              {doc.images.map((image) => (
+                <PlacedImage key={image.id} image={image} />
+              ))}
+            </g>
+
+            {/* session-only tracing reference over the page */}
+            {reference?.visible && (
+              <image
+                className="reference-overlay"
+                href={reference.dataUrl}
+                x={doc.base.viewBox.x}
+                y={doc.base.viewBox.y}
+                width={doc.base.viewBox.w}
+                height={doc.base.viewBox.h}
+                opacity={reference.opacity}
+                preserveAspectRatio="none"
+                pointerEvents="none"
+              />
+            )}
 
             {/* freely drawn divider lines and simple shapes */}
-            {doc.drawingElements.map((item) => (
+            {doc.drawingElements.filter((d) => isImageVisible(doc, d.imageId)).map((item) => (
               <DrawingElementView
                 key={item.id}
                 item={item}
@@ -463,6 +623,7 @@ export function Canvas() {
               <g
                 className="region-highlight"
                 pointerEvents="none"
+                transform={highlightImage ? imageTransform(highlightImage) : undefined}
                 dangerouslySetInnerHTML={{ __html: highlightMarkup }}
               />
             )}
@@ -478,7 +639,7 @@ export function Canvas() {
             />
 
             {/* standalone headings, figure letters, and captions */}
-            {doc.textAnnotations.map((item) => (
+            {doc.textAnnotations.filter((t) => isImageVisible(doc, t.imageId)).map((item) => (
               <TextAnnotationView
                 key={item.id}
                 item={item}
@@ -487,13 +648,26 @@ export function Canvas() {
               />
             ))}
 
+            {/* numbered site list */}
+            <SiteLegendView
+              doc={doc}
+              selectedSiteId={selectedSiteId}
+              connections={
+                showSiteConnections && selectedSiteId
+                  ? resolved.filter((c) => c.visible && c.siteId === selectedSiteId).map((c) => c.anchorPoint)
+                  : []
+              }
+              onDown={onLegendDown}
+              onRowClick={selectSite}
+            />
+
             {/* callouts */}
             {resolved.map((c) => (
               <CalloutView
                 key={c.id}
                 c={c}
                 fontSize={fontSize}
-                selected={selectedId === c.id}
+                selected={selectedId === c.id || (!!selectedSiteId && c.siteId === selectedSiteId)}
                 editing={selectedId === c.id}
                 onSelect={select}
                 onLabelDown={onLabelDown}
@@ -501,6 +675,16 @@ export function Canvas() {
                 onElbowDown={onElbowDown}
               />
             ))}
+
+            {/* selected image: frame + resize / rotate handles */}
+            {selectedImageId && findImage(doc, selectedImageId) && (
+              <ImageChrome
+                image={findImage(doc, selectedImageId)!}
+                unit={unitsPerPx()}
+                onResizeDown={onResizeDown}
+                onRotateDown={onRotateDown}
+              />
+            )}
           </>
         )}
       </svg>
@@ -509,6 +693,12 @@ export function Canvas() {
           <button onClick={() => zoomBy(1 / 1.25)} title="Zoom out" aria-label="Zoom out">−</button>
           <button onClick={fitView} title="Fit to view">Fit</button>
           <button onClick={() => zoomBy(1.25)} title="Zoom in" aria-label="Zoom in">+</button>
+        </div>
+      )}
+      {doc && pendingSiteId && (
+        <div className="canvas-hint" role="status">
+          Click an image to place site {siteById(doc, pendingSiteId)?.number}
+          {siteById(doc, pendingSiteId) ? ` (${siteById(doc, pendingSiteId)!.label})` : ''}. Esc cancels.
         </div>
       )}
       {!doc && <div className="canvas-empty">No drawing loaded.</div>}

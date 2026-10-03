@@ -20,6 +20,30 @@ export const SAMPLES: SampleDef[] = [
 
 export const DEFAULT_SAMPLE_KEY = 'divider'
 
+/** Multi-image page templates (scene files converted on load). */
+export interface TemplateDef {
+  key: string
+  file: string
+  label: string
+  /** status line shown after loading: provenance and review caveats */
+  note: string
+}
+
+export const TEMPLATES: TemplateDef[] = [
+  {
+    key: 'skinLibrary',
+    file: 'diorama/skin-assessment-library.scene.json',
+    label: 'Skin assessment — body library',
+    note: 'Skin assessment built from the bundled body drawings. Marker positions are approximate and need review; not a validated clinical tool.',
+  },
+  {
+    key: 'skinTraced',
+    file: 'diorama/skin-assessment.scene.json',
+    label: 'Skin assessment — traced reference',
+    note: 'Skin assessment traced from a reference flowsheet. Unvalidated visual reconstruction; not a clinical assessment tool.',
+  },
+]
+
 export function sampleUrl(file: string): string {
   return `${import.meta.env.BASE_URL}samples/${file}`
 }

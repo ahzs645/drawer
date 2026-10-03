@@ -1,4 +1,4 @@
-import { boxForTarget, pointToNormalized, resolveAnchor } from './geometry'
+import { boxForTarget, drawingFor, findImage, pointToNormalized, resolveAnchor } from './geometry'
 import type { Anchor, AnchorAttachment, AnchorMapping, BaseDrawing, DrawerDoc, MappingMode, MappingValue } from './types'
 
 export function diagramUid(prefix: string): string {
@@ -38,36 +38,55 @@ export function attachAnchorToTarget(doc: DrawerDoc, id: string, targetId: strin
   const anchor = doc.anchors.find((a) => a.id === id)
   if (!anchor) throw new Error('The selected point no longer exists.')
   if (anchor.mode === 'path-offset') throw new Error('Path-offset attachment is not implemented; convert this anchor first.')
-  if (targetId && !own(doc.base.targetBoxes, targetId)) throw new Error(`Unknown SVG target: ${targetId}`)
+  // targets are elements of the drawing the point lives on
+  const drawing = drawingFor(doc, anchor.imageId)
+  if (targetId && !own(drawing.targetBoxes, targetId)) throw new Error(`Unknown SVG target: ${targetId}`)
   const oldTarget = anchor.relative?.targetId
-  if (oldTarget && !own(doc.base.targetBoxes, oldTarget) && !center) throw new Error(`Current target is missing: ${oldTarget}. Choose a new target and center explicitly.`)
-  const box = boxForTarget(doc.base, targetId)
+  if (oldTarget && !own(drawing.targetBoxes, oldTarget) && !center) throw new Error(`Current target is missing: ${oldTarget}. Choose a new target and center explicitly.`)
+  const box = boxForTarget(drawing, targetId)
   if (!(box.w > 0 && box.h > 0)) throw new Error('A target must have nonzero width and height.')
-  const point = resolveAnchor(anchor, boxForTarget(doc.base, oldTarget))
+  const point = resolveAnchor(anchor, boxForTarget(drawing, oldTarget))
   const relative = { targetId, ...(center ? { nx: 0.5, ny: 0.5 } : pointToNormalized(point, box)) }
   return { ...doc, anchors: doc.anchors.map((a) => a.id === id ? { ...a, mode: 'relative-bbox', relative, absolute: undefined, pathOffset: undefined } : a) }
 }
 
-export function missingTargets(doc: DrawerDoc, base: BaseDrawing = doc.base): string[] {
-  const ids = [
-    ...doc.anchors.map((a) => a.mode === 'path-offset' ? a.pathOffset?.targetId : a.relative?.targetId),
-    ...doc.landmarks.map((l) => l.targetId),
-  ]
-  return [...new Set(ids.filter((id): id is string => !!id && !own(base.targetBoxes, id)))]
+/**
+ * Targets referenced by points/landmarks on one image (or, with imageId
+ * undefined, on any image) that its drawing does not contain. `drawing`
+ * substitutes a candidate replacement artwork for that image.
+ */
+export function missingTargets(doc: DrawerDoc, imageId?: string | null, drawing?: BaseDrawing): string[] {
+  const missing = new Set<string>()
+  const check = (owner: string | undefined, id: string | null | undefined) => {
+    if (!id) return
+    if (imageId !== undefined && (owner ?? null) !== imageId) return
+    const boxes = (imageId !== undefined && drawing ? drawing : drawingFor(doc, owner)).targetBoxes
+    if (!own(boxes, id)) missing.add(id)
+  }
+  for (const a of doc.anchors) check(a.imageId, a.mode === 'path-offset' ? a.pathOffset?.targetId : a.relative?.targetId)
+  for (const l of doc.landmarks) check(l.imageId, l.targetId)
+  return [...missing]
 }
 
-/** No silent fallback to the whole figure when the replacement loses a named target. */
-export function replaceBaseKeepingMappings(doc: DrawerDoc, base: BaseDrawing): DrawerDoc {
-  const missing = missingTargets(doc, base)
+/** Swap an image's artwork; no silent fallback to the whole figure when a named target is lost. */
+export function replaceImageArtwork(doc: DrawerDoc, imageId: string, drawing: BaseDrawing): DrawerDoc {
+  const image = findImage(doc, imageId)
+  if (!image) throw new Error('Choose an image to replace.')
+  const missing = missingTargets(doc, imageId, drawing)
   if (missing.length) throw new Error(`Replacement cancelled. Missing referenced SVG targets: ${missing.join(', ')}`)
-  if (doc.anchors.some((a) => a.mode === 'path-offset')) throw new Error('Replacement cancelled: path-offset anchors are not supported.')
-  if (doc.anchors.some((a) => a.mode === 'absolute') && JSON.stringify(doc.base.viewBox) !== JSON.stringify(base.viewBox)) {
+  const anchors = doc.anchors.filter((a) => a.imageId === imageId)
+  if (anchors.some((a) => a.mode === 'path-offset')) throw new Error('Replacement cancelled: path-offset anchors are not supported.')
+  if (anchors.some((a) => a.mode === 'absolute') && JSON.stringify(image.drawing.viewBox) !== JSON.stringify(drawing.viewBox)) {
     throw new Error('Replacement changes the coordinate system of absolute anchors. Attach them to named targets first.')
   }
-  return { ...doc, base }
+  // keep the image's on-page scale: the new artwork occupies the same scale per unit
+  const sx = image.width / image.drawing.viewBox.w
+  const sy = image.height / image.drawing.viewBox.h
+  const next = { ...image, drawing, width: drawing.viewBox.w * sx, height: drawing.viewBox.h * sy }
+  return { ...doc, images: doc.images.map((i) => (i.id === imageId ? next : i)) }
 }
 
-function rasterMime(bytes: Uint8Array): AnchorAttachment['mimeType'] | null {
+export function rasterMime(bytes: Uint8Array): AnchorAttachment['mimeType'] | null {
   if (bytes.length >= 8 && [137, 80, 78, 71, 13, 10, 26, 10].every((n, i) => bytes[i] === n)) return 'image/png'
   if (bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255) return 'image/jpeg'
   if (bytes.length >= 12 && String.fromCharCode(...bytes.slice(0, 4)) === 'RIFF' && String.fromCharCode(...bytes.slice(8, 12)) === 'WEBP') return 'image/webp'
@@ -106,12 +125,49 @@ export function addReferenceImage(doc: DrawerDoc, anchorId: string, attachment: 
 export function validateDiagramExtensions(doc: DrawerDoc): void {
   const box = (b: unknown) => record(b) && ['x', 'y', 'w', 'h'].every((k) => finite(b[k])) && (b.w as number) > 0 && (b.h as number) > 0
   if (!box(doc.base.viewBox) || !box(doc.base.contentBox)) throw new Error('Invalid drawing coordinate box.')
+  if (!Array.isArray(doc.images) || doc.images.length > 200) throw new Error('Invalid image list.')
+  const imageIds = new Set<string>()
+  for (const image of doc.images) {
+    if (!record(image) || !validString(image.id) || imageIds.has(image.id) || !validString(image.name, 512)) throw new Error('Invalid or duplicate image ID.')
+    imageIds.add(image.id)
+    if (!record(image.drawing) || typeof image.drawing.inner !== 'string' || !box(image.drawing.viewBox) || !box(image.drawing.contentBox)) throw new Error(`Invalid drawing for image ${image.id}.`)
+    if (![image.x, image.y, image.rotation].every((n) => finite(n) && Math.abs(n) <= 1e6) || !finite(image.width) || !finite(image.height) || image.width <= 0 || image.height <= 0) throw new Error(`Invalid placement for image ${image.id}.`)
+  }
+  const ownedBy = (id: unknown, what: string) => {
+    if (id !== undefined && (typeof id !== 'string' || !imageIds.has(id))) throw new Error(`${what} refers to a missing image.`)
+  }
+  for (const l of doc.landmarks) ownedBy(l.imageId, 'A landmark')
+  for (const t of doc.textAnnotations) ownedBy(t.imageId, 'A text item')
+  for (const d of doc.drawingElements) ownedBy(d.imageId, 'A shape')
+  const siteIds = new Set<string>()
+  if (doc.sites !== undefined) {
+    if (!Array.isArray(doc.sites) || doc.sites.length > 2000) throw new Error('Invalid site table.')
+    const numbers = new Set<number>()
+    const keys = new Set<string>()
+    for (const site of doc.sites) {
+      if (!record(site) || !validString(site.id) || siteIds.has(site.id) || !validString(site.label) || !validString(site.fieldKey) || !site.fieldKey || !safeKey(site.fieldKey)) throw new Error('Invalid or duplicate site.')
+      if (!Number.isInteger(site.number) || site.number < 1 || site.number > 9999 || numbers.has(site.number)) throw new Error('Site numbers must be unique whole numbers from 1 to 9999.')
+      if (keys.has(site.fieldKey)) throw new Error('Each site needs its own field key.')
+      siteIds.add(site.id)
+      numbers.add(site.number)
+      keys.add(site.fieldKey)
+    }
+  }
+  for (const c of doc.callouts) {
+    if (c.siteId !== undefined && !siteIds.has(c.siteId)) throw new Error('A callout refers to a missing site.')
+  }
+  if (doc.siteLegend !== undefined) {
+    const g = doc.siteLegend
+    if (!record(g) || !record(g.pos) || !finite(g.pos.x) || !finite(g.pos.y) || !finite(g.fontSize) || g.fontSize <= 0 || !finite(g.rowHeight) || g.rowHeight <= 0 || !validString(g.heading)) throw new Error('Invalid site legend.')
+  }
+  if (doc.exportFrame !== undefined && !['content', 'page'].includes(doc.exportFrame)) throw new Error('Unknown export frame.')
   const anchorIds = new Set<string>()
   const attachmentIds = new Set<string>()
   let total = 0
   for (const a of doc.anchors) {
     if (!a || !validString(a.id) || anchorIds.has(a.id)) throw new Error('Invalid or duplicate anchor ID.')
     anchorIds.add(a.id)
+    ownedBy(a.imageId, 'A point')
     if (a.mapping !== undefined) {
       const m = a.mapping
       if (!record(m) || !validString(m.fieldKey) || !safeKey(m.fieldKey)) throw new Error('Invalid field mapping.')
@@ -140,6 +196,7 @@ export function validateDiagramExtensions(doc: DrawerDoc): void {
   }
   for (const v of doc.views) {
     if (v.mappingMode !== undefined && !MAPPING_MODES.includes(v.mappingMode)) throw new Error('Unknown mapping rendering mode.')
+    if (v.siteDisplay !== undefined && !['numbers', 'names', 'values', 'blank'].includes(v.siteDisplay)) throw new Error('Unknown site display mode.')
   }
   const positions = [
     ...doc.callouts,

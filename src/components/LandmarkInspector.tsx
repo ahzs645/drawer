@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { round } from '../geometry'
+import { drawingFor, findImage, round } from '../geometry'
 import { useStore } from '../store'
 import { CollapsiblePanel } from './CollapsiblePanel'
 
@@ -78,8 +78,8 @@ export function LandmarkInspector() {
           value={landmark.targetId ?? ''}
           onChange={(e) => setLandmarkTarget(landmark.id, e.target.value || null)}
         >
-          <option value="">Whole drawing</option>
-          {Object.keys(doc.base.targetBoxes).map((key) => (
+          <option value="">Whole {findImage(doc, landmark.imageId)?.name ?? 'drawing'}</option>
+          {Object.keys(drawingFor(doc, landmark.imageId).targetBoxes).map((key) => (
             <option key={key} value={key}>{key}</option>
           ))}
         </select>

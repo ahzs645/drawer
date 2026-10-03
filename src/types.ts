@@ -56,6 +56,12 @@ export type MappingValue = string | number | boolean | null
 export interface Anchor {
   id: string
   mode: AnchorMode
+  /**
+   * Image this point belongs to. Its relative/absolute coordinates are then in
+   * that image's own drawing space, so the point follows the image when it is
+   * moved, resized or rotated. Absent = a point on the page itself.
+   */
+  imageId?: string
   mapping?: AnchorMapping
   attachments?: AnchorAttachment[]
   /** present when mode === 'absolute' */
@@ -85,6 +91,8 @@ export interface Landmark {
   targetId?: string | null
   /** optional group for the picker, e.g. "Anterior" / "Posterior" / "Organs" */
   group?: string
+  /** image whose drawing this landmark is normalized in; absent = the page */
+  imageId?: string
 }
 
 export type FontWeight = 400 | 500 | 600 | 700
@@ -108,10 +116,14 @@ export interface TextAnnotation {
   color: string
   /** width of the horizontal rule for the heading style, in SVG user units */
   ruleWidth: number
+  /** when set, the text moves with this image (pos stays in page units) */
+  imageId?: string
 }
 
-export type BalloonShape = 'circle' | 'hex' | 'none'
-export type LeaderStyle = 'straight' | 'elbow'
+/** 'badge' is a filled circle with knocked-out text (a numbered site marker). */
+export type BalloonShape = 'circle' | 'hex' | 'badge' | 'none'
+/** 'none' puts the balloon directly on the point, with no leader line. */
+export type LeaderStyle = 'straight' | 'elbow' | 'none'
 /** How the point ON the body is drawn (the end the leader lands on). */
 export type AnchorMarker = 'ring' | 'dot' | 'tick' | 'none'
 /** Decoration at the body end of the leader line. */
@@ -189,6 +201,12 @@ export interface Callout {
   leaderWidth?: number
   fontSize?: number
   fontWeight?: FontWeight
+  /**
+   * Shared site row this callout is a placement of. Every placement of a site
+   * shows the site's label, number and field key, so one row can be marked on
+   * several images.
+   */
+  siteId?: string
 }
 
 export type LabelMode = 'names' | 'numbers' | 'blank'
@@ -225,8 +243,66 @@ export interface View {
    * model and simply ignored while this is on.
    */
   mono?: boolean
+  /**
+   * How site placements render in this view. Defaults to 'blank' for a blank
+   * quiz view and 'numbers' otherwise. Other callouts follow labelMode.
+   */
+  siteDisplay?: SiteDisplay
 }
 
+export type SiteDisplay = 'numbers' | 'names' | 'values' | 'blank'
+
+/**
+ * A row of the shared site table: one numbered location (e.g. "6. Sacrum") that
+ * may be marked on several images. The field key links it to an external
+ * application field; its value lives in DrawerDoc.mappingValues.
+ */
+export interface Site {
+  id: string
+  number: number
+  label: string
+  fieldKey: string
+}
+
+/** The on-page numbered list of sites. */
+export interface SiteLegend {
+  /** top-left corner of the legend block, in page units */
+  pos: Vec2
+  heading: string
+  fontSize: number
+  rowHeight: number
+  visible: boolean
+}
+
+/**
+ * A drawing placed on the page. The drawing keeps its own coordinate system;
+ * x/y/width/height place its viewBox on the page (before rotation about the
+ * box center). Several images can share a page, each movable independently.
+ */
+export interface ImageInstance {
+  id: string
+  name: string
+  drawing: BaseDrawing
+  x: number
+  y: number
+  width: number
+  height: number
+  /** degrees, clockwise, about the center of the placed box */
+  rotation: number
+  /** mirror the drawing horizontally */
+  flipX?: boolean
+  /** hidden images (and everything attached to them) are not drawn or exported */
+  visible?: boolean
+  /** locked images cannot be moved, resized, or deleted from the canvas */
+  locked?: boolean
+  /** free-text provenance note, e.g. where the artwork came from */
+  source?: string
+}
+
+/**
+ * A drawing's markup + geometry. Used for each placed image, and for the page
+ * (DrawerDoc.base), whose viewBox is the page frame.
+ */
 export interface BaseDrawing {
   /** inner SVG markup of the body (paths/groups), without the outer <svg> */
   inner: string
@@ -247,6 +323,8 @@ export type DrawingElementKind = 'line' | 'rect'
 /** A freely drawn line or rectangle layered over the imported base drawing. */
 export interface DrawingElement {
   id: string
+  /** when set, the shape moves with this image (coordinates stay in page units) */
+  imageId?: string
   kind: DrawingElementKind
   start: Vec2
   end: Vec2
@@ -262,7 +340,19 @@ export interface DrawerDoc {
   mappingValues?: Record<string, MappingValue>
   id: string
   name: string
+  /**
+   * The page. Its viewBox is the page frame; artwork lives in `images`. Older
+   * project files stored their single drawing here — they are migrated into
+   * images[0] on load (see normalizeDoc), so `inner` is normally empty.
+   */
   base: BaseDrawing
+  /** drawings placed on the page, bottom to top */
+  images: ImageInstance[]
+  /** shared site table (numbered locations with one or more placements) */
+  sites?: Site[]
+  siteLegend?: SiteLegend
+  /** crop for SVG/PNG/PDF export: fit the content (default) or use the page frame */
+  exportFrame?: 'content' | 'page'
   anchors: Anchor[]
   callouts: Callout[]
   views: View[]
@@ -303,4 +393,6 @@ export interface ResolvedCallout {
   visible: boolean
   /** 1-based number used in 'numbers' mode and the legend */
   index: number
+  imageId?: string
+  siteId?: string
 }

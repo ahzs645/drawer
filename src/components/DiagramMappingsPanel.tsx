@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useStore } from '../store'
-import { addReferenceImage, attachAnchorToTarget, missingTargets, readReferenceImage, replaceBaseKeepingMappings, setAnchorMapping, validateDiagramExtensions } from '../diagramMappings'
+import { addReferenceImage, attachAnchorToTarget, missingTargets, readReferenceImage, replaceImageArtwork, setAnchorMapping, validateDiagramExtensions } from '../diagramMappings'
+import { calloutFieldKey, calloutName, siteById } from '../docModel'
+import { drawingFor, findImage } from '../geometry'
 import { parseSvg } from '../svgParse'
 import { getView } from '../resolve'
 import { downloadText } from '../export/projectIo'
@@ -22,6 +24,7 @@ export function DiagramMappingsPanel() {
   const doc = useStore((s) => s.doc)
   const status = useStore((s) => s.status)
   const selectedId = useStore((s) => s.selectedCalloutId)
+  const selectedImageId = useStore((s) => s.selectedImageId)
   const [open, setOpen] = useState(false)
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
@@ -32,7 +35,10 @@ export function DiagramMappingsPanel() {
   const anchor = doc?.anchors.find((a) => a.id === callout?.anchorId)
   const view = doc ? getView(doc) : undefined
   const missing = doc ? missingTargets(doc) : []
-  const targetKeys = doc ? Object.keys(doc.base.targetBoxes).sort((a, b) => Number(b.startsWith('site-')) - Number(a.startsWith('site-')) || a.localeCompare(b)) : []
+  // targets are the named parts of the drawing this point is on
+  const targetKeys = doc ? Object.keys(drawingFor(doc, anchor?.imageId).targetBoxes).sort((a, b) => Number(b.startsWith('site-')) - Number(a.startsWith('site-')) || a.localeCompare(b)) : []
+  // artwork replacement applies to the selected image, else the selected point's image, else a lone image
+  const artworkImage = doc ? findImage(doc, selectedImageId) ?? findImage(doc, anchor?.imageId) ?? (doc.images.length === 1 ? doc.images[0] : undefined) : undefined
 
   useEffect(() => { setDraft(anchor?.mapping ?? { fieldKey: '' }) }, [doc?.id, anchor?.id, anchor?.mapping])
   useEffect(() => { setLabel(callout?.labelText ?? '') }, [callout?.id, callout?.labelText])
@@ -48,12 +54,15 @@ export function DiagramMappingsPanel() {
     setBusy(true)
     try {
       if (file.size > 2 * 1024 * 1024) throw new Error('Use an SVG up to 2 MiB.')
-      const base = parseSvg(await file.text())
+      if (!artworkImage) throw new Error('Select the image whose artwork you want to replace.')
+      const imageId = artworkImage.id
+      const before = artworkImage.drawing
+      const drawing = parseSvg(await file.text())
       commitDiagram((current) => {
-        if (current.id !== snapshot.id || current.base !== snapshot.base) throw new Error('The drawing changed while reading the SVG; select the file again.')
-        return replaceBaseKeepingMappings(current, base)
+        if (current.id !== snapshot.id || findImage(current, imageId)?.drawing !== before) throw new Error('The drawing changed while reading the SVG; select the file again.')
+        return replaceImageArtwork(current, imageId, drawing)
       })
-      setMessage('SVG replaced; anchors, mappings, views and reference images retained.')
+      setMessage(`Artwork of ${artworkImage.name} replaced; anchors, mappings, views and reference images retained.`)
     } catch (e) { setMessage((e as Error).message) } finally { setBusy(false) }
   }
 
@@ -81,7 +90,7 @@ export function DiagramMappingsPanel() {
         setOpen(true)
       }, 'Foot-artery template opened. No external clinical codes have been assigned.')}>Foot-artery template</button>
       <button type="button" aria-expanded={open} aria-controls="diagram-mappings-panel" onClick={() => setOpen(!open)}>Mappings &amp; attachments</button>
-      <span className="dm-summary">{doc ? `${doc.anchors.filter((a) => a.mapping?.fieldKey).length} / ${doc.anchors.length} points mapped` : 'Open a drawing to assign mappings'}</span>
+      <span className="dm-summary">{doc ? `${doc.callouts.filter((c) => calloutFieldKey(doc, c)).length} / ${doc.callouts.length} points mapped` : 'Open a drawing to assign mappings'}</span>
       {open && <div className="dm-panel" id="diagram-mappings-panel" role="region" aria-label="Mappings and attachments">
         <div className="dm-heading"><h2>Mappings &amp; attachments</h2><button type="button" aria-label="Close mappings panel" onClick={() => setOpen(false)}>Close</button></div>
         <p className="dm-note">The template reproduces the supplied schematic. Positions and clinical codes require review. Use non-patient test data here.</p>
@@ -89,12 +98,12 @@ export function DiagramMappingsPanel() {
         <label className="dm-field">Point / callout
           <select value={callout?.id ?? ''} disabled={!doc} onChange={(e) => useStore.getState().select(e.target.value || null)}>
             <option value="">Select a point on the drawing or here</option>
-            {doc?.callouts.map((c) => <option key={c.id} value={c.id}>{c.labelText.replace(/\n/g, ' ')}</option>)}
+            {doc?.callouts.map((c) => <option key={c.id} value={c.id}>{calloutName(doc, c).replace(/\n/g, ' ')}</option>)}
           </select>
         </label>
         {anchor && callout && <>
           <small className="dm-id">{anchor.id}</small>
-          <label className="dm-field">Attach point to SVG element
+          <label className="dm-field">Attach point to SVG element{anchor.imageId ? ` of ${findImage(doc!, anchor.imageId)?.name ?? 'its image'}` : ''}
             <select value={anchor.relative?.targetId ?? ''} onChange={(e) => run(() => commitDiagram((d) => attachAnchorToTarget(d, anchor.id, e.target.value || null)))}>
               <option value="">Whole drawing</option>
               {anchor.relative?.targetId && !targetKeys.includes(anchor.relative.targetId) && <option value={anchor.relative.targetId}>Missing: {anchor.relative.targetId}</option>}
@@ -103,14 +112,17 @@ export function DiagramMappingsPanel() {
           </label>
           <button type="button" onClick={() => run(() => commitDiagram((d) => attachAnchorToTarget(d, anchor.id, anchor.relative?.targetId ?? null, true)))}>Center point on attached element</button>
           <p className="dm-note">Changing the attachment preserves the point's position. Centering moves it explicitly. Stable SVG IDs keep it attached when the artwork is replaced.</p>
-          <fieldset><legend>External mapping</legend>
+          {callout.siteId && siteById(doc!, callout.siteId) ? <fieldset><legend>External mapping</legend>
+            <p className="dm-note">This is a marker of site {siteById(doc!, callout.siteId)!.number} ({siteById(doc!, callout.siteId)!.label}). It uses the site’s field key <code>{siteById(doc!, callout.siteId)!.fieldKey}</code>; edit it in the Sites panel.</p>
+            <button type="button" onClick={() => useStore.getState().selectSite(callout.siteId!)}>Edit the site</button>
+          </fieldset> : <fieldset><legend>External mapping</legend>
             <label className="dm-field">Field key<input maxLength={512} value={draft.fieldKey} placeholder="Your application's exact field key" onChange={(e) => setDraft({ ...draft, fieldKey: e.target.value })}/></label>
             <label className="dm-field">Mapped display name<input maxLength={512} value={draft.display ?? ''} onChange={(e) => setDraft({ ...draft, display: e.target.value })}/></label>
             <label className="dm-field">Code system (optional)<input maxLength={512} value={draft.system ?? ''} onChange={(e) => setDraft({ ...draft, system: e.target.value })}/></label>
             <label className="dm-field">Code (optional)<input maxLength={512} value={draft.code ?? ''} onChange={(e) => setDraft({ ...draft, code: e.target.value })}/></label>
             <div className="dm-row"><button type="button" onClick={() => run(() => commitDiagram((d) => setAnchorMapping(d, anchor.id, { ...draft, fieldKey: draft.fieldKey.trim() })))}>Save mapping</button><button type="button" onClick={() => run(() => commitDiagram((d) => setAnchorMapping(d, anchor.id, undefined)))}>Clear mapping</button></div>
-          </fieldset>
-          <fieldset><legend>Editable label</legend>
+          </fieldset>}
+          {!callout.siteId && <fieldset><legend>Editable label</legend>
             <label className="dm-field">Label text — Enter adds a line<textarea rows={3} value={label} onChange={(e) => setLabel(e.target.value)}/></label>
             <button type="button" onClick={() => run(() => commitDiagram((d) => ({ ...d, callouts: d.callouts.map((c) => c.id === callout.id ? { ...c, labelText: label } : c) })))}>Apply label</button>
             <label className="dm-field"><span><input type="checkbox" checked={!!callout.labelOffset} onChange={(e) => run(() => commitDiagram((d) => ({ ...d, callouts: d.callouts.map((c) => c.id === callout.id ? { ...c, labelOffset: e.target.checked ? { x: 0, y: -40 } : undefined } : c) })))}/> Place text independently of leader endpoint</span></label>
@@ -119,7 +131,7 @@ export function DiagramMappingsPanel() {
               <label className="dm-field">Text alignment<select value={callout.labelAlign ?? 'start'} onChange={(e) => run(() => commitDiagram((d) => ({ ...d, callouts: d.callouts.map((c) => c.id === callout.id ? { ...c, labelAlign: e.target.value as TextAnnotationAlign } : c) })))}><option value="start">Start</option><option value="middle">Center</option><option value="end">End</option></select></label>
             </>}
             <p className="dm-note">Per-view text overrides still take precedence. Dragging a label keeps its text offset attached to the leader endpoint.</p>
-          </fieldset>
+          </fieldset>}
           <fieldset><legend>Reference images for this point</legend>
             <label className="dm-field">Attach a PNG, JPEG or WebP<input type="file" accept="image/png,image/jpeg,image/webp" disabled={busy} onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ''; if (file) void attachFile(file) }}/></label>
             <p className="dm-note">1 MiB per image; 2 MiB total per project. Embedded in downloaded projects and browser autosave. Not printed or embedded in SVG exports.</p>
@@ -135,9 +147,9 @@ export function DiagramMappingsPanel() {
             <p className="dm-note">Keys match exactly, including dots. Missing or null values render as an em dash. No formulas are evaluated.</p>
           </fieldset>
           <fieldset><legend>Artwork and integration</legend>
-            <label className="dm-field">Replace SVG while keeping mappings<input type="file" accept="image/svg+xml,.svg" disabled={busy} onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ''; if (file) void replaceSvg(file) }}/></label>
+            <label className="dm-field">Replace artwork of {artworkImage ? `“${artworkImage.name}”` : 'the selected image'} while keeping mappings<input type="file" accept="image/svg+xml,.svg" disabled={busy || !artworkImage} onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ''; if (file) void replaceSvg(file) }}/></label>
             <p className="dm-note">Missing referenced IDs cancel replacement. Supported SVG is self-contained vector markup; active content, embedded stylesheets and external resources are removed.</p>
-            <button type="button" onClick={() => downloadText('drawer-mappings.json', JSON.stringify({ format: 'drawer-anchor-mappings', version: 1, documentId: doc.id, anchors: doc.anchors.map((a) => ({ id: a.id, mode: a.mode, relative: a.relative, absolute: a.absolute, mapping: a.mapping ?? null })) }, null, 2), 'application/json')}>Export mapping manifest</button>
+            <button type="button" onClick={() => downloadText('drawer-mappings.json', JSON.stringify({ format: 'drawer-anchor-mappings', version: 1, documentId: doc.id, anchors: doc.anchors.map((a) => ({ id: a.id, mode: a.mode, imageId: a.imageId ?? null, relative: a.relative, absolute: a.absolute, mapping: a.mapping ?? null })), sites: doc.sites ?? [] }, null, 2), 'application/json')}>Export mapping manifest</button>
             <p className="dm-note">Use Drawer’s existing project export to retain the full editable drawing, mappings, values and reference images. SVG/PNG use the same resolved callouts.</p>
           </fieldset>
         </>}
