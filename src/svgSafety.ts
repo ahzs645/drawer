@@ -14,7 +14,47 @@ function safePaint(value: string): boolean {
   return !/url\s*\(/i.test(remaining)
 }
 
+/**
+ * Illustrator, Inkscape and most design tools style artwork through a <style>
+ * sheet of class rules (`.cls-1 { fill: #fff }`). <style> itself is never kept,
+ * so first copy each simple rule onto the elements it matches as an inline
+ * style (which the per-property filter below then checks). Only compound
+ * selectors are applied — `tag`, `.class`, `#id` and combinations, in comma
+ * lists; anything more complex is ignored. Later rules win, and an element's
+ * own style attribute wins over the sheet.
+ */
+function inlineStyleSheets(root: Element): void {
+  const sheets = Array.from(root.querySelectorAll('style'))
+  if (!sheets.length) return
+  const applied = new Map<Element, string[]>()
+  for (const sheet of sheets) {
+    const css = (sheet.textContent ?? '').replace(/\/\*[\s\S]*?\*\//g, '')
+    for (const rule of css.split('}')) {
+      const brace = rule.indexOf('{')
+      if (brace < 0) continue
+      const declarations = rule.slice(brace + 1).trim()
+      if (!declarations || /[<>\\]|@import/i.test(declarations)) continue
+      for (const raw of rule.slice(0, brace).split(',')) {
+        const selector = raw.trim()
+        if (!/^(?:[A-Za-z][\w-]*)?(?:[.#][A-Za-z_][\w-]*)*$/.test(selector) || !selector) continue
+        let matches: Element[] = []
+        try {
+          matches = Array.from(root.querySelectorAll(selector))
+        } catch {
+          continue
+        }
+        for (const el of matches) applied.set(el, [...(applied.get(el) ?? []), declarations])
+      }
+    }
+  }
+  for (const [el, declarations] of applied) {
+    const own = el.getAttribute('style')
+    el.setAttribute('style', [...declarations, own ?? ''].filter(Boolean).join(';'))
+  }
+}
+
 export function sanitizeSvgElement(root: Element): void {
+  inlineStyleSheets(root)
   const elements = [root, ...Array.from(root.querySelectorAll('*'))]
   for (const el of elements) {
     if (el !== root && (!TAGS.has(el.localName) || el.namespaceURI !== NS)) {
