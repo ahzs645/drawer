@@ -14,7 +14,8 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --test tests/diorama-core.test.mjs tests/library-variant.test.mjs"
   },
   "dependencies": {
     "jspdf": "^4.2.1",

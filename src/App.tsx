@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Canvas } from './components/Canvas'
+import { DioramaWorkspace } from './components/DioramaWorkspace'
 import { DiagramMappingsPanel } from './components/DiagramMappingsPanel'
 import { Sidebar } from './components/Sidebar'
 import { Toolbar } from './components/Toolbar'
@@ -110,6 +111,7 @@ export default function App() {
   return (
     <div className="app">
       <Toolbar />
+      <DioramaWorkspace />
       <DiagramMappingsPanel />
       <div className="workspace">
         <main className="canvas-wrap">
