@@ -1,0 +1,796 @@
+{
+  "format": "drawer-scene",
+  "version": 1,
+  "id": "clinical-hands",
+  "name": "Hands — four palmar and dorsal views",
+  "width": 1254,
+  "height": 1254,
+  "pageRule": false,
+  "cleanView": true,
+  "assets": [
+    {
+      "id": "hand-right-palmar",
+      "name": "Right hand — palm, fingers down",
+      "width": 346,
+      "height": 501,
+      "inner": "<g id=\"hand-right-palmar-geometry\" data-name=\"Right hand — palm, fingers down\" transform=\"translate(-171 -107)\">\n<path id=\"hand-right-palmar-silhouette\" data-name=\"Hand silhouette\" d=\"M325 115 C327 138 331 158 332 178 C334 193 331 201 322 209 L322 209 C309 222 296 235 282 249 C260 270 250 289 239 311 C231 329 215 346 199 362 C192 369 185 375 182 382 C179 391 192 398 207 397 C228 397 245 381 261 357 C273 338 280 327 292 326 L292 326 C302 346 301 375 298 397 C294 418 287 440 283 459 C279 478 275 498 270 516 C264 536 263 558 277 562 C293 569 306 549 310 508 C316 494 320 479 321 465 C330 452 332 429 341 418 L341 418 C344 451 338 482 339 514 C340 532 342 537 339 548 C337 567 338 590 349 597 C357 603 368 600 374 589 C383 575 379 548 380 531 C384 505 383 484 384 466 C384 449 385 436 387 430 C388 426 390 425 393 425 L393 425 C393 443 396 461 400 475 C398 492 401 511 403 522 C399 542 398 563 406 576 C412 586 425 583 433 570 C441 555 440 542 439 520 C438 499 440 476 439 456 L437 420 C437 414 441 410 445 408 L445 408 C449 419 452 431 459 443 C459 455 465 469 469 477 C472 492 477 513 486 521 C493 526 502 524 507 513 C512 503 508 488 505 475 L498 448 C494 431 490 414 487 400 L487 400 C481 388 483 373 485 358 C489 337 489 312 488 286 C488 261 478 244 469 234 L469 234 C463 227 463 215 459 202 C454 187 450 179 451 167 C452 151 457 125 459 115 Z\" fill=\"#ffffff\" stroke=\"none\"/>\n<g id=\"hand-right-palmar-linework\" data-name=\"Editable hand contours and details\" fill=\"none\" stroke=\"#111111\" stroke-width=\"3.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n<path id=\"hand-right-palmar-wrist-radial\" data-name=\"Wrist — thumb-side contour\" d=\"M325 115 C327 138 331 158 332 178 C334 193 331 201 322 209\"/>\n<path id=\"hand-right-palmar-thumb\" data-name=\"Thumb contour\" d=\"M322 209 C309 222 296 235 282 249 C260 270 250 289 239 311 C231 329 215 346 199 362 C192 369 185 375 182 382 C179 391 192 398 207 397 C228 397 245 381 261 357 C273 338 280 327 292 326\"/>\n<path id=\"hand-right-palmar-index\" data-name=\"Index finger contour\" d=\"M292 326 C302 346 301 375 298 397 C294 418 287 440 283 459 C279 478 275 498 270 516 C264 536 263 558 277 562 C293 569 306 549 310 508 C316 494 320 479 321 465 C330 452 332 429 341 418\"/>\n<path id=\"hand-right-palmar-middle\" data-name=\"Middle finger contour\" d=\"M341 418 C344 451 338 482 339 514 C340 532 342 537 339 548 C337 567 338 590 349 597 C357 603 368 600 374 589 C383 575 379 548 380 531 C384 505 383 484 384 466 C384 449 385 436 387 430 C388 426 390 425 393 425\"/>\n<path id=\"hand-right-palmar-ring\" data-name=\"Ring finger contour\" d=\"M393 425 C393 443 396 461 400 475 C398 492 401 511 403 522 C399 542 398 563 406 576 C412 586 425 583 433 570 C441 555 440 542 439 520 C438 499 440 476 439 456 L437 420 C437 414 441 410 445 408\"/>\n<path id=\"hand-right-palmar-little\" data-name=\"Little finger contour\" d=\"M445 408 C449 419 452 431 459 443 C459 455 465 469 469 477 C472 492 477 513 486 521 C493 526 502 524 507 513 C512 503 508 488 505 475 L498 448 C494 431 490 414 487 400\"/>\n<path id=\"hand-right-palmar-palm-ulnar\" data-name=\"Palm — little-finger-side contour\" d=\"M487 400 C481 388 483 373 485 358 C489 337 489 312 488 286 C488 261 478 244 469 234\"/>\n<path id=\"hand-right-palmar-wrist-ulnar\" data-name=\"Wrist — little-finger-side contour\" d=\"M469 234 C463 227 463 215 459 202 C454 187 450 179 451 167 C452 151 457 125 459 115\"/>\n<path id=\"hand-right-palmar-thumb-web\" data-name=\"Thumb–index web fold\" d=\"M292 326 C298 324 303 324 309 323\"/>\n<path id=\"hand-right-palmar-palm-thumb-fold\" data-name=\"Palm fold — thumb side\" d=\"M330 316 C370 309 396 275 395 220\" stroke-width=\"2.8\"/>\n<path id=\"hand-right-palmar-palm-ulnar-fold\" data-name=\"Palm fold — little-finger side\" d=\"M403 262 C407 299 419 334 441 350\" stroke-width=\"2.8\"/>\n<path id=\"hand-right-palmar-index-middle-web\" data-name=\"Index–middle web fold\" d=\"M340 416 C344 418 347 419 351 420\"/>\n<path id=\"hand-right-palmar-middle-ring-web\" data-name=\"Middle–ring web fold\" d=\"M388 426 C392 425 396 423 400 422\"/>\n<path id=\"hand-right-palmar-ring-little-web\" data-name=\"Ring–little web fold\" d=\"M437 415 C441 410 445 407 449 405\"/>\n</g>\n</g>",
+      "landmarks": [
+        {
+          "id": "hand-right-palmar-wrist-landmark",
+          "label": "Wrist centre",
+          "x": 221,
+          "y": 59
+        },
+        {
+          "id": "hand-right-palmar-palm-landmark",
+          "label": "Palm centre",
+          "x": 227,
+          "y": 259
+        },
+        {
+          "id": "hand-right-palmar-thumb-tip-landmark",
+          "label": "Thumb tip",
+          "x": 28,
+          "y": 283,
+          "targetId": "hand-right-palmar-thumb"
+        },
+        {
+          "id": "hand-right-palmar-index-tip-landmark",
+          "label": "Index fingertip",
+          "x": 112,
+          "y": 453,
+          "targetId": "hand-right-palmar-index"
+        },
+        {
+          "id": "hand-right-palmar-middle-tip-landmark",
+          "label": "Middle fingertip",
+          "x": 189,
+          "y": 491,
+          "targetId": "hand-right-palmar-middle"
+        },
+        {
+          "id": "hand-right-palmar-ring-tip-landmark",
+          "label": "Ring fingertip",
+          "x": 246,
+          "y": 474,
+          "targetId": "hand-right-palmar-ring"
+        },
+        {
+          "id": "hand-right-palmar-little-tip-landmark",
+          "label": "Little fingertip",
+          "x": 323,
+          "y": 416,
+          "targetId": "hand-right-palmar-little"
+        },
+        {
+          "id": "hand-right-palmar-thumb-web-landmark",
+          "label": "Thumb–index web",
+          "x": 125,
+          "y": 218,
+          "targetId": "hand-right-palmar-thumb-web"
+        },
+        {
+          "id": "hand-right-palmar-palm-thumb-fold-landmark",
+          "label": "Palm fold — thumb side",
+          "x": 194,
+          "y": 193,
+          "targetId": "hand-right-palmar-palm-thumb-fold"
+        },
+        {
+          "id": "hand-right-palmar-palm-ulnar-fold-landmark",
+          "label": "Palm fold — little-finger side",
+          "x": 247,
+          "y": 212,
+          "targetId": "hand-right-palmar-palm-ulnar-fold"
+        },
+        {
+          "id": "hand-right-palmar-index-middle-web-landmark",
+          "label": "Index–middle web",
+          "x": 170,
+          "y": 311,
+          "targetId": "hand-right-palmar-index-middle-web"
+        },
+        {
+          "id": "hand-right-palmar-middle-ring-web-landmark",
+          "label": "Middle–ring web",
+          "x": 220,
+          "y": 318,
+          "targetId": "hand-right-palmar-middle-ring-web"
+        },
+        {
+          "id": "hand-right-palmar-ring-little-web-landmark",
+          "label": "Ring–little web",
+          "x": 272,
+          "y": 303,
+          "targetId": "hand-right-palmar-ring-little-web"
+        }
+      ],
+      "source": "Labeled hand views in four positions(1).png"
+    },
+    {
+      "id": "hand-left-palmar",
+      "name": "Left hand — palm, fingers down",
+      "width": 346,
+      "height": 501,
+      "inner": "<g id=\"hand-left-palmar-mirror\" data-name=\"Bilateral reconstruction\" transform=\"translate(346 0) scale(-1 1)\">\n<g id=\"hand-left-palmar-geometry\" data-name=\"Left hand — palm, fingers down\" transform=\"translate(-171 -107)\">\n<path id=\"hand-left-palmar-silhouette\" data-name=\"Hand silhouette\" d=\"M325 115 C327 138 331 158 332 178 C334 193 331 201 322 209 L322 209 C309 222 296 235 282 249 C260 270 250 289 239 311 C231 329 215 346 199 362 C192 369 185 375 182 382 C179 391 192 398 207 397 C228 397 245 381 261 357 C273 338 280 327 292 326 L292 326 C302 346 301 375 298 397 C294 418 287 440 283 459 C279 478 275 498 270 516 C264 536 263 558 277 562 C293 569 306 549 310 508 C316 494 320 479 321 465 C330 452 332 429 341 418 L341 418 C344 451 338 482 339 514 C340 532 342 537 339 548 C337 567 338 590 349 597 C357 603 368 600 374 589 C383 575 379 548 380 531 C384 505 383 484 384 466 C384 449 385 436 387 430 C388 426 390 425 393 425 L393 425 C393 443 396 461 400 475 C398 492 401 511 403 522 C399 542 398 563 406 576 C412 586 425 583 433 570 C441 555 440 542 439 520 C438 499 440 476 439 456 L437 420 C437 414 441 410 445 408 L445 408 C449 419 452 431 459 443 C459 455 465 469 469 477 C472 492 477 513 486 521 C493 526 502 524 507 513 C512 503 508 488 505 475 L498 448 C494 431 490 414 487 400 L487 400 C481 388 483 373 485 358 C489 337 489 312 488 286 C488 261 478 244 469 234 L469 234 C463 227 463 215 459 202 C454 187 450 179 451 167 C452 151 457 125 459 115 Z\" fill=\"#ffffff\" stroke=\"none\"/>\n<g id=\"hand-left-palmar-linework\" data-name=\"Editable hand contours and details\" fill=\"none\" stroke=\"#111111\" stroke-width=\"3.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n<path id=\"hand-left-palmar-wrist-radial\" data-name=\"Wrist — thumb-side contour\" d=\"M325 115 C327 138 331 158 332 178 C334 193 331 201 322 209\"/>\n<path id=\"hand-left-palmar-thumb\" data-name=\"Thumb contour\" d=\"M322 209 C309 222 296 235 282 249 C260 270 250 289 239 311 C231 329 215 346 199 362 C192 369 185 375 182 382 C179 391 192 398 207 397 C228 397 245 381 261 357 C273 338 280 327 292 326\"/>\n<path id=\"hand-left-palmar-index\" data-name=\"Index finger contour\" d=\"M292 326 C302 346 301 375 298 397 C294 418 287 440 283 459 C279 478 275 498 270 516 C264 536 263 558 277 562 C293 569 306 549 310 508 C316 494 320 479 321 465 C330 452 332 429 341 418\"/>\n<path id=\"hand-left-palmar-middle\" data-name=\"Middle finger contour\" d=\"M341 418 C344 451 338 482 339 514 C340 532 342 537 339 548 C337 567 338 590 349 597 C357 603 368 600 374 589 C383 575 379 548 380 531 C384 505 383 484 384 466 C384 449 385 436 387 430 C388 426 390 425 393 425\"/>\n<path id=\"hand-left-palmar-ring\" data-name=\"Ring finger contour\" d=\"M393 425 C393 443 396 461 400 475 C398 492 401 511 403 522 C399 542 398 563 406 576 C412 586 425 583 433 570 C441 555 440 542 439 520 C438 499 440 476 439 456 L437 420 C437 414 441 410 445 408\"/>\n<path id=\"hand-left-palmar-little\" data-name=\"Little finger contour\" d=\"M445 408 C449 419 452 431 459 443 C459 455 465 469 469 477 C472 492 477 513 486 521 C493 526 502 524 507 513 C512 503 508 488 505 475 L498 448 C494 431 490 414 487 400\"/>\n<path id=\"hand-left-palmar-palm-ulnar\" data-name=\"Palm — little-finger-side contour\" d=\"M487 400 C481 388 483 373 485 358 C489 337 489 312 488 286 C488 261 478 244 469 234\"/>\n<path id=\"hand-left-palmar-wrist-ulnar\" data-name=\"Wrist — little-finger-side contour\" d=\"M469 234 C463 227 463 215 459 202 C454 187 450 179 451 167 C452 151 457 125 459 115\"/>\n<path id=\"hand-left-palmar-thumb-web\" data-name=\"Thumb–index web fold\" d=\"M292 326 C298 324 303 324 309 323\"/>\n<path id=\"hand-left-palmar-palm-thumb-fold\" data-name=\"Palm fold — thumb side\" d=\"M330 316 C370 309 396 275 395 220\" stroke-width=\"2.8\"/>\n<path id=\"hand-left-palmar-palm-ulnar-fold\" data-name=\"Palm fold — little-finger side\" d=\"M403 262 C407 299 419 334 441 350\" stroke-width=\"2.8\"/>\n<path id=\"hand-left-palmar-index-middle-web\" data-name=\"Index–middle web fold\" d=\"M340 416 C344 418 347 419 351 420\"/>\n<path id=\"hand-left-palmar-middle-ring-web\" data-name=\"Middle–ring web fold\" d=\"M388 426 C392 425 396 423 400 422\"/>\n<path id=\"hand-left-palmar-ring-little-web\" data-name=\"Ring–little web fold\" d=\"M437 415 C441 410 445 407 449 405\"/>\n</g>\n</g>\n</g>",
+      "landmarks": [
+        {
+          "id": "hand-left-palmar-wrist-landmark",
+          "label": "Wrist centre",
+          "x": 125,
+          "y": 59
+        },
+        {
+          "id": "hand-left-palmar-palm-landmark",
+          "label": "Palm centre",
+          "x": 119,
+          "y": 259
+        },
+        {
+          "id": "hand-left-palmar-thumb-tip-landmark",
+          "label": "Thumb tip",
+          "x": 318,
+          "y": 283,
+          "targetId": "hand-left-palmar-thumb"
+        },
+        {
+          "id": "hand-left-palmar-index-tip-landmark",
+          "label": "Index fingertip",
+          "x": 234,
+          "y": 453,
+          "targetId": "hand-left-palmar-index"
+        },
+        {
+          "id": "hand-left-palmar-middle-tip-landmark",
+          "label": "Middle fingertip",
+          "x": 157,
+          "y": 491,
+          "targetId": "hand-left-palmar-middle"
+        },
+        {
+          "id": "hand-left-palmar-ring-tip-landmark",
+          "label": "Ring fingertip",
+          "x": 100,
+          "y": 474,
+          "targetId": "hand-left-palmar-ring"
+        },
+        {
+          "id": "hand-left-palmar-little-tip-landmark",
+          "label": "Little fingertip",
+          "x": 23,
+          "y": 416,
+          "targetId": "hand-left-palmar-little"
+        },
+        {
+          "id": "hand-left-palmar-thumb-web-landmark",
+          "label": "Thumb–index web",
+          "x": 221,
+          "y": 218,
+          "targetId": "hand-left-palmar-thumb-web"
+        },
+        {
+          "id": "hand-left-palmar-palm-thumb-fold-landmark",
+          "label": "Palm fold — thumb side",
+          "x": 152,
+          "y": 193,
+          "targetId": "hand-left-palmar-palm-thumb-fold"
+        },
+        {
+          "id": "hand-left-palmar-palm-ulnar-fold-landmark",
+          "label": "Palm fold — little-finger side",
+          "x": 99,
+          "y": 212,
+          "targetId": "hand-left-palmar-palm-ulnar-fold"
+        },
+        {
+          "id": "hand-left-palmar-index-middle-web-landmark",
+          "label": "Index–middle web",
+          "x": 176,
+          "y": 311,
+          "targetId": "hand-left-palmar-index-middle-web"
+        },
+        {
+          "id": "hand-left-palmar-middle-ring-web-landmark",
+          "label": "Middle–ring web",
+          "x": 126,
+          "y": 318,
+          "targetId": "hand-left-palmar-middle-ring-web"
+        },
+        {
+          "id": "hand-left-palmar-ring-little-web-landmark",
+          "label": "Ring–little web",
+          "x": 74,
+          "y": 303,
+          "targetId": "hand-left-palmar-ring-little-web"
+        }
+      ],
+      "source": "Labeled hand views in four positions(1).png"
+    },
+    {
+      "id": "hand-left-dorsal",
+      "name": "Left hand — dorsum, fingers up",
+      "width": 365,
+      "height": 499,
+      "inner": "<g id=\"hand-left-dorsal-geometry\" data-name=\"Left hand — dorsum, fingers up\" transform=\"translate(-228 -632)\">\n<path id=\"hand-left-dorsal-silhouette\" data-name=\"Hand silhouette\" d=\"M253 1123 C264 1091 279 1048 286 1020 L286 1020 C293 1000 278 974 271 952 C261 926 263 905 261 880 C260 848 258 826 249 800 L249 800 C247 790 243 781 241 775 C236 761 233 743 241 735 C250 726 264 730 270 744 C274 753 274 763 277 777 C284 802 292 829 300 838 L300 838 C304 844 298 815 297 809 L287 758 C282 732 278 711 281 690 C282 679 288 672 298 672 C311 671 316 686 318 704 C322 733 331 758 336 790 C339 807 340 820 343 819 L343 819 C348 818 344 797 345 783 L341 710 C341 686 337 666 342 652 C346 640 354 637 363 640 C379 642 383 660 385 684 C385 713 390 740 389 768 L389 802 C389 818 392 825 398 820 L398 820 C403 815 405 796 409 782 C413 765 414 744 418 730 C422 713 420 691 431 676 C439 665 454 666 461 675 C470 688 466 708 465 724 C461 750 463 776 460 797 C456 831 454 850 459 877 C461 887 464 896 466 902 L466 902 C479 897 490 875 502 861 C517 844 535 833 549 828 C562 824 575 829 582 834 C589 842 585 852 578 862 C565 876 545 892 533 908 C522 923 515 940 510 954 C499 973 480 994 468 1008 L468 1008 C453 1023 430 1029 422 1046 C412 1068 407 1098 399 1123 Z\" fill=\"#ffffff\" stroke=\"none\"/>\n<g id=\"hand-left-dorsal-linework\" data-name=\"Editable hand contours and details\" fill=\"none\" stroke=\"#111111\" stroke-width=\"3.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n<path id=\"hand-left-dorsal-wrist-ulnar\" data-name=\"Wrist — little-finger-side contour\" d=\"M253 1123 C264 1091 279 1048 286 1020\"/>\n<path id=\"hand-left-dorsal-dorsum-ulnar\" data-name=\"Dorsum — little-finger-side contour\" d=\"M286 1020 C293 1000 278 974 271 952 C261 926 263 905 261 880 C260 848 258 826 249 800\"/>\n<path id=\"hand-left-dorsal-little\" data-name=\"Little finger contour\" d=\"M249 800 C247 790 243 781 241 775 C236 761 233 743 241 735 C250 726 264 730 270 744 C274 753 274 763 277 777 C284 802 292 829 300 838\"/>\n<path id=\"hand-left-dorsal-ring\" data-name=\"Ring finger contour\" d=\"M300 838 C304 844 298 815 297 809 L287 758 C282 732 278 711 281 690 C282 679 288 672 298 672 C311 671 316 686 318 704 C322 733 331 758 336 790 C339 807 340 820 343 819\"/>\n<path id=\"hand-left-dorsal-middle\" data-name=\"Middle finger contour\" d=\"M343 819 C348 818 344 797 345 783 L341 710 C341 686 337 666 342 652 C346 640 354 637 363 640 C379 642 383 660 385 684 C385 713 390 740 389 768 L389 802 C389 818 392 825 398 820\"/>\n<path id=\"hand-left-dorsal-index\" data-name=\"Index finger contour\" d=\"M398 820 C403 815 405 796 409 782 C413 765 414 744 418 730 C422 713 420 691 431 676 C439 665 454 666 461 675 C470 688 466 708 465 724 C461 750 463 776 460 797 C456 831 454 850 459 877 C461 887 464 896 466 902\"/>\n<path id=\"hand-left-dorsal-thumb\" data-name=\"Thumb contour\" d=\"M466 902 C479 897 490 875 502 861 C517 844 535 833 549 828 C562 824 575 829 582 834 C589 842 585 852 578 862 C565 876 545 892 533 908 C522 923 515 940 510 954 C499 973 480 994 468 1008\"/>\n<path id=\"hand-left-dorsal-wrist-radial\" data-name=\"Wrist — thumb-side contour\" d=\"M468 1008 C453 1023 430 1029 422 1046 C412 1068 407 1098 399 1123\"/>\n<path id=\"hand-left-dorsal-little-nail\" data-name=\"Little fingernail\" d=\"M241 742 C242 736 248 733 253 734 C260 734 262 739 264 746 L265 754 C259 760 251 762 244 759 C242 754 241 748 241 742 Z\" stroke-width=\"2.7\"/>\n<path id=\"hand-left-dorsal-ring-nail\" data-name=\"Ring fingernail\" d=\"M286 682 C288 676 293 674 300 675 C307 675 310 680 311 686 L313 698 C306 704 295 705 287 701 C285 695 285 688 286 682 Z\" stroke-width=\"2.7\"/>\n<path id=\"hand-left-dorsal-middle-nail\" data-name=\"Middle fingernail\" d=\"M347 649 C349 643 355 641 362 642 C370 643 373 650 373 658 L373 669 C367 676 354 676 346 672 C344 665 345 655 347 649 Z\" stroke-width=\"2.7\"/>\n<path id=\"hand-left-dorsal-index-nail\" data-name=\"Index fingernail\" d=\"M437 677 C441 672 449 670 455 674 C461 678 461 685 460 695 C454 702 441 702 433 697 C433 688 434 681 437 677 Z\" stroke-width=\"2.7\"/>\n<path id=\"hand-left-dorsal-thumb-nail\" data-name=\"Thumbnail\" d=\"M553 837 C561 830 571 830 579 835 C586 841 583 851 577 859 C571 866 565 870 558 866 C548 862 545 855 548 847 C549 843 551 839 553 837 Z\" stroke-width=\"2.7\"/>\n<path id=\"hand-left-dorsal-thumb-web\" data-name=\"Thumb–index web fold\" d=\"M466 902 C468 910 469 918 469 925\"/>\n</g>\n</g>",
+      "landmarks": [
+        {
+          "id": "hand-left-dorsal-wrist-landmark",
+          "label": "Wrist centre",
+          "x": 120,
+          "y": 429
+        },
+        {
+          "id": "hand-left-dorsal-dorsum-landmark",
+          "label": "Dorsum centre",
+          "x": 149,
+          "y": 259
+        },
+        {
+          "id": "hand-left-dorsal-thumb-tip-landmark",
+          "label": "Thumb tip",
+          "x": 355,
+          "y": 209,
+          "targetId": "hand-left-dorsal-thumb"
+        },
+        {
+          "id": "hand-left-dorsal-index-tip-landmark",
+          "label": "Index fingertip",
+          "x": 219,
+          "y": 37,
+          "targetId": "hand-left-dorsal-index"
+        },
+        {
+          "id": "hand-left-dorsal-middle-tip-landmark",
+          "label": "Middle fingertip",
+          "x": 130,
+          "y": 7,
+          "targetId": "hand-left-dorsal-middle"
+        },
+        {
+          "id": "hand-left-dorsal-ring-tip-landmark",
+          "label": "Ring fingertip",
+          "x": 70,
+          "y": 41,
+          "targetId": "hand-left-dorsal-ring"
+        },
+        {
+          "id": "hand-left-dorsal-little-tip-landmark",
+          "label": "Little fingertip",
+          "x": 24,
+          "y": 99,
+          "targetId": "hand-left-dorsal-little"
+        },
+        {
+          "id": "hand-left-dorsal-thumb-nail-landmark",
+          "label": "Thumbnail centre",
+          "x": 336,
+          "y": 217,
+          "targetId": "hand-left-dorsal-thumb-nail"
+        },
+        {
+          "id": "hand-left-dorsal-index-nail-landmark",
+          "label": "Index fingernail centre",
+          "x": 219,
+          "y": 55,
+          "targetId": "hand-left-dorsal-index-nail"
+        },
+        {
+          "id": "hand-left-dorsal-middle-nail-landmark",
+          "label": "Middle fingernail centre",
+          "x": 132,
+          "y": 25,
+          "targetId": "hand-left-dorsal-middle-nail"
+        },
+        {
+          "id": "hand-left-dorsal-ring-nail-landmark",
+          "label": "Ring fingernail centre",
+          "x": 71,
+          "y": 57,
+          "targetId": "hand-left-dorsal-ring-nail"
+        },
+        {
+          "id": "hand-left-dorsal-little-nail-landmark",
+          "label": "Little fingernail centre",
+          "x": 25,
+          "y": 115,
+          "targetId": "hand-left-dorsal-little-nail"
+        },
+        {
+          "id": "hand-left-dorsal-thumb-web-landmark",
+          "label": "Thumb–index web",
+          "x": 238,
+          "y": 270,
+          "targetId": "hand-left-dorsal-thumb-web"
+        }
+      ],
+      "source": "Labeled hand views in four positions(1).png"
+    },
+    {
+      "id": "hand-right-dorsal",
+      "name": "Right hand — dorsum, fingers up",
+      "width": 365,
+      "height": 499,
+      "inner": "<g id=\"hand-right-dorsal-mirror\" data-name=\"Bilateral reconstruction\" transform=\"translate(365 0) scale(-1 1)\">\n<g id=\"hand-right-dorsal-geometry\" data-name=\"Right hand — dorsum, fingers up\" transform=\"translate(-228 -632)\">\n<path id=\"hand-right-dorsal-silhouette\" data-name=\"Hand silhouette\" d=\"M253 1123 C264 1091 279 1048 286 1020 L286 1020 C293 1000 278 974 271 952 C261 926 263 905 261 880 C260 848 258 826 249 800 L249 800 C247 790 243 781 241 775 C236 761 233 743 241 735 C250 726 264 730 270 744 C274 753 274 763 277 777 C284 802 292 829 300 838 L300 838 C304 844 298 815 297 809 L287 758 C282 732 278 711 281 690 C282 679 288 672 298 672 C311 671 316 686 318 704 C322 733 331 758 336 790 C339 807 340 820 343 819 L343 819 C348 818 344 797 345 783 L341 710 C341 686 337 666 342 652 C346 640 354 637 363 640 C379 642 383 660 385 684 C385 713 390 740 389 768 L389 802 C389 818 392 825 398 820 L398 820 C403 815 405 796 409 782 C413 765 414 744 418 730 C422 713 420 691 431 676 C439 665 454 666 461 675 C470 688 466 708 465 724 C461 750 463 776 460 797 C456 831 454 850 459 877 C461 887 464 896 466 902 L466 902 C479 897 490 875 502 861 C517 844 535 833 549 828 C562 824 575 829 582 834 C589 842 585 852 578 862 C565 876 545 892 533 908 C522 923 515 940 510 954 C499 973 480 994 468 1008 L468 1008 C453 1023 430 1029 422 1046 C412 1068 407 1098 399 1123 Z\" fill=\"#ffffff\" stroke=\"none\"/>\n<g id=\"hand-right-dorsal-linework\" data-name=\"Editable hand contours and details\" fill=\"none\" stroke=\"#111111\" stroke-width=\"3.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n<path id=\"hand-right-dorsal-wrist-ulnar\" data-name=\"Wrist — little-finger-side contour\" d=\"M253 1123 C264 1091 279 1048 286 1020\"/>\n<path id=\"hand-right-dorsal-dorsum-ulnar\" data-name=\"Dorsum — little-finger-side contour\" d=\"M286 1020 C293 1000 278 974 271 952 C261 926 263 905 261 880 C260 848 258 826 249 800\"/>\n<path id=\"hand-right-dorsal-little\" data-name=\"Little finger contour\" d=\"M249 800 C247 790 243 781 241 775 C236 761 233 743 241 735 C250 726 264 730 270 744 C274 753 274 763 277 777 C284 802 292 829 300 838\"/>\n<path id=\"hand-right-dorsal-ring\" data-name=\"Ring finger contour\" d=\"M300 838 C304 844 298 815 297 809 L287 758 C282 732 278 711 281 690 C282 679 288 672 298 672 C311 671 316 686 318 704 C322 733 331 758 336 790 C339 807 340 820 343 819\"/>\n<path id=\"hand-right-dorsal-middle\" data-name=\"Middle finger contour\" d=\"M343 819 C348 818 344 797 345 783 L341 710 C341 686 337 666 342 652 C346 640 354 637 363 640 C379 642 383 660 385 684 C385 713 390 740 389 768 L389 802 C389 818 392 825 398 820\"/>\n<path id=\"hand-right-dorsal-index\" data-name=\"Index finger contour\" d=\"M398 820 C403 815 405 796 409 782 C413 765 414 744 418 730 C422 713 420 691 431 676 C439 665 454 666 461 675 C470 688 466 708 465 724 C461 750 463 776 460 797 C456 831 454 850 459 877 C461 887 464 896 466 902\"/>\n<path id=\"hand-right-dorsal-thumb\" data-name=\"Thumb contour\" d=\"M466 902 C479 897 490 875 502 861 C517 844 535 833 549 828 C562 824 575 829 582 834 C589 842 585 852 578 862 C565 876 545 892 533 908 C522 923 515 940 510 954 C499 973 480 994 468 1008\"/>\n<path id=\"hand-right-dorsal-wrist-radial\" data-name=\"Wrist — thumb-side contour\" d=\"M468 1008 C453 1023 430 1029 422 1046 C412 1068 407 1098 399 1123\"/>\n<path id=\"hand-right-dorsal-little-nail\" data-name=\"Little fingernail\" d=\"M241 742 C242 736 248 733 253 734 C260 734 262 739 264 746 L265 754 C259 760 251 762 244 759 C242 754 241 748 241 742 Z\" stroke-width=\"2.7\"/>\n<path id=\"hand-right-dorsal-ring-nail\" data-name=\"Ring fingernail\" d=\"M286 682 C288 676 293 674 300 675 C307 675 310 680 311 686 L313 698 C306 704 295 705 287 701 C285 695 285 688 286 682 Z\" stroke-width=\"2.7\"/>\n<path id=\"hand-right-dorsal-middle-nail\" data-name=\"Middle fingernail\" d=\"M347 649 C349 643 355 641 362 642 C370 643 373 650 373 658 L373 669 C367 676 354 676 346 672 C344 665 345 655 347 649 Z\" stroke-width=\"2.7\"/>\n<path id=\"hand-right-dorsal-index-nail\" data-name=\"Index fingernail\" d=\"M437 677 C441 672 449 670 455 674 C461 678 461 685 460 695 C454 702 441 702 433 697 C433 688 434 681 437 677 Z\" stroke-width=\"2.7\"/>\n<path id=\"hand-right-dorsal-thumb-nail\" data-name=\"Thumbnail\" d=\"M553 837 C561 830 571 830 579 835 C586 841 583 851 577 859 C571 866 565 870 558 866 C548 862 545 855 548 847 C549 843 551 839 553 837 Z\" stroke-width=\"2.7\"/>\n<path id=\"hand-right-dorsal-thumb-web\" data-name=\"Thumb–index web fold\" d=\"M466 902 C468 910 469 918 469 925\"/>\n</g>\n</g>\n</g>",
+      "landmarks": [
+        {
+          "id": "hand-right-dorsal-wrist-landmark",
+          "label": "Wrist centre",
+          "x": 245,
+          "y": 429
+        },
+        {
+          "id": "hand-right-dorsal-dorsum-landmark",
+          "label": "Dorsum centre",
+          "x": 216,
+          "y": 259
+        },
+        {
+          "id": "hand-right-dorsal-thumb-tip-landmark",
+          "label": "Thumb tip",
+          "x": 10,
+          "y": 209,
+          "targetId": "hand-right-dorsal-thumb"
+        },
+        {
+          "id": "hand-right-dorsal-index-tip-landmark",
+          "label": "Index fingertip",
+          "x": 146,
+          "y": 37,
+          "targetId": "hand-right-dorsal-index"
+        },
+        {
+          "id": "hand-right-dorsal-middle-tip-landmark",
+          "label": "Middle fingertip",
+          "x": 235,
+          "y": 7,
+          "targetId": "hand-right-dorsal-middle"
+        },
+        {
+          "id": "hand-right-dorsal-ring-tip-landmark",
+          "label": "Ring fingertip",
+          "x": 295,
+          "y": 41,
+          "targetId": "hand-right-dorsal-ring"
+        },
+        {
+          "id": "hand-right-dorsal-little-tip-landmark",
+          "label": "Little fingertip",
+          "x": 341,
+          "y": 99,
+          "targetId": "hand-right-dorsal-little"
+        },
+        {
+          "id": "hand-right-dorsal-thumb-nail-landmark",
+          "label": "Thumbnail centre",
+          "x": 29,
+          "y": 217,
+          "targetId": "hand-right-dorsal-thumb-nail"
+        },
+        {
+          "id": "hand-right-dorsal-index-nail-landmark",
+          "label": "Index fingernail centre",
+          "x": 146,
+          "y": 55,
+          "targetId": "hand-right-dorsal-index-nail"
+        },
+        {
+          "id": "hand-right-dorsal-middle-nail-landmark",
+          "label": "Middle fingernail centre",
+          "x": 233,
+          "y": 25,
+          "targetId": "hand-right-dorsal-middle-nail"
+        },
+        {
+          "id": "hand-right-dorsal-ring-nail-landmark",
+          "label": "Ring fingernail centre",
+          "x": 294,
+          "y": 57,
+          "targetId": "hand-right-dorsal-ring-nail"
+        },
+        {
+          "id": "hand-right-dorsal-little-nail-landmark",
+          "label": "Little fingernail centre",
+          "x": 340,
+          "y": 115,
+          "targetId": "hand-right-dorsal-little-nail"
+        },
+        {
+          "id": "hand-right-dorsal-thumb-web-landmark",
+          "label": "Thumb–index web",
+          "x": 127,
+          "y": 270,
+          "targetId": "hand-right-dorsal-thumb-web"
+        }
+      ],
+      "source": "Labeled hand views in four positions(1).png"
+    }
+  ],
+  "images": [
+    {
+      "id": "hand-right-palmar",
+      "assetId": "hand-right-palmar",
+      "name": "Right hand — palm, fingers down",
+      "x": 171,
+      "y": 107,
+      "width": 346,
+      "height": 501,
+      "rotation": 0
+    },
+    {
+      "id": "hand-left-palmar",
+      "assetId": "hand-left-palmar",
+      "name": "Left hand — palm, fingers down",
+      "x": 737,
+      "y": 107,
+      "width": 346,
+      "height": 501,
+      "rotation": 0
+    },
+    {
+      "id": "hand-left-dorsal",
+      "assetId": "hand-left-dorsal",
+      "name": "Left hand — dorsum, fingers up",
+      "x": 228,
+      "y": 632,
+      "width": 365,
+      "height": 499,
+      "rotation": 0
+    },
+    {
+      "id": "hand-right-dorsal",
+      "assetId": "hand-right-dorsal",
+      "name": "Right hand — dorsum, fingers up",
+      "x": 661,
+      "y": 632,
+      "width": 365,
+      "height": 499,
+      "rotation": 0
+    }
+  ],
+  "sites": [
+    {
+      "id": "site-hand-right-wrist",
+      "label": "Right hand — wrist",
+      "fieldKey": "example.hand_right_wrist",
+      "number": 1
+    },
+    {
+      "id": "site-hand-right-thumb-tip",
+      "label": "Right hand — thumb tip",
+      "fieldKey": "example.hand_right_thumb_tip",
+      "number": 2
+    },
+    {
+      "id": "site-hand-right-index-tip",
+      "label": "Right hand — index tip",
+      "fieldKey": "example.hand_right_index_tip",
+      "number": 3
+    },
+    {
+      "id": "site-hand-right-middle-tip",
+      "label": "Right hand — middle tip",
+      "fieldKey": "example.hand_right_middle_tip",
+      "number": 4
+    },
+    {
+      "id": "site-hand-right-ring-tip",
+      "label": "Right hand — ring tip",
+      "fieldKey": "example.hand_right_ring_tip",
+      "number": 5
+    },
+    {
+      "id": "site-hand-right-little-tip",
+      "label": "Right hand — little tip",
+      "fieldKey": "example.hand_right_little_tip",
+      "number": 6
+    },
+    {
+      "id": "site-hand-left-wrist",
+      "label": "Left hand — wrist",
+      "fieldKey": "example.hand_left_wrist",
+      "number": 7
+    },
+    {
+      "id": "site-hand-left-thumb-tip",
+      "label": "Left hand — thumb tip",
+      "fieldKey": "example.hand_left_thumb_tip",
+      "number": 8
+    },
+    {
+      "id": "site-hand-left-index-tip",
+      "label": "Left hand — index tip",
+      "fieldKey": "example.hand_left_index_tip",
+      "number": 9
+    },
+    {
+      "id": "site-hand-left-middle-tip",
+      "label": "Left hand — middle tip",
+      "fieldKey": "example.hand_left_middle_tip",
+      "number": 10
+    },
+    {
+      "id": "site-hand-left-ring-tip",
+      "label": "Left hand — ring tip",
+      "fieldKey": "example.hand_left_ring_tip",
+      "number": 11
+    },
+    {
+      "id": "site-hand-left-little-tip",
+      "label": "Left hand — little tip",
+      "fieldKey": "example.hand_left_little_tip",
+      "number": 12
+    }
+  ],
+  "links": [
+    {
+      "id": "link-hand-right-palmar-wrist",
+      "siteId": "site-hand-right-wrist",
+      "imageId": "hand-right-palmar",
+      "u": 0.638728323699422,
+      "v": 0.11776447105788423,
+      "radius": 10
+    },
+    {
+      "id": "link-hand-right-palmar-thumb-tip",
+      "siteId": "site-hand-right-thumb-tip",
+      "imageId": "hand-right-palmar",
+      "u": 0.08092485549132948,
+      "v": 0.564870259481038,
+      "radius": 10,
+      "targetId": "hand-right-palmar-thumb"
+    },
+    {
+      "id": "link-hand-right-palmar-index-tip",
+      "siteId": "site-hand-right-index-tip",
+      "imageId": "hand-right-palmar",
+      "u": 0.3236994219653179,
+      "v": 0.9041916167664671,
+      "radius": 10,
+      "targetId": "hand-right-palmar-index"
+    },
+    {
+      "id": "link-hand-right-palmar-middle-tip",
+      "siteId": "site-hand-right-middle-tip",
+      "imageId": "hand-right-palmar",
+      "u": 0.546242774566474,
+      "v": 0.9800399201596807,
+      "radius": 10,
+      "targetId": "hand-right-palmar-middle"
+    },
+    {
+      "id": "link-hand-right-palmar-ring-tip",
+      "siteId": "site-hand-right-ring-tip",
+      "imageId": "hand-right-palmar",
+      "u": 0.7109826589595376,
+      "v": 0.9461077844311377,
+      "radius": 10,
+      "targetId": "hand-right-palmar-ring"
+    },
+    {
+      "id": "link-hand-right-palmar-little-tip",
+      "siteId": "site-hand-right-little-tip",
+      "imageId": "hand-right-palmar",
+      "u": 0.9335260115606936,
+      "v": 0.8303393213572854,
+      "radius": 10,
+      "targetId": "hand-right-palmar-little"
+    },
+    {
+      "id": "link-hand-left-palmar-wrist",
+      "siteId": "site-hand-left-wrist",
+      "imageId": "hand-left-palmar",
+      "u": 0.36127167630057805,
+      "v": 0.11776447105788423,
+      "radius": 10
+    },
+    {
+      "id": "link-hand-left-palmar-thumb-tip",
+      "siteId": "site-hand-left-thumb-tip",
+      "imageId": "hand-left-palmar",
+      "u": 0.9190751445086706,
+      "v": 0.564870259481038,
+      "radius": 10,
+      "targetId": "hand-left-palmar-thumb"
+    },
+    {
+      "id": "link-hand-left-palmar-index-tip",
+      "siteId": "site-hand-left-index-tip",
+      "imageId": "hand-left-palmar",
+      "u": 0.6763005780346821,
+      "v": 0.9041916167664671,
+      "radius": 10,
+      "targetId": "hand-left-palmar-index"
+    },
+    {
+      "id": "link-hand-left-palmar-middle-tip",
+      "siteId": "site-hand-left-middle-tip",
+      "imageId": "hand-left-palmar",
+      "u": 0.45375722543352603,
+      "v": 0.9800399201596807,
+      "radius": 10,
+      "targetId": "hand-left-palmar-middle"
+    },
+    {
+      "id": "link-hand-left-palmar-ring-tip",
+      "siteId": "site-hand-left-ring-tip",
+      "imageId": "hand-left-palmar",
+      "u": 0.28901734104046245,
+      "v": 0.9461077844311377,
+      "radius": 10,
+      "targetId": "hand-left-palmar-ring"
+    },
+    {
+      "id": "link-hand-left-palmar-little-tip",
+      "siteId": "site-hand-left-little-tip",
+      "imageId": "hand-left-palmar",
+      "u": 0.06647398843930635,
+      "v": 0.8303393213572854,
+      "radius": 10,
+      "targetId": "hand-left-palmar-little"
+    },
+    {
+      "id": "link-hand-left-dorsal-wrist",
+      "siteId": "site-hand-left-wrist",
+      "imageId": "hand-left-dorsal",
+      "u": 0.3287671232876712,
+      "v": 0.8597194388777555,
+      "radius": 10
+    },
+    {
+      "id": "link-hand-left-dorsal-thumb-tip",
+      "siteId": "site-hand-left-thumb-tip",
+      "imageId": "hand-left-dorsal",
+      "u": 0.9726027397260274,
+      "v": 0.4188376753507014,
+      "radius": 10,
+      "targetId": "hand-left-dorsal-thumb"
+    },
+    {
+      "id": "link-hand-left-dorsal-index-tip",
+      "siteId": "site-hand-left-index-tip",
+      "imageId": "hand-left-dorsal",
+      "u": 0.6,
+      "v": 0.07414829659318638,
+      "radius": 10,
+      "targetId": "hand-left-dorsal-index"
+    },
+    {
+      "id": "link-hand-left-dorsal-middle-tip",
+      "siteId": "site-hand-left-middle-tip",
+      "imageId": "hand-left-dorsal",
+      "u": 0.3561643835616438,
+      "v": 0.014028056112224449,
+      "radius": 10,
+      "targetId": "hand-left-dorsal-middle"
+    },
+    {
+      "id": "link-hand-left-dorsal-ring-tip",
+      "siteId": "site-hand-left-ring-tip",
+      "imageId": "hand-left-dorsal",
+      "u": 0.1917808219178082,
+      "v": 0.08216432865731463,
+      "radius": 10,
+      "targetId": "hand-left-dorsal-ring"
+    },
+    {
+      "id": "link-hand-left-dorsal-little-tip",
+      "siteId": "site-hand-left-little-tip",
+      "imageId": "hand-left-dorsal",
+      "u": 0.06575342465753424,
+      "v": 0.19839679358717435,
+      "radius": 10,
+      "targetId": "hand-left-dorsal-little"
+    },
+    {
+      "id": "link-hand-right-dorsal-wrist",
+      "siteId": "site-hand-right-wrist",
+      "imageId": "hand-right-dorsal",
+      "u": 0.6712328767123288,
+      "v": 0.8597194388777555,
+      "radius": 10
+    },
+    {
+      "id": "link-hand-right-dorsal-thumb-tip",
+      "siteId": "site-hand-right-thumb-tip",
+      "imageId": "hand-right-dorsal",
+      "u": 0.0273972602739726,
+      "v": 0.4188376753507014,
+      "radius": 10,
+      "targetId": "hand-right-dorsal-thumb"
+    },
+    {
+      "id": "link-hand-right-dorsal-index-tip",
+      "siteId": "site-hand-right-index-tip",
+      "imageId": "hand-right-dorsal",
+      "u": 0.4,
+      "v": 0.07414829659318638,
+      "radius": 10,
+      "targetId": "hand-right-dorsal-index"
+    },
+    {
+      "id": "link-hand-right-dorsal-middle-tip",
+      "siteId": "site-hand-right-middle-tip",
+      "imageId": "hand-right-dorsal",
+      "u": 0.6438356164383562,
+      "v": 0.014028056112224449,
+      "radius": 10,
+      "targetId": "hand-right-dorsal-middle"
+    },
+    {
+      "id": "link-hand-right-dorsal-ring-tip",
+      "siteId": "site-hand-right-ring-tip",
+      "imageId": "hand-right-dorsal",
+      "u": 0.8082191780821918,
+      "v": 0.08216432865731463,
+      "radius": 10,
+      "targetId": "hand-right-dorsal-ring"
+    },
+    {
+      "id": "link-hand-right-dorsal-little-tip",
+      "siteId": "site-hand-right-little-tip",
+      "imageId": "hand-right-dorsal",
+      "u": 0.9342465753424658,
+      "v": 0.19839679358717435,
+      "radius": 10,
+      "targetId": "hand-right-dorsal-little"
+    }
+  ],
+  "annotations": [],
+  "texts": [
+    {
+      "id": "hand-right-palmar-label",
+      "text": "Right",
+      "x": 257.5,
+      "y": -30,
+      "fontSize": 84,
+      "bold": true,
+      "align": "middle",
+      "imageId": "hand-right-palmar"
+    },
+    {
+      "id": "hand-left-palmar-label",
+      "text": "Left",
+      "x": 124,
+      "y": -31,
+      "fontSize": 84,
+      "bold": true,
+      "align": "middle",
+      "imageId": "hand-left-palmar"
+    },
+    {
+      "id": "hand-left-dorsal-label",
+      "text": "Left",
+      "x": 172.5,
+      "y": 579,
+      "fontSize": 84,
+      "bold": true,
+      "align": "middle",
+      "imageId": "hand-left-dorsal"
+    },
+    {
+      "id": "hand-right-dorsal-label",
+      "text": "Right",
+      "x": 207.5,
+      "y": 579,
+      "fontSize": 84,
+      "bold": true,
+      "align": "middle",
+      "imageId": "hand-right-dorsal"
+    }
+  ],
+  "legend": {
+    "x": 24,
+    "y": 24,
+    "width": 300,
+    "rowHeight": 26,
+    "fontSize": 18,
+    "heading": "Shared example sites",
+    "visible": false
+  },
+  "provenance": {
+    "source": "Labeled hand views in four positions(1).png",
+    "artwork": "Manually authored cubic Bezier contours and separate named detail paths; no bitmap embedding or automatic contour tracing.",
+    "review": "Visual reconstruction from supplied illustrations. Landmark and site positions are illustrative and have not been clinically validated.",
+    "symmetry": "Paired left/right views are explicitly reconstructed from mirrored masters; labels remain independent editable text."
+  }
+}

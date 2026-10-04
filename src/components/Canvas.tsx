@@ -126,6 +126,7 @@ export function Canvas() {
   const selectedImageId = useStore((s) => s.selectedImageId)
   const selectedSiteId = useStore((s) => s.selectedSiteId)
   const pendingSiteId = useStore((s) => s.pendingSiteId)
+  const pendingSiteImageId = useStore((s) => s.pendingSiteImageId)
   const showSiteConnections = useStore((s) => s.showSiteConnections)
   const reference = useStore((s) => s.reference)
   const select = useStore((s) => s.select)
@@ -891,7 +892,7 @@ export function Canvas() {
       )}
       {doc && pendingSiteId && (
         <div className="canvas-hint" role="status">
-          Click an image to place site {siteById(doc, pendingSiteId)?.number}
+          Click {pendingSiteImageId ? findImage(doc, pendingSiteImageId)?.name ?? 'the chosen view' : 'an image'} to place site {siteById(doc, pendingSiteId)?.number}
           {siteById(doc, pendingSiteId) ? ` (${siteById(doc, pendingSiteId)!.label})` : ''}. Esc cancels.
         </div>
       )}

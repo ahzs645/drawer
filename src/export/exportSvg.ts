@@ -562,10 +562,11 @@ export function renderSvg(doc: DrawerDoc, opts: ExportOptions = {}): { svg: stri
   const interactiveRoot = state?.interactive?.sites || state?.interactive?.areas
   const role = state ? (interactiveRoot ? ` role="group" aria-label="${esc(doc.name)}"` : ` role="img" aria-label="${esc(doc.name)}"`) : ''
   const title = interactiveRoot ? '' : `  <title>${esc(doc.name)}</title>\n`
+  const provenance = doc.provenance ? `  <metadata data-drawer-provenance="true">${esc(JSON.stringify(doc.provenance))}</metadata>\n` : ''
   const prolog = opts.omitProlog ? '' : '<?xml version="1.0" encoding="UTF-8"?>\n'
 
   const svg = `${prolog}<svg xmlns="http://www.w3.org/2000/svg"${rootId} viewBox="${bounds.x} ${bounds.y} ${bounds.w} ${bounds.h}"${size} font-family="${FONT_FAMILY}" data-generator="drawer" data-doc-name="${esc(doc.name)}"${state ? ` data-view-id="${esc(view?.id ?? '')}"` : ''}${role}>
-${title}${stateStyle}${bg}  <g class="body-layer">${doc.base.inner}${renderImages(doc, partTags)}</g>
+${title}${provenance}${stateStyle}${bg}  <g class="body-layer">${doc.base.inner}${renderImages(doc, partTags)}</g>
 ${areaMarkup ? `${areaMarkup}\n` : ''}${drawingElements}
 ${textAnnotations}
 ${connectionLines ? `${connectionLines}\n` : ''}${siteLegend}

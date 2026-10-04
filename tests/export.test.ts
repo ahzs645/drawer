@@ -28,12 +28,16 @@ const GOLDEN: Record<string, string> = {
   'skin-assessment.scene.json|blank-markers': '7cdd949c458c98c8',
 }
 
-test('exportSvg output is stable for every view of the skin-assessment templates', () => {
+test('exportSvg artwork is stable for every view while retaining source metadata', () => {
   for (const file of ['skin-assessment-library.scene.json', 'skin-assessment.scene.json']) {
     const doc = scene(file)
     for (const view of doc.views) {
       const key = `${file}|${view.id}`
-      const out = hash(exportSvg(doc, { viewId: view.id }))
+      const svg = exportSvg(doc, { viewId: view.id })
+      assert.ok(svg.includes('data-drawer-provenance="true"'), 'source notes survive static export')
+      // Provenance is an intentional additive metadata node. Keep the
+      // original byte-level regression for every visible drawing/label.
+      const out = hash(svg.replace(/  <metadata data-drawer-provenance="true">[^]*?<\/metadata>\n/, ''))
       if (process.env.DRAWER_PRINT_GOLDEN) console.log(JSON.stringify(key), JSON.stringify(out))
       else assert.equal(out, GOLDEN[key], key)
     }

@@ -1,0 +1,519 @@
+{
+  "format": "drawer-scene",
+  "version": 1,
+  "id": "clinical-body",
+  "name": "Four-view clinical body chart — vector reconstruction",
+  "width": 1575,
+  "height": 999,
+  "pageRule": false,
+  "cleanView": true,
+  "assets": [
+    {
+      "id": "body-anterior",
+      "name": "Body — anterior",
+      "width": 280,
+      "height": 962,
+      "inner": "<g id=\"body-anterior-artwork\" data-name=\"Anterior body artwork\" transform=\"translate(-144 -16)\"><g id=\"body-anterior-right-regions\" data-name=\"right anatomical regions\"><path id=\"body-anterior-right-surface\" data-name=\"right body surface\" d=\"M283.5 25 C263 24 247 34 241 49 C235 61 237 77 239 90 C235 81 230 86 232 97 L233 109 C234 117 237 123 242 121 C244 128 247 134 249 139 L251 161 C252 168 244 174 236 179 L213 194 C195 198 181 204 172 218 C160 235 158 258 162 277 L164 286 C159 310 158 339 160 366 C154 387 150 408 152 430 L159 493 C161 503 158 511 161 518 L156 553 C155 558 157 562 160 566 L168 586 C174 593 183 598 191 601 C195 603 199 600 196 596 C196 590 190 588 184 583 L179 563 C178 558 180 554 182 552 C185 556 187 565 188 574 C190 581 200 582 200 576 C198 562 195 552 194 539 L191 527 L196 581 C200 610 209 646 219 674 C218 693 225 709 221 731 C214 759 215 781 222 810 L238 870 C242 882 236 890 240 898 C237 906 234 918 228 928 C222 936 217 941 218 949 C218 954 221 955 223 952 C222 959 226 960 230 956 C228 962 233 964 237 959 C235 965 242 966 246 960 C248 965 258 963 262 958 C267 952 264 944 267 936 L272 923 C277 914 272 907 272 900 C269 893 275 887 272 879 C267 868 267 856 270 832 L277 794 C280 775 275 756 270 738 C266 722 273 701 275 684 C278 663 279 643 280 622 L282 553 L283.5 533 Z\" fill=\"white\" stroke=\"none\" stroke-width=\"0\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-head\" data-name=\"Head and ear contour\" d=\"M283.5 25 C263 24 247 34 241 49 C235 61 237 77 239 90 C235 81 230 86 232 97 L233 109 C234 117 237 123 242 121 C244 128 247 134 249 139\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-neck-shoulder\" data-name=\"Neck and shoulder\" d=\"M249 139 L251 161 C252 168 244 174 236 179 L213 194 C195 198 181 204 172 218 C160 235 158 258 162 277 L164 286\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-arm-hand-outline\" data-name=\"Arm, wrist and hand outline\" d=\"M164 286 C159 310 158 339 160 366 C154 387 150 408 152 430 L159 493 C161 503 158 511 161 518 L156 553 C155 558 157 562 160 566 L168 586 C174 593 183 598 191 601 C195 603 199 600 196 596 C196 590 190 588 184 583 L179 563 C178 558 180 554 182 552 C185 556 187 565 188 574 C190 581 200 582 200 576 C198 562 195 552 194 539 L191 527\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-outer-thigh-knee-calf\" data-name=\"Outer thigh, knee and calf\" d=\"M191 527 L196 581 C200 610 209 646 219 674 C218 693 225 709 221 731 C214 759 215 781 222 810 L238 870 C242 882 236 890 240 898\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-foot\" data-name=\"Ankle, foot and toes\" d=\"M240 898 C237 906 234 918 228 928 C222 936 217 941 218 949 C218 954 221 955 223 952 C222 959 226 960 230 956 C228 962 233 964 237 959 C235 965 242 966 246 960 C248 965 258 963 262 958 C267 952 264 944 267 936 L272 923 C277 914 272 907 272 900\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-inner-calf-knee-thigh\" data-name=\"Inner calf, knee and thigh\" d=\"M272 900 C269 893 275 887 272 879 C267 868 267 856 270 832 L277 794 C280 775 275 756 270 738 C266 722 273 701 275 684 C278 663 279 643 280 622 L282 553 L283.5 533\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-axilla\" data-name=\"Axilla and upper arm\" d=\"M196 262 C202 270 203 282 205 296 L205 330 C207 347 200 366 200 384 C201 401 197 425 192 446 L185 487 C183 499 184 510 183 517 L191 531\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-trunk\" data-name=\"Lateral chest and abdomen\" d=\"M205 290 C205 312 205 335 211 357 C217 376 211 393 209 409 C207 431 198 460 194 482 C191 498 192 513 191 527\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-axillary-fold\" data-name=\"Anterior axillary fold\" d=\"M205 285 C209 291 211 295 214 296\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><ellipse id=\"body-anterior-right-nipple\" data-name=\"Nipple\" cx=\"219\" cy=\"289.5\" rx=\"4.1\" ry=\"2.7\" fill=\"white\" stroke=\"#171918\" stroke-width=\"1.5\"/><path id=\"body-anterior-right-pectoral-fold\" data-name=\"Medial pectoral contour\" d=\"M281 298 C278 302 276 305 272 307\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-elbow-crease\" data-name=\"Elbow crease\" d=\"M171 376 C176 380 183 379 189 375\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.35\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-wrist-crease\" data-name=\"Wrist contour\" d=\"M186 510 C184 516 185 521 189 526\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-thumb-web\" data-name=\"Thumb web and base\" d=\"M179 549 C182 553 184 556 185 560\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-index-finger\" data-name=\"Index finger\" d=\"M162 558 L174 585 C180 590 187 594 193 597\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-finger-tip-fold\" data-name=\"Curled finger tip crease\" d=\"M188 596 C190 594 194 596 195 599\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-thumb-nail\" data-name=\"Thumbnail\" d=\"M194 570 C190 570 189 574 191 577 C194 580 198 578 198 575\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-thigh-tendon\" data-name=\"Lateral thigh tendon\" d=\"M214 657 C216 664 218 670 222 674\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-patella-outer\" data-name=\"Outer knee contour\" d=\"M228 675 C223 686 227 693 231 702 L232 712\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-patella-inner\" data-name=\"Inner knee contour\" d=\"M265 678 C269 685 267 693 265 698 M264 705 C266 716 262 724 255 728\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-patella-lower\" data-name=\"Lower knee contour\" d=\"M232 716 C232 722 235 725 239 727\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-ankle-tendon\" data-name=\"Anterior ankle tendon\" d=\"M270 887 C271 896 269 904 270 912\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-great-toe\" data-name=\"Great toe contour\" d=\"M245 958 C243 953 245 947 249 944 M247 953 C252 951 258 952 261 955\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.35\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-second-toe\" data-name=\"Second toe contour\" d=\"M237 959 C237 954 239 949 242 944\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-third-toe\" data-name=\"Third toe contour\" d=\"M230 956 C231 951 233 946 236 942\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-fourth-toe\" data-name=\"Fourth toe contour\" d=\"M223 952 C224 948 227 943 230 940\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-little-toe\" data-name=\"Little toe contour\" d=\"M219 947 C220 944 222 941 224 939\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><g id=\"body-anterior-left-regions\" data-name=\"left anatomical regions\" transform=\"translate(567 0) scale(-1 1)\"><path id=\"body-anterior-left-surface\" data-name=\"left body surface\" d=\"M283.5 25 C263 24 247 34 241 49 C235 61 237 77 239 90 C235 81 230 86 232 97 L233 109 C234 117 237 123 242 121 C244 128 247 134 249 139 L251 161 C252 168 244 174 236 179 L213 194 C195 198 181 204 172 218 C160 235 158 258 162 277 L164 286 C159 310 158 339 160 366 C154 387 150 408 152 430 L159 493 C161 503 158 511 161 518 L156 553 C155 558 157 562 160 566 L168 586 C174 593 183 598 191 601 C195 603 199 600 196 596 C196 590 190 588 184 583 L179 563 C178 558 180 554 182 552 C185 556 187 565 188 574 C190 581 200 582 200 576 C198 562 195 552 194 539 L191 527 L196 581 C200 610 209 646 219 674 C218 693 225 709 221 731 C214 759 215 781 222 810 L238 870 C242 882 236 890 240 898 C237 906 234 918 228 928 C222 936 217 941 218 949 C218 954 221 955 223 952 C222 959 226 960 230 956 C228 962 233 964 237 959 C235 965 242 966 246 960 C248 965 258 963 262 958 C267 952 264 944 267 936 L272 923 C277 914 272 907 272 900 C269 893 275 887 272 879 C267 868 267 856 270 832 L277 794 C280 775 275 756 270 738 C266 722 273 701 275 684 C278 663 279 643 280 622 L282 553 L283.5 533 Z\" fill=\"white\" stroke=\"none\" stroke-width=\"0\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-head\" data-name=\"Head and ear contour\" d=\"M283.5 25 C263 24 247 34 241 49 C235 61 237 77 239 90 C235 81 230 86 232 97 L233 109 C234 117 237 123 242 121 C244 128 247 134 249 139\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-neck-shoulder\" data-name=\"Neck and shoulder\" d=\"M249 139 L251 161 C252 168 244 174 236 179 L213 194 C195 198 181 204 172 218 C160 235 158 258 162 277 L164 286\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-arm-hand-outline\" data-name=\"Arm, wrist and hand outline\" d=\"M164 286 C159 310 158 339 160 366 C154 387 150 408 152 430 L159 493 C161 503 158 511 161 518 L156 553 C155 558 157 562 160 566 L168 586 C174 593 183 598 191 601 C195 603 199 600 196 596 C196 590 190 588 184 583 L179 563 C178 558 180 554 182 552 C185 556 187 565 188 574 C190 581 200 582 200 576 C198 562 195 552 194 539 L191 527\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-outer-thigh-knee-calf\" data-name=\"Outer thigh, knee and calf\" d=\"M191 527 L196 581 C200 610 209 646 219 674 C218 693 225 709 221 731 C214 759 215 781 222 810 L238 870 C242 882 236 890 240 898\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-foot\" data-name=\"Ankle, foot and toes\" d=\"M240 898 C237 906 234 918 228 928 C222 936 217 941 218 949 C218 954 221 955 223 952 C222 959 226 960 230 956 C228 962 233 964 237 959 C235 965 242 966 246 960 C248 965 258 963 262 958 C267 952 264 944 267 936 L272 923 C277 914 272 907 272 900\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-inner-calf-knee-thigh\" data-name=\"Inner calf, knee and thigh\" d=\"M272 900 C269 893 275 887 272 879 C267 868 267 856 270 832 L277 794 C280 775 275 756 270 738 C266 722 273 701 275 684 C278 663 279 643 280 622 L282 553 L283.5 533\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-axilla\" data-name=\"Axilla and upper arm\" d=\"M196 262 C202 270 203 282 205 296 L205 330 C207 347 200 366 200 384 C201 401 197 425 192 446 L185 487 C183 499 184 510 183 517 L191 531\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-trunk\" data-name=\"Lateral chest and abdomen\" d=\"M205 290 C205 312 205 335 211 357 C217 376 211 393 209 409 C207 431 198 460 194 482 C191 498 192 513 191 527\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-axillary-fold\" data-name=\"Anterior axillary fold\" d=\"M205 285 C209 291 211 295 214 296\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><ellipse id=\"body-anterior-left-nipple\" data-name=\"Nipple\" cx=\"219\" cy=\"289.5\" rx=\"4.1\" ry=\"2.7\" fill=\"white\" stroke=\"#171918\" stroke-width=\"1.5\"/><path id=\"body-anterior-left-pectoral-fold\" data-name=\"Medial pectoral contour\" d=\"M281 298 C278 302 276 305 272 307\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-elbow-crease\" data-name=\"Elbow crease\" d=\"M171 376 C176 380 183 379 189 375\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.35\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-wrist-crease\" data-name=\"Wrist contour\" d=\"M186 510 C184 516 185 521 189 526\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-thumb-web\" data-name=\"Thumb web and base\" d=\"M179 549 C182 553 184 556 185 560\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-index-finger\" data-name=\"Index finger\" d=\"M162 558 L174 585 C180 590 187 594 193 597\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-finger-tip-fold\" data-name=\"Curled finger tip crease\" d=\"M188 596 C190 594 194 596 195 599\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-thumb-nail\" data-name=\"Thumbnail\" d=\"M194 570 C190 570 189 574 191 577 C194 580 198 578 198 575\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-thigh-tendon\" data-name=\"Lateral thigh tendon\" d=\"M214 657 C216 664 218 670 222 674\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-patella-outer\" data-name=\"Outer knee contour\" d=\"M228 675 C223 686 227 693 231 702 L232 712\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-patella-inner\" data-name=\"Inner knee contour\" d=\"M265 678 C269 685 267 693 265 698 M264 705 C266 716 262 724 255 728\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-patella-lower\" data-name=\"Lower knee contour\" d=\"M232 716 C232 722 235 725 239 727\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-ankle-tendon\" data-name=\"Anterior ankle tendon\" d=\"M270 887 C271 896 269 904 270 912\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-great-toe\" data-name=\"Great toe contour\" d=\"M245 958 C243 953 245 947 249 944 M247 953 C252 951 258 952 261 955\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.35\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-second-toe\" data-name=\"Second toe contour\" d=\"M237 959 C237 954 239 949 242 944\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-third-toe\" data-name=\"Third toe contour\" d=\"M230 956 C231 951 233 946 236 942\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-fourth-toe\" data-name=\"Fourth toe contour\" d=\"M223 952 C224 948 227 943 230 940\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-little-toe\" data-name=\"Little toe contour\" d=\"M219 947 C220 944 222 941 224 939\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><g id=\"body-anterior-central-anatomy\" data-name=\"Face and central anatomy\"><path id=\"body-anterior-right-jaw\" data-name=\"Right jaw contour\" d=\"M241 117 C245 132 255 145 267 153\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-jaw\" data-name=\"Left jaw contour\" d=\"M326 117 C322 132 312 145 301 153\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-chin\" data-name=\"Chin contour\" d=\"M273 158 C280 162 289 162 296 158\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-ear-fold\" data-name=\"Right ear cartilage\" d=\"M238 92 C233 90 234 99 237 102 C234 109 237 115 239 115 M238 96 C241 99 237 104 239 109\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.35\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-ear-fold\" data-name=\"Left ear cartilage\" d=\"M329 92 C334 90 333 99 330 102 C333 109 330 115 328 115 M329 96 C326 99 330 104 328 109\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.35\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-eyebrow\" data-name=\"Right eyebrow\" d=\"M252 84 C258 78 267 77 273 82 C266 81 259 81 252 84 Z\" fill=\"#171918\" stroke=\"none\" stroke-width=\"0\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-eyebrow\" data-name=\"Left eyebrow\" d=\"M292 82 C299 77 308 79 315 84 C306 81 299 81 292 82 Z\" fill=\"#171918\" stroke=\"none\" stroke-width=\"0\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-eye\" data-name=\"Right eyelids\" d=\"M250 93 C256 87 266 87 273 93 C266 98 257 97 250 93 Z\" fill=\"white\" stroke=\"#171918\" stroke-width=\"1.05\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-eye\" data-name=\"Left eyelids\" d=\"M293 93 C299 87 309 87 315 93 C309 97 300 98 293 93 Z\" fill=\"white\" stroke=\"#171918\" stroke-width=\"1.05\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><ellipse id=\"body-anterior-right-iris\" data-name=\"Right iris\" cx=\"262.5\" cy=\"93\" rx=\"3.4\" ry=\"3.25\" fill=\"#171918\" stroke=\"#171918\" stroke-width=\"0\"/><ellipse id=\"body-anterior-left-iris\" data-name=\"Left iris\" cx=\"303.5\" cy=\"93\" rx=\"3.4\" ry=\"3.25\" fill=\"#171918\" stroke=\"#171918\" stroke-width=\"0\"/><ellipse id=\"body-anterior-right-eye-highlight\" data-name=\"Right eye highlight\" cx=\"263.4\" cy=\"91.8\" rx=\"0.8\" ry=\"0.8\" fill=\"white\" stroke=\"#171918\" stroke-width=\"0\"/><ellipse id=\"body-anterior-left-eye-highlight\" data-name=\"Left eye highlight\" cx=\"304.4\" cy=\"91.8\" rx=\"0.8\" ry=\"0.8\" fill=\"white\" stroke=\"#171918\" stroke-width=\"0\"/><path id=\"body-anterior-nose-bridge\" data-name=\"Nasal bridge\" d=\"M274 88 C279 94 278 104 275 109 M292 89 C288 96 290 104 292 109\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-nose-tip\" data-name=\"Nasal tip and nostrils\" d=\"M276 108 C272 109 271 114 274 115 L280 114 C282 117 286 117 289 114 L293 115 C297 114 294 109 292 108\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.35\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-philtrum\" data-name=\"Philtrum\" d=\"M281 119 L281 125 C282 127 285 127 285 124 L285 119\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-upper-lip\" data-name=\"Upper lip\" d=\"M271 133 C276 132 280 127 284 130 C287 128 292 132 299 133 C289 136 280 136 271 133 Z\" fill=\"white\" stroke=\"#171918\" stroke-width=\"1.05\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-lower-lip\" data-name=\"Lower lip\" d=\"M274 137 C280 142 289 141 296 137\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-lip-shadow\" data-name=\"Lower lip crease\" d=\"M281 146 L287 146\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-neck-tendon\" data-name=\"Right neck tendon\" d=\"M267 172 C274 188 275 202 283 204\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-neck-tendon\" data-name=\"Left neck tendon\" d=\"M304 172 C298 188 293 205 283 204\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-right-clavicle\" data-name=\"Right clavicle\" d=\"M239 198 C251 201 263 198 273 199\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-anterior-left-clavicle\" data-name=\"Left clavicle\" d=\"M299 199 C311 198 323 201 337 198\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><ellipse id=\"body-anterior-umbilicus\" data-name=\"Umbilicus\" cx=\"283.5\" cy=\"409\" rx=\"4.4\" ry=\"1.75\" fill=\"white\" stroke=\"#171918\" stroke-width=\"1.7\"/><path id=\"body-anterior-pubic-fold\" data-name=\"Pubic fold\" d=\"M275 525 C279 535 287 537 291 525\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g></g>",
+      "landmarks": [
+        {
+          "id": "body-anterior-forehead",
+          "label": "Forehead",
+          "x": 139.5,
+          "y": 42,
+          "targetId": "body-anterior-right-head"
+        },
+        {
+          "id": "body-anterior-chin-site",
+          "label": "Chin",
+          "x": 139.5,
+          "y": 142,
+          "targetId": "body-anterior-chin"
+        },
+        {
+          "id": "body-anterior-neck-site",
+          "label": "Anterior neck",
+          "x": 139.5,
+          "y": 169,
+          "targetId": "body-anterior-central-anatomy"
+        },
+        {
+          "id": "body-anterior-right-shoulder-site",
+          "label": "Right shoulder",
+          "x": 40,
+          "y": 199,
+          "targetId": "body-anterior-right-neck-shoulder"
+        },
+        {
+          "id": "body-anterior-left-shoulder-site",
+          "label": "Left shoulder",
+          "x": 239,
+          "y": 199,
+          "targetId": "body-anterior-left-neck-shoulder"
+        },
+        {
+          "id": "body-anterior-sternum",
+          "label": "Sternum",
+          "x": 139.5,
+          "y": 254,
+          "targetId": "body-anterior-right-surface"
+        },
+        {
+          "id": "body-anterior-umbilicus-site",
+          "label": "Umbilicus",
+          "x": 139.5,
+          "y": 393,
+          "targetId": "body-anterior-umbilicus"
+        },
+        {
+          "id": "body-anterior-right-elbow-site",
+          "label": "Right elbow",
+          "x": 37,
+          "y": 360,
+          "targetId": "body-anterior-right-elbow-crease"
+        },
+        {
+          "id": "body-anterior-left-elbow-site",
+          "label": "Left elbow",
+          "x": 242,
+          "y": 360,
+          "targetId": "body-anterior-left-elbow-crease"
+        },
+        {
+          "id": "body-anterior-right-hand-site",
+          "label": "Right hand",
+          "x": 36,
+          "y": 553,
+          "targetId": "body-anterior-right-arm-hand-outline"
+        },
+        {
+          "id": "body-anterior-left-hand-site",
+          "label": "Left hand",
+          "x": 243,
+          "y": 553,
+          "targetId": "body-anterior-left-arm-hand-outline"
+        },
+        {
+          "id": "body-anterior-right-knee-site",
+          "label": "Right knee",
+          "x": 102,
+          "y": 687,
+          "targetId": "body-anterior-right-outer-thigh-knee-calf"
+        },
+        {
+          "id": "body-anterior-left-knee-site",
+          "label": "Left knee",
+          "x": 177,
+          "y": 687,
+          "targetId": "body-anterior-left-outer-thigh-knee-calf"
+        },
+        {
+          "id": "body-anterior-right-foot-site",
+          "label": "Right foot",
+          "x": 98,
+          "y": 920,
+          "targetId": "body-anterior-right-foot"
+        },
+        {
+          "id": "body-anterior-left-foot-site",
+          "label": "Left foot",
+          "x": 181,
+          "y": 920,
+          "targetId": "body-anterior-left-foot"
+        }
+      ],
+      "source": "Four-view clinical body chart(1).png"
+    },
+    {
+      "id": "body-profile-left",
+      "name": "Body — left-facing profile",
+      "width": 170,
+      "height": 943,
+      "inner": "<g id=\"body-profile-left-artwork\" data-name=\"Left-facing profile body artwork\" transform=\"translate(-571 -20)\"><path id=\"body-profile-left-far-leg-foot\" data-name=\"Far lower leg and foot\" d=\"M646 655 C642 672 644 688 650 699 C649 708 653 717 659 722 C657 748 664 781 670 815 C675 842 672 859 658 871 C649 879 630 883 615 890 C605 890 598 890 592 893 C586 894 587 900 592 902 C598 905 607 904 611 902 C620 908 632 906 640 902 L660 890 C675 875 678 853 677 833 L688 764 C695 728 696 691 686 661 Z\" fill=\"white\" stroke=\"#171918\" stroke-width=\"2.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-far-calf\" data-name=\"Far calf contour\" d=\"M707 655 C707 688 724 713 729 733 C734 751 727 770 721 783 L701 844 L688 800 L690 698 Z\" fill=\"white\" stroke=\"#171918\" stroke-width=\"2.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-body-contour\" data-name=\"Profile head, neck, trunk and near leg\" d=\"M647 27 C672 26 692 35 701 53 C709 69 709 87 702 101 C698 111 690 119 687 132 C684 142 684 150 687 158 L714 194 C718 218 730 240 732 257 C734 274 725 284 720 299 L708 341 C710 357 707 370 704 385 C701 402 705 420 714 437 C729 462 735 479 730 498 C727 514 719 527 709 534 L709 568 C712 608 711 640 707 671 C706 695 713 719 717 738 C723 757 724 772 721 790 L711 849 C707 872 706 886 711 904 C714 915 717 925 707 930 C697 935 680 937 666 942 L637 950 C632 951 628 951 625 949 C621 953 615 951 616 948 C611 952 604 950 605 946 C599 950 592 947 595 942 C589 946 582 942 585 937 C581 937 580 932 586 929 L611 921 C632 914 650 903 661 890 C671 876 674 857 673 841 C673 819 669 794 665 771 C661 751 657 734 659 721 C652 716 649 707 649 696 C644 684 643 674 644 660 C636 644 626 620 619 596 L617 545 C616 526 615 509 614 486 C602 469 594 450 592 433 C589 417 595 401 591 386 C588 374 593 359 591 347 C588 337 591 322 594 309 L598 285 C591 278 592 269 598 258 L615 232 C628 211 635 198 633 185 C631 171 623 160 614 156 C603 157 592 156 593 147 L595 140 C597 137 592 137 590 134 C588 133 590 131 594 130 C592 125 592 121 585 121 C580 122 575 118 579 113 L588 99 C592 93 593 90 590 86 C587 83 590 75 592 68 C597 41 616 29 647 27 Z\" fill=\"white\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-near-arm-hand\" data-name=\"Near shoulder, arm and hand\" d=\"M712 252 C706 270 711 305 707 329 C706 338 706 344 707 351 C709 362 708 369 704 376 C701 384 698 397 693 411 C682 443 666 474 652 494 C650 499 648 505 648 510 C653 521 652 532 649 544 C648 558 643 578 639 581 C637 584 634 583 634 580 C633 589 630 594 626 594 C623 594 622 591 623 587 C623 594 622 599 618 598 C614 598 612 593 613 588 C610 592 607 589 605 583 C602 572 602 558 604 548 C601 555 598 560 595 558 C591 557 596 551 599 545 C602 539 604 534 606 529 C609 518 613 509 617 499 C626 470 633 440 639 412 C643 393 648 380 653 369 C655 365 655 358 655.5 352 L656 345 C656 341 654 337 653 334 C649 323 647 311 646 300 C645 287 639 277 635 272\" fill=\"white\" stroke=\"#171918\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><g id=\"body-profile-left-anatomy-details\" data-name=\"Profile anatomy details\"><path id=\"body-profile-left-ear\" data-name=\"Ear contour\" d=\"M650 108 C656 108 664 101 665 91 C666 80 660 74 654 77 C648 79 648 86 650 91\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.65\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-ear-inner\" data-name=\"Ear cartilage\" d=\"M653 81 C659 77 663 86 661 92 M653 84 C658 83 661 89 657 93 L654 99 C652 101 650 102 649 101 M651 88 C655 87 657 91 654 94 M656 100 L659 98\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-jaw\" data-name=\"Mandible contour\" d=\"M649 103 C648 119 637 137 624 146\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-eyebrow\" data-name=\"Eyebrow\" d=\"M593 84 C599 80 606 82 612 87 C605 85 599 85 593 86 Z\" fill=\"#171918\" stroke=\"none\" stroke-width=\"0\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-eye\" data-name=\"Eye and eyelids\" d=\"M596 91 C601 90 606 93 609 94 L598 97 C600 94 598 93 596 91 Z\" fill=\"white\" stroke=\"#171918\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><ellipse id=\"body-profile-left-iris\" data-name=\"Iris\" cx=\"601\" cy=\"94\" rx=\"2.1\" ry=\"2.2\" fill=\"#171918\" stroke=\"#171918\" stroke-width=\"0\"/><path id=\"body-profile-left-nose\" data-name=\"Nose and nostril\" d=\"M590 112 C596 110 599 117 594 120 M585 118 L588 118\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-mouth\" data-name=\"Mouth and lips\" d=\"M590 130 C595 132 599 133 603 131 M593 138 C596 137 599 135 600 134\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.35\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-neck-tendon\" data-name=\"Neck tendons\" d=\"M641 184 C640 194 635 196 633 200 M656 189 C652 201 645 208 641 218 C633 227 630 238 632 249\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-clavicle\" data-name=\"Clavicular contour\" d=\"M647 207 C651 204 655 203 660 204\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-nipple\" data-name=\"Profile nipple\" d=\"M596 270 C602 271 601 279 596 279\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-chest-fold\" data-name=\"Chest contour\" d=\"M597 283 C597 287 599 289 601 290\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-anterior-pelvis\" data-name=\"Anterior pelvis contour\" d=\"M612 461 C615 479 615 490 614 501\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-elbow\" data-name=\"Elbow contour\" d=\"M693 363 C691 369 685 370 683 376 L680 386\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-wrist\" data-name=\"Wrist contour\" d=\"M651 495 L648 508\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-thumb\" data-name=\"Thumb contour\" d=\"M604 546 C601 550 600 555 596 556\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-index-finger\" data-name=\"Index finger contour\" d=\"M613 554 C614 567 612 579 613 588\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-middle-finger\" data-name=\"Middle finger contour\" d=\"M625 557 C623 568 623 579 623 587\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-ring-finger\" data-name=\"Ring finger contour\" d=\"M637 557 C634 566 634 574 634 580\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-finger-creases\" data-name=\"Finger joint creases\" d=\"M607 575 L610 575 M616 580 L620 580 M626 577 L630 577 M637 569 L640 569 M615 593 C617 591 620 591 621 593\" fill=\"none\" stroke=\"#171918\" stroke-width=\"0.65\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-hip-fold\" data-name=\"Gluteal profile fold\" d=\"M716 528 L708 534\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-anterior-knee\" data-name=\"Anterior knee contour\" d=\"M644 660 C649 671 658 678 661 689\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-posterior-knee\" data-name=\"Posterior knee contour\" d=\"M707 670 C704 681 697 697 702 709\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-ankle\" data-name=\"Ankle tendon\" d=\"M703 865 C699 881 708 903 692 908\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.35\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-far-foot-toe\" data-name=\"Far foot toe detail\" d=\"M591 894 C595 896 600 895 603 893\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-great-toe\" data-name=\"Near great toe contour\" d=\"M585 935 C592 935 596 930 603 928 M585 930 C585 933 588 934 591 932\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-second-toe\" data-name=\"Near second toe contour\" d=\"M595 942 C601 935 607 932 614 931 M590 939 C590 942 593 942 596 940\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-third-toe\" data-name=\"Near third toe contour\" d=\"M605 946 C610 939 616 935 623 934 M601 944 C602 946 605 946 608 943\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-fourth-toe\" data-name=\"Near fourth toe contour\" d=\"M616 948 C620 942 625 938 631 937\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-left-little-toe\" data-name=\"Near little toe contour\" d=\"M625 949 C628 944 631 942 634 941\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g></g>",
+      "landmarks": [
+        {
+          "id": "body-profile-left-temple",
+          "label": "Temple",
+          "x": 66,
+          "y": 62,
+          "targetId": "body-profile-left-body-contour"
+        },
+        {
+          "id": "body-profile-left-ear-site",
+          "label": "Ear",
+          "x": 84,
+          "y": 72,
+          "targetId": "body-profile-left-ear"
+        },
+        {
+          "id": "body-profile-left-jaw-site",
+          "label": "Jaw",
+          "x": 65,
+          "y": 113,
+          "targetId": "body-profile-left-jaw"
+        },
+        {
+          "id": "body-profile-left-neck-site",
+          "label": "Neck",
+          "x": 80,
+          "y": 176,
+          "targetId": "body-profile-left-neck-tendon"
+        },
+        {
+          "id": "body-profile-left-shoulder-site",
+          "label": "Shoulder",
+          "x": 118,
+          "y": 245,
+          "targetId": "body-profile-left-near-arm-hand"
+        },
+        {
+          "id": "body-profile-left-chest-site",
+          "label": "Chest",
+          "x": 36,
+          "y": 255,
+          "targetId": "body-profile-left-body-contour"
+        },
+        {
+          "id": "body-profile-left-abdomen",
+          "label": "Abdomen",
+          "x": 39,
+          "y": 389,
+          "targetId": "body-profile-left-body-contour"
+        },
+        {
+          "id": "body-profile-left-elbow-site",
+          "label": "Elbow",
+          "x": 115,
+          "y": 355,
+          "targetId": "body-profile-left-elbow"
+        },
+        {
+          "id": "body-profile-left-wrist-site",
+          "label": "Wrist",
+          "x": 61,
+          "y": 495,
+          "targetId": "body-profile-left-near-arm-hand"
+        },
+        {
+          "id": "body-profile-left-hand-site",
+          "label": "Hand",
+          "x": 52,
+          "y": 545,
+          "targetId": "body-profile-left-near-arm-hand"
+        },
+        {
+          "id": "body-profile-left-hip-site",
+          "label": "Hip",
+          "x": 139,
+          "y": 472,
+          "targetId": "body-profile-left-body-contour"
+        },
+        {
+          "id": "body-profile-left-knee-site",
+          "label": "Knee",
+          "x": 102,
+          "y": 672,
+          "targetId": "body-profile-left-body-contour"
+        },
+        {
+          "id": "body-profile-left-ankle-site",
+          "label": "Ankle",
+          "x": 126,
+          "y": 864,
+          "targetId": "body-profile-left-ankle"
+        },
+        {
+          "id": "body-profile-left-foot-site",
+          "label": "Near foot",
+          "x": 79,
+          "y": 906,
+          "targetId": "body-profile-left-body-contour"
+        }
+      ],
+      "source": "Four-view clinical body chart(1).png"
+    },
+    {
+      "id": "body-posterior",
+      "name": "Body — posterior",
+      "width": 274,
+      "height": 945,
+      "inner": "<g id=\"body-posterior-artwork\" data-name=\"Posterior body artwork\" transform=\"translate(-870 -18)\"><g id=\"body-posterior-left-regions\" data-name=\"left anatomical regions\"><path id=\"body-posterior-left-surface\" data-name=\"left body surface\" d=\"M1006 25 C985 25 969 35 963 51 C958 63 958 82 960 97 C954 90 952 97 955 106 C956 115 961 123 967 125 L967 119 C971 131 975 143 976 155 C977 164 973 171 968 175 L934 195 C915 201 900 211 891 229 C882 247 881 268 886 292 C880 317 881 343 883 369 C877 389 877 413 879 438 L886 501 C888 510 884 518 888 525 L890 554 C890 560 894 565 897 571 L904 585 C910 592 918 598 927 601 L925 590 C918 586 912 581 910 576 L905 562 C907 556 910 551 911 545 L910 531 L922 580 C927 613 936 646 944 674 C942 692 948 710 946 726 C940 752 941 777 948 803 L966 870 C969 880 971 888 967 897 C963 893 959 896 960 899 C955 895 951 899 954 902 C949 898 945 902 948 905 C943 903 941 907 945 911 C941 914 946 920 950 925 C955 932 961 934 966 939 C971 947 978 951 989 950 C1001 950 1006 943 1003 932 L998 913 C994 899 995 885 997 869 L1003 800 C1007 778 1001 756 997 738 C993 723 997 712 1001 699 C1009 675 1003 655 1002 638 C1002 617 1006 591 1006 570 L1006 518 Z\" fill=\"white\" stroke=\"none\" stroke-width=\"0\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-head\" data-name=\"Occiput and ear contour\" d=\"M1006 25 C985 25 969 35 963 51 C958 63 958 82 960 97 C954 90 952 97 955 106 C956 115 961 123 967 125 L967 119\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-neck-shoulder\" data-name=\"Neck and shoulder\" d=\"M967 119 C971 131 975 143 976 155 C977 164 973 171 968 175 L934 195 C915 201 900 211 891 229 C882 247 881 268 886 292\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-arm-hand-outline\" data-name=\"Arm, wrist and hand outline\" d=\"M886 292 C880 317 881 343 883 369 C877 389 877 413 879 438 L886 501 C888 510 884 518 888 525 L890 554 C890 560 894 565 897 571 L904 585 C910 592 918 598 927 601 L925 590 C918 586 912 581 910 576 L905 562 C907 556 910 551 911 545 L910 531\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-outer-thigh-knee-calf\" data-name=\"Outer thigh, knee and calf\" d=\"M910 531 L922 580 C927 613 936 646 944 674 C942 692 948 710 946 726 C940 752 941 777 948 803 L966 870 C969 880 971 888 967 897\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-foot\" data-name=\"Heel, foot and toes\" d=\"M967 897 C963 893 959 896 960 899 C955 895 951 899 954 902 C949 898 945 902 948 905 C943 903 941 907 945 911 C941 914 946 920 950 925 C955 932 961 934 966 939 C971 947 978 951 989 950 C1001 950 1006 943 1003 932 L998 913 C994 899 995 885 997 869\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-inner-calf-knee-thigh\" data-name=\"Inner calf, knee and thigh\" d=\"M997 869 L1003 800 C1007 778 1001 756 997 738 C993 723 997 712 1001 699 C1009 675 1003 655 1002 638 C1002 617 1006 591 1006 570 L1006 518\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-axilla\" data-name=\"Posterior axilla and upper arm\" d=\"M914 262 L922 276 C926 300 925 318 926 338 C925 354 921 368 925 385 C928 400 922 425 919 446 L910 491 C908 504 908 518 912 531\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-flank\" data-name=\"Lateral back and waist\" d=\"M926 338 C933 358 939 382 934 403 L929 432 C923 454 917 481 918 505 L920 533 L922 580\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-scapula-upper\" data-name=\"Upper scapular contour\" d=\"M983 216 C987 220 989 226 989 234\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-scapula-medial\" data-name=\"Medial scapular border\" d=\"M989 245 C987 266 980 280 968 294\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-scapula-lateral\" data-name=\"Lateral scapular contour\" d=\"M940 290 C943 294 947 295 950 296\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-elbow\" data-name=\"Posterior elbow crease\" d=\"M897 390 C903 401 910 396 914 385\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.35\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-lumbar-fold\" data-name=\"Lateral lumbar contour\" d=\"M939 450 C945 464 943 480 940 494\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-gluteal-fold\" data-name=\"Gluteal fold\" d=\"M944 525 C960 533 981 533 995 526 C1003 522 1006 518 1006 511\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.85\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-hand-dorsum\" data-name=\"Dorsal hand tendons\" d=\"M908 517 C915 526 917 539 913 551\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-hand-fingers\" data-name=\"Posterior finger contours\" d=\"M892 555 L908 584 L923 595 M913 551 C918 555 922 568 924 575\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-lateral-knee\" data-name=\"Lateral posterior knee contour\" d=\"M951 674 C958 682 960 690 958 700\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-medial-knee\" data-name=\"Medial posterior knee contour\" d=\"M988 666 C985 676 986 684 987 693\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-knee-tendon\" data-name=\"Posterior medial knee tendon\" d=\"M998 625 C994 642 995 657 999 672\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-calf-tendon\" data-name=\"Upper medial calf tendon\" d=\"M997 717 C992 726 993 738 998 746\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-achilles\" data-name=\"Achilles tendon\" d=\"M998 816 C991 858 992 886 999 918\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-ankle-tendon\" data-name=\"Lateral ankle contour\" d=\"M974 897 C972 905 975 914 978 919 M984 899 C984 906 984 913 983 921\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-left-toe-folds\" data-name=\"Posterior toe contours\" d=\"M960 899 L966 900 M954 902 L963 904 M948 905 L958 908 M945 911 L953 912\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><g id=\"body-posterior-right-regions\" data-name=\"right anatomical regions\" transform=\"translate(2012 0) scale(-1 1)\"><path id=\"body-posterior-right-surface\" data-name=\"right body surface\" d=\"M1006 25 C985 25 969 35 963 51 C958 63 958 82 960 97 C954 90 952 97 955 106 C956 115 961 123 967 125 L967 119 C971 131 975 143 976 155 C977 164 973 171 968 175 L934 195 C915 201 900 211 891 229 C882 247 881 268 886 292 C880 317 881 343 883 369 C877 389 877 413 879 438 L886 501 C888 510 884 518 888 525 L890 554 C890 560 894 565 897 571 L904 585 C910 592 918 598 927 601 L925 590 C918 586 912 581 910 576 L905 562 C907 556 910 551 911 545 L910 531 L922 580 C927 613 936 646 944 674 C942 692 948 710 946 726 C940 752 941 777 948 803 L966 870 C969 880 971 888 967 897 C963 893 959 896 960 899 C955 895 951 899 954 902 C949 898 945 902 948 905 C943 903 941 907 945 911 C941 914 946 920 950 925 C955 932 961 934 966 939 C971 947 978 951 989 950 C1001 950 1006 943 1003 932 L998 913 C994 899 995 885 997 869 L1003 800 C1007 778 1001 756 997 738 C993 723 997 712 1001 699 C1009 675 1003 655 1002 638 C1002 617 1006 591 1006 570 L1006 518 Z\" fill=\"white\" stroke=\"none\" stroke-width=\"0\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-head\" data-name=\"Occiput and ear contour\" d=\"M1006 25 C985 25 969 35 963 51 C958 63 958 82 960 97 C954 90 952 97 955 106 C956 115 961 123 967 125 L967 119\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-neck-shoulder\" data-name=\"Neck and shoulder\" d=\"M967 119 C971 131 975 143 976 155 C977 164 973 171 968 175 L934 195 C915 201 900 211 891 229 C882 247 881 268 886 292\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-arm-hand-outline\" data-name=\"Arm, wrist and hand outline\" d=\"M886 292 C880 317 881 343 883 369 C877 389 877 413 879 438 L886 501 C888 510 884 518 888 525 L890 554 C890 560 894 565 897 571 L904 585 C910 592 918 598 927 601 L925 590 C918 586 912 581 910 576 L905 562 C907 556 910 551 911 545 L910 531\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-outer-thigh-knee-calf\" data-name=\"Outer thigh, knee and calf\" d=\"M910 531 L922 580 C927 613 936 646 944 674 C942 692 948 710 946 726 C940 752 941 777 948 803 L966 870 C969 880 971 888 967 897\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-foot\" data-name=\"Heel, foot and toes\" d=\"M967 897 C963 893 959 896 960 899 C955 895 951 899 954 902 C949 898 945 902 948 905 C943 903 941 907 945 911 C941 914 946 920 950 925 C955 932 961 934 966 939 C971 947 978 951 989 950 C1001 950 1006 943 1003 932 L998 913 C994 899 995 885 997 869\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-inner-calf-knee-thigh\" data-name=\"Inner calf, knee and thigh\" d=\"M997 869 L1003 800 C1007 778 1001 756 997 738 C993 723 997 712 1001 699 C1009 675 1003 655 1002 638 C1002 617 1006 591 1006 570 L1006 518\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-axilla\" data-name=\"Posterior axilla and upper arm\" d=\"M914 262 L922 276 C926 300 925 318 926 338 C925 354 921 368 925 385 C928 400 922 425 919 446 L910 491 C908 504 908 518 912 531\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-flank\" data-name=\"Lateral back and waist\" d=\"M926 338 C933 358 939 382 934 403 L929 432 C923 454 917 481 918 505 L920 533 L922 580\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-scapula-upper\" data-name=\"Upper scapular contour\" d=\"M983 216 C987 220 989 226 989 234\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-scapula-medial\" data-name=\"Medial scapular border\" d=\"M989 245 C987 266 980 280 968 294\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-scapula-lateral\" data-name=\"Lateral scapular contour\" d=\"M940 290 C943 294 947 295 950 296\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-elbow\" data-name=\"Posterior elbow crease\" d=\"M897 390 C903 401 910 396 914 385\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.35\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-lumbar-fold\" data-name=\"Lateral lumbar contour\" d=\"M939 450 C945 464 943 480 940 494\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-gluteal-fold\" data-name=\"Gluteal fold\" d=\"M944 525 C960 533 981 533 995 526 C1003 522 1006 518 1006 511\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.85\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-hand-dorsum\" data-name=\"Dorsal hand tendons\" d=\"M908 517 C915 526 917 539 913 551\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.55\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-hand-fingers\" data-name=\"Posterior finger contours\" d=\"M892 555 L908 584 L923 595 M913 551 C918 555 922 568 924 575\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-lateral-knee\" data-name=\"Lateral posterior knee contour\" d=\"M951 674 C958 682 960 690 958 700\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-medial-knee\" data-name=\"Medial posterior knee contour\" d=\"M988 666 C985 676 986 684 987 693\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-knee-tendon\" data-name=\"Posterior medial knee tendon\" d=\"M998 625 C994 642 995 657 999 672\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-calf-tendon\" data-name=\"Upper medial calf tendon\" d=\"M997 717 C992 726 993 738 998 746\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-achilles\" data-name=\"Achilles tendon\" d=\"M998 816 C991 858 992 886 999 918\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-ankle-tendon\" data-name=\"Lateral ankle contour\" d=\"M974 897 C972 905 975 914 978 919 M984 899 C984 906 984 913 983 921\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-right-toe-folds\" data-name=\"Posterior toe contours\" d=\"M960 899 L966 900 M954 902 L963 904 M948 905 L958 908 M945 911 L953 912\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g><g id=\"body-posterior-central-back\" data-name=\"Central back and sacrum\"><path id=\"body-posterior-lumbar-spine\" data-name=\"Lumbar midline\" d=\"M1006 367 C1008 381 1008 393 1006 404\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-sacral-fold\" data-name=\"Sacral crease\" d=\"M1003 450 L1006 455 L1009 450\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-posterior-gluteal-cleft\" data-name=\"Gluteal cleft\" d=\"M1006 461 L1006 514\" fill=\"none\" stroke=\"#171918\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g></g>",
+      "landmarks": [
+        {
+          "id": "body-posterior-occiput",
+          "label": "Occiput",
+          "x": 136,
+          "y": 54,
+          "targetId": "body-posterior-left-head"
+        },
+        {
+          "id": "body-posterior-neck-site",
+          "label": "Posterior neck",
+          "x": 136,
+          "y": 144,
+          "targetId": "body-posterior-left-surface"
+        },
+        {
+          "id": "body-posterior-left-shoulder-site",
+          "label": "Left shoulder",
+          "x": 46,
+          "y": 202,
+          "targetId": "body-posterior-left-neck-shoulder"
+        },
+        {
+          "id": "body-posterior-right-shoulder-site",
+          "label": "Right shoulder",
+          "x": 226,
+          "y": 202,
+          "targetId": "body-posterior-right-neck-shoulder"
+        },
+        {
+          "id": "body-posterior-left-scapula-site",
+          "label": "Left scapula",
+          "x": 104,
+          "y": 247,
+          "targetId": "body-posterior-left-scapula-medial"
+        },
+        {
+          "id": "body-posterior-right-scapula-site",
+          "label": "Right scapula",
+          "x": 168,
+          "y": 247,
+          "targetId": "body-posterior-right-scapula-medial"
+        },
+        {
+          "id": "body-posterior-lumbar-site",
+          "label": "Lumbar midline",
+          "x": 136,
+          "y": 370,
+          "targetId": "body-posterior-lumbar-spine"
+        },
+        {
+          "id": "body-posterior-sacrum",
+          "label": "Sacrum",
+          "x": 136,
+          "y": 434,
+          "targetId": "body-posterior-sacral-fold"
+        },
+        {
+          "id": "body-posterior-left-elbow-site",
+          "label": "Left elbow",
+          "x": 35,
+          "y": 372,
+          "targetId": "body-posterior-left-elbow"
+        },
+        {
+          "id": "body-posterior-right-elbow-site",
+          "label": "Right elbow",
+          "x": 237,
+          "y": 372,
+          "targetId": "body-posterior-right-elbow"
+        },
+        {
+          "id": "body-posterior-left-hand-site",
+          "label": "Left hand",
+          "x": 39,
+          "y": 549,
+          "targetId": "body-posterior-left-hand-dorsum"
+        },
+        {
+          "id": "body-posterior-right-hand-site",
+          "label": "Right hand",
+          "x": 233,
+          "y": 549,
+          "targetId": "body-posterior-right-hand-dorsum"
+        },
+        {
+          "id": "body-posterior-left-knee-site",
+          "label": "Left posterior knee",
+          "x": 100,
+          "y": 670,
+          "targetId": "body-posterior-left-outer-thigh-knee-calf"
+        },
+        {
+          "id": "body-posterior-right-knee-site",
+          "label": "Right posterior knee",
+          "x": 172,
+          "y": 670,
+          "targetId": "body-posterior-right-outer-thigh-knee-calf"
+        },
+        {
+          "id": "body-posterior-heel-site",
+          "label": "Left heel",
+          "x": 115,
+          "y": 918,
+          "targetId": "body-posterior-left-foot"
+        }
+      ],
+      "source": "Four-view clinical body chart(1).png"
+    },
+    {
+      "id": "body-profile-right",
+      "name": "Body — right-facing profile",
+      "width": 175,
+      "height": 943,
+      "inner": "<g id=\"body-profile-right-artwork\" data-name=\"Right-facing profile body artwork\" transform=\"translate(-1274 -20)\"><g id=\"body-profile-right-reflected-construction\" data-name=\"Reflected profile construction\" transform=\"translate(2018 0) scale(-1 1)\"><path id=\"body-profile-right-far-leg-foot\" data-name=\"Far lower leg and foot\" d=\"M646 655 C642 672 644 688 650 699 C649 708 653 717 659 722 C657 748 664 781 670 815 C675 842 672 859 658 871 C649 879 630 883 615 890 C605 890 598 890 592 893 C586 894 587 900 592 902 C598 905 607 904 611 902 C620 908 632 906 640 902 L660 890 C675 875 678 853 677 833 L688 764 C695 728 696 691 686 661 Z\" fill=\"white\" stroke=\"#171918\" stroke-width=\"2.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-far-calf\" data-name=\"Far calf contour\" d=\"M707 655 C707 688 724 713 729 733 C734 751 727 770 721 783 L701 844 L688 800 L690 698 Z\" fill=\"white\" stroke=\"#171918\" stroke-width=\"2.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-body-contour\" data-name=\"Profile head, neck, trunk and near leg\" d=\"M647 27 C672 26 692 35 701 53 C709 69 709 87 702 101 C698 111 690 119 687 132 C684 142 684 150 687 158 L714 194 C718 218 730 240 732 257 C734 274 725 284 720 299 L708 341 C710 357 707 370 704 385 C701 402 705 420 714 437 C729 462 735 479 730 498 C727 514 719 527 709 534 L709 568 C712 608 711 640 707 671 C706 695 713 719 717 738 C723 757 724 772 721 790 L711 849 C707 872 706 886 711 904 C714 915 717 925 707 930 C697 935 680 937 666 942 L637 950 C632 951 628 951 625 949 C621 953 615 951 616 948 C611 952 604 950 605 946 C599 950 592 947 595 942 C589 946 582 942 585 937 C581 937 580 932 586 929 L611 921 C632 914 650 903 661 890 C671 876 674 857 673 841 C673 819 669 794 665 771 C661 751 657 734 659 721 C652 716 649 707 649 696 C644 684 643 674 644 660 C636 644 626 620 619 596 L617 545 C616 526 615 509 614 486 C602 469 594 450 592 433 C589 417 595 401 591 386 C588 374 593 359 591 347 C588 337 591 322 594 309 L598 285 C591 278 592 269 598 258 L615 232 C628 211 635 198 633 185 C631 171 623 160 614 156 C603 157 592 156 593 147 L595 140 C597 137 592 137 590 134 C588 133 590 131 594 130 C592 125 592 121 585 121 C580 122 575 118 579 113 L588 99 C592 93 593 90 590 86 C587 83 590 75 592 68 C597 41 616 29 647 27 Z\" fill=\"white\" stroke=\"#171918\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-near-arm-hand\" data-name=\"Near shoulder, arm and hand\" d=\"M712 252 C706 270 711 305 707 329 C706 338 706 344 707 351 C709 362 708 369 704 376 C701 384 698 397 693 411 C682 443 666 474 652 494 C650 499 648 505 648 510 C653 521 652 532 649 544 C648 558 643 578 639 581 C637 584 634 583 634 580 C633 589 630 594 626 594 C623 594 622 591 623 587 C623 594 622 599 618 598 C614 598 612 593 613 588 C610 592 607 589 605 583 C602 572 602 558 604 548 C601 555 598 560 595 558 C591 557 596 551 599 545 C602 539 604 534 606 529 C609 518 613 509 617 499 C626 470 633 440 639 412 C643 393 648 380 653 369 C655 365 655 358 655.5 352 L656 345 C656 341 654 337 653 334 C649 323 647 311 646 300 C645 287 639 277 635 272\" fill=\"white\" stroke=\"#171918\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><g id=\"body-profile-right-anatomy-details\" data-name=\"Profile anatomy details\"><path id=\"body-profile-right-ear\" data-name=\"Ear contour\" d=\"M650 108 C656 108 664 101 665 91 C666 80 660 74 654 77 C648 79 648 86 650 91\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.65\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-ear-inner\" data-name=\"Ear cartilage\" d=\"M653 81 C659 77 663 86 661 92 M653 84 C658 83 661 89 657 93 L654 99 C652 101 650 102 649 101 M651 88 C655 87 657 91 654 94 M656 100 L659 98\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-jaw\" data-name=\"Mandible contour\" d=\"M649 103 C648 119 637 137 624 146\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-eyebrow\" data-name=\"Eyebrow\" d=\"M593 84 C599 80 606 82 612 87 C605 85 599 85 593 86 Z\" fill=\"#171918\" stroke=\"none\" stroke-width=\"0\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-eye\" data-name=\"Eye and eyelids\" d=\"M596 91 C601 90 606 93 609 94 L598 97 C600 94 598 93 596 91 Z\" fill=\"white\" stroke=\"#171918\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><ellipse id=\"body-profile-right-iris\" data-name=\"Iris\" cx=\"601\" cy=\"94\" rx=\"2.1\" ry=\"2.2\" fill=\"#171918\" stroke=\"#171918\" stroke-width=\"0\"/><path id=\"body-profile-right-nose\" data-name=\"Nose and nostril\" d=\"M590 112 C596 110 599 117 594 120 M585 118 L588 118\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-mouth\" data-name=\"Mouth and lips\" d=\"M590 130 C595 132 599 133 603 131 M593 138 C596 137 599 135 600 134\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.35\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-neck-tendon\" data-name=\"Neck tendons\" d=\"M641 184 C640 194 635 196 633 200 M656 189 C652 201 645 208 641 218 C633 227 630 238 632 249\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-clavicle\" data-name=\"Clavicular contour\" d=\"M647 207 C651 204 655 203 660 204\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-nipple\" data-name=\"Profile nipple\" d=\"M596 270 C602 271 601 279 596 279\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-chest-fold\" data-name=\"Chest contour\" d=\"M597 283 C597 287 599 289 601 290\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-anterior-pelvis\" data-name=\"Anterior pelvis contour\" d=\"M612 461 C615 479 615 490 614 501\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-elbow\" data-name=\"Elbow contour\" d=\"M693 363 C691 369 685 370 683 376 L680 386\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-wrist\" data-name=\"Wrist contour\" d=\"M651 495 L648 508\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-thumb\" data-name=\"Thumb contour\" d=\"M604 546 C601 550 600 555 596 556\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-index-finger\" data-name=\"Index finger contour\" d=\"M613 554 C614 567 612 579 613 588\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-middle-finger\" data-name=\"Middle finger contour\" d=\"M625 557 C623 568 623 579 623 587\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-ring-finger\" data-name=\"Ring finger contour\" d=\"M637 557 C634 566 634 574 634 580\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-finger-creases\" data-name=\"Finger joint creases\" d=\"M607 575 L610 575 M616 580 L620 580 M626 577 L630 577 M637 569 L640 569 M615 593 C617 591 620 591 621 593\" fill=\"none\" stroke=\"#171918\" stroke-width=\"0.65\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-hip-fold\" data-name=\"Gluteal profile fold\" d=\"M716 528 L708 534\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-anterior-knee\" data-name=\"Anterior knee contour\" d=\"M644 660 C649 671 658 678 661 689\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-posterior-knee\" data-name=\"Posterior knee contour\" d=\"M707 670 C704 681 697 697 702 709\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-ankle\" data-name=\"Ankle tendon\" d=\"M703 865 C699 881 708 903 692 908\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.35\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-far-foot-toe\" data-name=\"Far foot toe detail\" d=\"M591 894 C595 896 600 895 603 893\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-great-toe\" data-name=\"Near great toe contour\" d=\"M585 935 C592 935 596 930 603 928 M585 930 C585 933 588 934 591 932\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-second-toe\" data-name=\"Near second toe contour\" d=\"M595 942 C601 935 607 932 614 931 M590 939 C590 942 593 942 596 940\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-third-toe\" data-name=\"Near third toe contour\" d=\"M605 946 C610 939 616 935 623 934 M601 944 C602 946 605 946 608 943\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-fourth-toe\" data-name=\"Near fourth toe contour\" d=\"M616 948 C620 942 625 938 631 937\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.15\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path id=\"body-profile-right-little-toe\" data-name=\"Near little toe contour\" d=\"M625 949 C628 944 631 942 634 941\" fill=\"none\" stroke=\"#171918\" stroke-width=\"1.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g></g></g>",
+      "landmarks": [
+        {
+          "id": "body-profile-right-temple",
+          "label": "Temple",
+          "x": 107,
+          "y": 62,
+          "targetId": "body-profile-right-body-contour"
+        },
+        {
+          "id": "body-profile-right-ear-site",
+          "label": "Ear",
+          "x": 89,
+          "y": 72,
+          "targetId": "body-profile-right-ear"
+        },
+        {
+          "id": "body-profile-right-jaw-site",
+          "label": "Jaw",
+          "x": 108,
+          "y": 113,
+          "targetId": "body-profile-right-jaw"
+        },
+        {
+          "id": "body-profile-right-neck-site",
+          "label": "Neck",
+          "x": 93,
+          "y": 176,
+          "targetId": "body-profile-right-neck-tendon"
+        },
+        {
+          "id": "body-profile-right-shoulder-site",
+          "label": "Shoulder",
+          "x": 55,
+          "y": 245,
+          "targetId": "body-profile-right-near-arm-hand"
+        },
+        {
+          "id": "body-profile-right-chest-site",
+          "label": "Chest",
+          "x": 137,
+          "y": 255,
+          "targetId": "body-profile-right-body-contour"
+        },
+        {
+          "id": "body-profile-right-abdomen",
+          "label": "Abdomen",
+          "x": 134,
+          "y": 389,
+          "targetId": "body-profile-right-body-contour"
+        },
+        {
+          "id": "body-profile-right-elbow-site",
+          "label": "Elbow",
+          "x": 58,
+          "y": 355,
+          "targetId": "body-profile-right-elbow"
+        },
+        {
+          "id": "body-profile-right-wrist-site",
+          "label": "Wrist",
+          "x": 112,
+          "y": 495,
+          "targetId": "body-profile-right-near-arm-hand"
+        },
+        {
+          "id": "body-profile-right-hand-site",
+          "label": "Hand",
+          "x": 121,
+          "y": 545,
+          "targetId": "body-profile-right-near-arm-hand"
+        },
+        {
+          "id": "body-profile-right-hip-site",
+          "label": "Hip",
+          "x": 34,
+          "y": 472,
+          "targetId": "body-profile-right-body-contour"
+        },
+        {
+          "id": "body-profile-right-knee-site",
+          "label": "Knee",
+          "x": 71,
+          "y": 672,
+          "targetId": "body-profile-right-body-contour"
+        },
+        {
+          "id": "body-profile-right-ankle-site",
+          "label": "Ankle",
+          "x": 47,
+          "y": 864,
+          "targetId": "body-profile-right-ankle"
+        },
+        {
+          "id": "body-profile-right-foot-site",
+          "label": "Near foot",
+          "x": 94,
+          "y": 906,
+          "targetId": "body-profile-right-body-contour"
+        }
+      ],
+      "source": "Four-view clinical body chart(1).png"
+    }
+  ],
+  "images": [
+    {
+      "id": "body-anterior",
+      "assetId": "body-anterior",
+      "name": "Body — anterior",
+      "x": 144,
+      "y": 16,
+      "width": 280,
+      "height": 962,
+      "rotation": 0
+    },
+    {
+      "id": "body-profile-left",
+      "assetId": "body-profile-left",
+      "name": "Body — left-facing profile",
+      "x": 571,
+      "y": 20,
+      "width": 170,
+      "height": 943,
+      "rotation": 0
+    },
+    {
+      "id": "body-posterior",
+      "assetId": "body-posterior",
+      "name": "Body — posterior",
+      "x": 870,
+      "y": 18,
+      "width": 274,
+      "height": 945,
+      "rotation": 0
+    },
+    {
+      "id": "body-profile-right",
+      "assetId": "body-profile-right",
+      "name": "Body — right-facing profile",
+      "x": 1274,
+      "y": 20,
+      "width": 175,
+      "height": 943,
+      "rotation": 0
+    }
+  ],
+  "sites": [],
+  "links": [],
+  "annotations": [],
+  "texts": [],
+  "legend": {
+    "x": 24,
+    "y": 24,
+    "width": 300,
+    "rowHeight": 26,
+    "fontSize": 18,
+    "heading": "Shared example sites",
+    "visible": false
+  },
+  "provenance": {
+    "source": "Four-view clinical body chart(1).png",
+    "artwork": "Manually authored cubic Bezier contours and separate named detail paths; no bitmap embedding or automatic contour tracing.",
+    "review": "Visual reconstruction from supplied illustrations. Landmark and site positions are illustrative and have not been clinically validated.",
+    "symmetry": "Front and back are separately authored. Opposing profiles may reuse mirrored geometry; profile names describe image-facing direction only."
+  }
+}

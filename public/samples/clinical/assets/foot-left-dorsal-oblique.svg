@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 397" width="220" height="397" role="img" aria-label="Left foot — dorsal oblique">
+<title>Left foot — dorsal oblique</title>
+<metadata>{&quot;source&quot;:&quot;Twelve-view left and right foot chart(1).png&quot;,&quot;artwork&quot;:&quot;Manually authored cubic Bezier contours and separate named detail paths; no bitmap embedding or automatic contour tracing.&quot;,&quot;review&quot;:&quot;Visual reconstruction from supplied illustrations. Landmark and site positions are illustrative and have not been clinically validated.&quot;,&quot;symmetry&quot;:&quot;Paired left/right views are explicitly reconstructed from mirrored masters; labels remain independent editable text.&quot;,&quot;assetId&quot;:&quot;foot-left-dorsal-oblique&quot;,&quot;view&quot;:&quot;dorsal-oblique&quot;,&quot;side&quot;:&quot;left&quot;}</metadata>
+<g id="foot-left-dorsal-oblique-artwork" data-name="Left foot — dorsal oblique" fill="none" stroke="#151515" stroke-width="3.3" stroke-linecap="round" stroke-linejoin="round"><g id="foot-left-dorsal-oblique-source-frame" transform="translate(-710 -408)"><path id="foot-left-dorsal-oblique-outline" data-name="Dorsal foot silhouette" d="M 803 422 L 800 480 C 799 495 796 506 799 517 C 789 533 785 547 773 560 C 757 579 749 596 744 615 C 742 628 734 638 735 648 C 727 659 722 674 722 686 C 720 696 724 702 730 704 C 726 713 729 723 737 727 C 734 735 739 745 747 750 C 742 760 747 771 758 773 C 763 776 770 775 776 771 C 770 781 778 789 790 792 C 805 796 816 788 826 777 C 834 768 839 758 840 747 C 841 735 851 723 859 711 C 871 694 871 678 870 656 C 869 623 877 589 889 563 C 903 545 913 528 916 508 C 920 489 910 470 903 459 L 917 423" fill="#fff"/>
+<path id="foot-left-dorsal-oblique-ankle-outer" data-name="Outer ankle fold" d="M 799 501 C 797 511 798 517 801 524"/>
+<path id="foot-left-dorsal-oblique-ankle-inner" data-name="Inner ankle contour" d="M 903 459 C 899 474 903 491 895 507 C 890 520 882 528 876 533"/>
+<path id="foot-left-dorsal-oblique-instep-tendon" data-name="Instep tendon contour" d="M 900 512 C 898 533 893 548 889 563"/>
+<path id="foot-left-dorsal-oblique-forefoot-edge" data-name="Forefoot edge fold" d="M 738 647 L 733 653"/>
+<path id="foot-left-dorsal-oblique-toe-5-divider" data-name="Little toe outline" d="M 759 669 C 743 675 743 690 731 706 C 726 714 730 722 737 725"/>
+<path id="foot-left-dorsal-oblique-toe-5-fold" data-name="Little toe crease" d="M 749 677 L 750 668 L 753 663"/>
+<path id="foot-left-dorsal-oblique-toe-4-divider" data-name="Fourth toe outline" d="M 774 682 C 750 693 747 708 739 725 C 733 737 740 746 747 749"/>
+<path id="foot-left-dorsal-oblique-toe-3-divider" data-name="Third toe outline" d="M 783 700 C 765 707 773 723 755 740 C 741 755 746 767 758 771"/>
+<path id="foot-left-dorsal-oblique-toe-2-divider" data-name="Second toe outline" d="M 797 717 C 797 730 788 743 786 749 C 781 760 778 767 776 771"/>
+<path id="foot-left-dorsal-oblique-hallux-divider" data-name="Great toe outline" d="M 808 712 C 805 730 797 742 790 754 C 783 764 775 770 776 777"/>
+<path id="foot-left-dorsal-oblique-hallux-fold" data-name="Great toe flexion creases" d="M 806 739 C 812 733 816 737 822 738 M 805 743 C 809 747 815 747 820 748"/>
+<path id="foot-left-dorsal-oblique-nail-5" data-name="Little toe nail" d="M 723 692 C 728 688 732 692 733 697 L 729 703 C 725 702 722 697 723 692 Z" fill="#fff"/>
+<path id="foot-left-dorsal-oblique-nail-4" data-name="Fourth toe nail" d="M 732 716 C 735 712 740 715 742 720 L 738 726 C 733 724 730 720 732 716 Z" fill="#fff"/>
+<path id="foot-left-dorsal-oblique-nail-3" data-name="Third toe nail" d="M 741 736 C 746 731 752 735 754 740 C 754 744 750 748 747 749 C 742 746 739 741 741 736 Z" fill="#fff"/>
+<path id="foot-left-dorsal-oblique-nail-2" data-name="Second toe nail" d="M 752 757 C 755 752 762 754 767 759 C 772 763 768 769 763 770 C 757 769 752 765 750 762 Z" fill="#fff"/>
+<path id="foot-left-dorsal-oblique-nail-1" data-name="Great toe nail" d="M 783 757 C 791 750 803 751 809 759 C 811 765 807 774 802 778 C 793 778 782 773 779 771 C 779 765 782 760 783 757 Z" fill="#fff"/></g></g>
+</svg>

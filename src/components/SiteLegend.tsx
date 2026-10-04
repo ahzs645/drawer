@@ -13,7 +13,24 @@ interface Props {
 /** The on-page numbered site list: drag to move, click a row to select the site. */
 export function SiteLegendView({ doc, selectedSiteId, connections, onDown, onRowClick }: Props) {
   const layout = siteLegendLayout(doc)
-  if (!layout) return null
+  if (!layout) {
+    // Charts often omit the printed legend. Their selected cross-view
+    // relationships still need a visible connection on the editing canvas.
+    if (connections.length < 2) return null
+    const points = [...connections].sort((a, b) => a.x - b.x || a.y - b.y)
+    return (
+      <g className="site-connections" pointerEvents="none">
+        <path
+          className="site-connection"
+          d={points.map((p, i) => `${i ? 'L' : 'M'}${p.x} ${p.y}`).join(' ')}
+          fill="none"
+          stroke="#2874bd"
+          strokeWidth={1.8}
+          strokeDasharray="6 5"
+        />
+      </g>
+    )
+  }
   const g = doc.siteLegend!
   const width = Math.max(...layout.rows.map((r) => r.text.length), layout.heading.text.length) * g.fontSize * 0.56
   const selected = layout.rows.find((r) => r.siteId === selectedSiteId)

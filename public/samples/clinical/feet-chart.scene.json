@@ -1,0 +1,1028 @@
+{
+  "format": "drawer-scene",
+  "version": 1,
+  "id": "clinical-feet",
+  "name": "Twelve-view left and right foot chart",
+  "width": 1816,
+  "height": 866,
+  "pageRule": false,
+  "cleanView": true,
+  "assets": [
+    {
+      "id": "foot-left-toe-front",
+      "name": "Left foot — toe front",
+      "width": 194,
+      "height": 224,
+      "inner": "<g id=\"foot-left-toe-front-artwork\" data-name=\"Left foot — toe front\" fill=\"none\" stroke=\"#151515\" stroke-width=\"3.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g id=\"foot-left-toe-front-source-frame\" transform=\"translate(-100 -33)\"><path id=\"foot-left-toe-front-outline\" data-name=\"Foot silhouette\" d=\"M 137.5 45 C 134 63 130 77 127.6 91 C 123.9 113 123.3 129 125.9 146 C 123.4 162 117.5 174 112.8 190 C 109.9 199 110.8 204 115.2 208 C 112.6 218 111.7 226 115.5 233 C 120.7 245 139 246 151.5 245 C 164 244.6 174.9 241.2 176.8 230.4 L 179.4 219.5 C 181.3 239 188.1 246 200.8 246.4 C 214.3 247.4 224.7 244.4 225.2 233.3 C 235.2 238.7 245.5 236.8 246.4 227.7 C 256.6 232.1 266 226.6 265.2 216.4 C 275.8 220.9 281.3 215.1 282 207.4 C 284.2 190 274.8 179.4 260.9 168.7 C 253.8 154.1 241.5 139.8 231 124.5 C 227 115.8 228.3 108.6 227.6 101.2 C 227 88.3 220 80.1 221.4 69.8 L 224.2 45\" fill=\"#fff\"/>\n<path id=\"foot-left-toe-front-ankle-crease\" data-name=\"Front ankle crease\" d=\"M 142.5 91 C 156 77 174 74 191 84\"/>\n<path id=\"foot-left-toe-front-ankle-inner\" data-name=\"Inner ankle contour\" d=\"M 139 109 C 131 126 128 144 126 156\"/>\n<path id=\"foot-left-toe-front-ankle-outer\" data-name=\"Outer ankle contour\" d=\"M 211 91 C 220 98 224 105 228 115\"/>\n<path id=\"foot-left-toe-front-hallux-fold\" data-name=\"Great toe flexion fold\" d=\"M 128 195 C 136 191 149 191 158 195\"/>\n<path id=\"foot-left-toe-front-hallux-nail\" data-name=\"Great toe nail rim\" d=\"M 127 208 C 137 200 151 201 162 208 M 130 204 C 139 199 152 199 160 204\"/>\n<path id=\"foot-left-toe-front-hallux-divider\" data-name=\"Great toe outline\" d=\"M 169 192 C 167.9 200 171.5 208 174.2 215 C 177.9 225 179 233 174.3 239 M 176 191 C 175 202 178.8 211 180.5 219\"/>\n<path id=\"foot-left-toe-front-toe-2-divider\" data-name=\"Second toe outline\" d=\"M 202.5 188 C 212.2 196 207.8 207 217 216 C 223.6 222 228.1 230 225.2 237.6\"/>\n<path id=\"foot-left-toe-front-toe-3-divider\" data-name=\"Third toe outline\" d=\"M 230 183.5 C 236 192 242.1 199 243 210 C 244.8 216 248.2 221 246.4 227.7\"/>\n<path id=\"foot-left-toe-front-toe-4-divider\" data-name=\"Fourth toe outline\" d=\"M 250.9 176 C 257 182 262.2 187.4 264 199.5 L 265.2 216.4\"/>\n<path id=\"foot-left-toe-front-toe-5-fold\" data-name=\"Little toe dorsal fold\" d=\"M 249 171 L 250.2 177 M 254 165.8 L 253.1 172.4\"/>\n<path id=\"foot-left-toe-front-nail-2\" data-name=\"Second toe nail\" d=\"M 197.6 220.9 C 200.6 216.5 211 216.5 216.1 220 C 222 224.1 218.6 228.9 209.7 229 C 199.4 229.2 194.6 226.4 197.6 220.9 Z\" fill=\"#fff\"/>\n<path id=\"foot-left-toe-front-nail-3\" data-name=\"Third toe nail\" d=\"M 225.2 214.2 C 229.5 209.5 237.3 211 241.1 217.3 C 244.2 221.9 239.6 223.8 233.8 222.8 C 226.7 222 221.8 218.5 225.2 214.2 Z\" fill=\"#fff\"/>\n<path id=\"foot-left-toe-front-nail-4\" data-name=\"Fourth toe nail\" d=\"M 248.3 208.7 C 250.9 204.1 257 205.4 260.5 211.1 C 263.5 217.4 259.8 218.2 253.8 216.6 C 248 215.2 246.7 212.1 248.3 208.7 Z\" fill=\"#fff\"/>\n<path id=\"foot-left-toe-front-nail-5\" data-name=\"Little toe nail\" d=\"M 270.8 194.7 C 274 192.2 278.6 195.1 280.1 200.4 C 281.1 205.7 277.7 207 273.3 204.3 C 269.8 202.1 268.6 197.1 270.8 194.7 Z\" fill=\"#fff\"/></g></g>",
+      "landmarks": [
+        {
+          "id": "foot-left-toe-front-ankle-landmark",
+          "label": "Ankle crease",
+          "x": 66,
+          "y": 46,
+          "targetId": "foot-left-toe-front-ankle-crease"
+        },
+        {
+          "id": "foot-left-toe-front-hallux-landmark",
+          "label": "Great toe",
+          "x": 45,
+          "y": 172,
+          "targetId": "foot-left-toe-front-hallux-nail"
+        },
+        {
+          "id": "foot-left-toe-front-toe-2-landmark",
+          "label": "Second toe",
+          "x": 108,
+          "y": 191,
+          "targetId": "foot-left-toe-front-nail-2"
+        },
+        {
+          "id": "foot-left-toe-front-toe-3-landmark",
+          "label": "Third toe",
+          "x": 132,
+          "y": 186,
+          "targetId": "foot-left-toe-front-nail-3"
+        },
+        {
+          "id": "foot-left-toe-front-toe-4-landmark",
+          "label": "Fourth toe",
+          "x": 154,
+          "y": 179,
+          "targetId": "foot-left-toe-front-nail-4"
+        },
+        {
+          "id": "foot-left-toe-front-toe-5-landmark",
+          "label": "Little toe",
+          "x": 175,
+          "y": 167,
+          "targetId": "foot-left-toe-front-nail-5"
+        }
+      ],
+      "source": "Twelve-view left and right foot chart(1).png"
+    },
+    {
+      "id": "foot-left-plantar",
+      "name": "Left foot — plantar",
+      "width": 168,
+      "height": 340,
+      "inner": "<g id=\"foot-left-plantar-artwork\" data-name=\"Left foot — plantar\" fill=\"none\" stroke=\"#151515\" stroke-width=\"3.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g id=\"foot-left-plantar-source-frame\" transform=\"translate(-345 -22)\"><path id=\"foot-left-plantar-outline\" data-name=\"Plantar foot silhouette\" d=\"M 374 188 C 375 215 376 237 375 258 C 369 278 367 298 373 318 C 379 339 398 350 419 349 C 441 348 456 332 465 313 C 474 295 473 281 479 263 C 493 219 498 175 498 141 C 498 126 495 112 496 100 C 497 88 491 78 483 79 C 475 79 470 87 470 95 C 473 85 474 78 471 68 C 468 56 459 54 452 59 C 453 48 445 40 436 43 C 431 44 428 48 426 54 C 429 44 424 35 416 34 C 406 32 399 39 399 48 C 393 35 379 34 370 42 C 359 54 356 72 359 86 C 361 98 357 111 357 128 C 357 149 363 169 374 188 Z\" fill=\"#fff\"/>\n<path id=\"foot-left-plantar-hallux-pad\" data-name=\"Great toe pad\" d=\"M 399 49 C 403 61 400 76 394 81 C 388 87 380 89 369 87\"/>\n<path id=\"foot-left-plantar-toe-2-pad\" data-name=\"Second toe pad\" d=\"M 400 51 C 402 58 408 61 413 61 M 400 70 L 400 85\"/>\n<path id=\"foot-left-plantar-toe-3-pad\" data-name=\"Third toe pad\" d=\"M 428 54 C 425 63 424 73 424 82 M 427 65 C 429 70 433 73 437 72\"/>\n<path id=\"foot-left-plantar-toe-4-pad\" data-name=\"Fourth toe pad\" d=\"M 451 60 C 447 72 447 80 449 88 M 449 76 C 451 82 455 86 460 85\"/>\n<path id=\"foot-left-plantar-toe-5-pad\" data-name=\"Little toe pad\" d=\"M 472 91 C 469 99 474 106 479 107 C 483 109 486 107 489 105\"/>\n<path id=\"foot-left-plantar-ball-crease\" data-name=\"Forefoot crease\" d=\"M 368 101 C 390 94 413 77 435 84 C 456 89 474 105 488 113\"/>\n<path id=\"foot-left-plantar-arch-crease\" data-name=\"Plantar arch crease\" d=\"M 422 124 C 422 145 414 162 399 172\"/></g></g>",
+      "landmarks": [
+        {
+          "id": "foot-left-plantar-hallux-landmark",
+          "label": "Great toe pad",
+          "x": 39,
+          "y": 63,
+          "targetId": "foot-left-plantar-hallux-pad"
+        },
+        {
+          "id": "foot-left-plantar-toe-2-landmark",
+          "label": "Second toe pad",
+          "x": 61,
+          "y": 37,
+          "targetId": "foot-left-plantar-toe-2-pad"
+        },
+        {
+          "id": "foot-left-plantar-toe-3-landmark",
+          "label": "Third toe pad",
+          "x": 87,
+          "y": 50,
+          "targetId": "foot-left-plantar-toe-3-pad"
+        },
+        {
+          "id": "foot-left-plantar-toe-5-landmark",
+          "label": "Little toe pad",
+          "x": 137,
+          "y": 85,
+          "targetId": "foot-left-plantar-toe-5-pad"
+        },
+        {
+          "id": "foot-left-plantar-forefoot-landmark",
+          "label": "Forefoot crease",
+          "x": 90,
+          "y": 62,
+          "targetId": "foot-left-plantar-ball-crease"
+        },
+        {
+          "id": "foot-left-plantar-arch-landmark",
+          "label": "Arch crease",
+          "x": 70,
+          "y": 131,
+          "targetId": "foot-left-plantar-arch-crease"
+        },
+        {
+          "id": "foot-left-plantar-heel-landmark",
+          "label": "Heel contour",
+          "x": 74,
+          "y": 326,
+          "targetId": "foot-left-plantar-outline"
+        }
+      ],
+      "source": "Twelve-view left and right foot chart(1).png"
+    },
+    {
+      "id": "foot-left-heel",
+      "name": "Left foot — heel rear",
+      "width": 180,
+      "height": 272,
+      "inner": "<g id=\"foot-left-heel-artwork\" data-name=\"Left foot — heel rear\" fill=\"none\" stroke=\"#151515\" stroke-width=\"3.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g id=\"foot-left-heel-source-frame\" transform=\"translate(-733 -66)\"><path id=\"foot-left-heel-outline\" data-name=\"Rear foot silhouette\" d=\"M 783 84 C 785 111 791 129 789 151 C 789 171 788 188 780 208 C 777 219 778 224 782 229 C 771 234 761 251 749 259 C 741 263 744 274 750 281 C 757 291 768 292 780 299 C 790 318 805 325 826 325 C 844 325 862 320 872 307 L 879 294 C 890 297 899 286 899 274 C 900 258 884 242 881 232 C 881 220 884 210 884 202 C 889 190 894 182 891 168 C 888 157 880 142 880 129 L 880 79\" fill=\"#fff\"/>\n<path id=\"foot-left-heel-heel-contour\" data-name=\"Heel and Achilles contours\" d=\"M 809 151 C 809 175 807 195 800 215 C 792 235 782 255 780 273 C 777 285 778 292 780 299 M 859 181 L 860 209 C 861 230 871 253 876 278 C 878 284 879 289 879 294\"/></g></g>",
+      "landmarks": [
+        {
+          "id": "foot-left-heel-ankle-outer-landmark",
+          "label": "Outer ankle contour",
+          "x": 73,
+          "y": 124,
+          "targetId": "foot-left-heel-heel-contour"
+        },
+        {
+          "id": "foot-left-heel-ankle-inner-landmark",
+          "label": "Inner ankle contour",
+          "x": 127,
+          "y": 135,
+          "targetId": "foot-left-heel-heel-contour"
+        },
+        {
+          "id": "foot-left-heel-heel-landmark",
+          "label": "Heel bottom",
+          "x": 93,
+          "y": 259,
+          "targetId": "foot-left-heel-outline"
+        },
+        {
+          "id": "foot-left-heel-heel-outer-landmark",
+          "label": "Outer heel contour",
+          "x": 47,
+          "y": 215,
+          "targetId": "foot-left-heel-heel-contour"
+        },
+        {
+          "id": "foot-left-heel-heel-inner-landmark",
+          "label": "Inner heel contour",
+          "x": 144,
+          "y": 222,
+          "targetId": "foot-left-heel-heel-contour"
+        },
+        {
+          "id": "foot-left-heel-foot-edge-landmark",
+          "label": "Visible foot edge",
+          "x": 16,
+          "y": 213,
+          "targetId": "foot-left-heel-outline"
+        }
+      ],
+      "source": "Twelve-view left and right foot chart(1).png"
+    },
+    {
+      "id": "foot-left-medial",
+      "name": "Left foot — medial side",
+      "width": 410,
+      "height": 247,
+      "inner": "<g id=\"foot-left-medial-artwork\" data-name=\"Left foot — medial side\" fill=\"none\" stroke=\"#151515\" stroke-width=\"3.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g id=\"foot-left-medial-source-frame\" transform=\"translate(-83 -310)\"><path id=\"foot-left-medial-outline\" data-name=\"Side foot silhouette\" d=\"M 119 322 C 120 351 124 378 120 399 C 117 423 108 436 102 452 C 94 470 91 485 98 501 C 106 530 129 533 155 531 C 182 529 203 522 222 519 C 231 516 236 516 245 518 L 294 524 C 320 529 338 536 354 540 C 373 547 390 544 404 539 C 429 547 454 543 470 535 C 481 528 485 516 476 508 C 469 500 461 503 455 501 C 453 494 443 493 430 493 C 419 493 409 485 398 481 C 382 474 365 467 345 457 C 320 443 299 430 275 419 C 263 405 254 389 255 375 L 258 322\" fill=\"#fff\"/>\n<path id=\"foot-left-medial-ankle-crease\" data-name=\"Ankle crease\" d=\"M 153 424 C 177 440 201 433 217 410\"/>\n<path id=\"foot-left-medial-arch-crease\" data-name=\"Arch contour\" d=\"M 220 505 C 252 490 286 493 318 515\"/>\n<path id=\"foot-left-medial-forefoot-top\" data-name=\"Top of forefoot\" d=\"M 345 457 C 371 477 394 487 421 499 C 430 503 442 504 458 501\"/>\n<path id=\"foot-left-medial-lesser-toe-ridge\" data-name=\"Lesser toe ridges\" d=\"M 366 470 C 378 470 391 476 397 481 M 391 479 C 409 484 418 491 429 493\"/>\n<path id=\"foot-left-medial-hallux-nail\" data-name=\"Great toe nail\" d=\"M 446 505 C 452 502 461 502 466 503 C 474 506 472 513 466 515 C 461 517 454 517 449 516 C 442 515 442 509 446 505 Z\" fill=\"#fff\"/>\n<path id=\"foot-left-medial-hallux-fold\" data-name=\"Great toe flexion crease\" d=\"M 424 508 C 419 514 420 521 424 522 C 430 525 435 513 430 507\"/>\n<path id=\"foot-left-medial-toe-ridge-fold\" data-name=\"Toe ridge fold\" d=\"M 443 495 C 441 499 444 502 448 503\"/></g></g>",
+      "landmarks": [
+        {
+          "id": "foot-left-medial-ankle-landmark",
+          "label": "Ankle crease",
+          "x": 102,
+          "y": 122,
+          "targetId": "foot-left-medial-ankle-crease"
+        },
+        {
+          "id": "foot-left-medial-heel-landmark",
+          "label": "Heel contour",
+          "x": 33,
+          "y": 214,
+          "targetId": "foot-left-medial-outline"
+        },
+        {
+          "id": "foot-left-medial-arch-landmark",
+          "label": "Arch contour",
+          "x": 187,
+          "y": 187,
+          "targetId": "foot-left-medial-arch-crease"
+        },
+        {
+          "id": "foot-left-medial-hallux-landmark",
+          "label": "Great toe nail",
+          "x": 374,
+          "y": 200,
+          "targetId": "foot-left-medial-hallux-nail"
+        },
+        {
+          "id": "foot-left-medial-forefoot-landmark",
+          "label": "Forefoot ridge",
+          "x": 312,
+          "y": 175,
+          "targetId": "foot-left-medial-forefoot-top"
+        },
+        {
+          "id": "foot-left-medial-toe-fold-landmark",
+          "label": "Toe crease",
+          "x": 343,
+          "y": 209,
+          "targetId": "foot-left-medial-hallux-fold"
+        }
+      ],
+      "source": "Twelve-view left and right foot chart(1).png"
+    },
+    {
+      "id": "foot-left-lateral",
+      "name": "Left foot — lateral side",
+      "width": 413,
+      "height": 257,
+      "inner": "<g id=\"foot-left-lateral-artwork\" data-name=\"Left foot — lateral side\" fill=\"none\" stroke=\"#151515\" stroke-width=\"3.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g id=\"foot-left-lateral-source-frame\" transform=\"translate(-88 -568)\"><path id=\"foot-left-lateral-outline\" data-name=\"Oblique side foot silhouette\" d=\"M 337 580 C 338 599 342 615 342 629 C 341 643 333 655 320 665 C 288 674 265 682 242 695 C 220 707 202 711 184 717 C 173 721 165 726 155 727 C 142 729 129 727 117 726 C 108 724 102 726 99 735 C 95 746 99 754 112 759 C 106 765 109 775 119 780 C 122 782 127 782 131 779 C 124 786 131 794 140 796 C 146 798 152 796 156 793 C 151 802 160 809 171 804 L 180 800 C 174 806 180 811 190 812 C 202 813 215 808 222 805 C 253 814 302 802 329 795 C 350 790 365 782 383 781 C 407 781 435 784 457 776 C 479 769 488 751 488 732 C 488 713 478 699 471 682 C 460 657 462 625 467 581\" fill=\"#fff\"/>\n<path id=\"foot-left-lateral-ankle-crease\" data-name=\"Ankle crease\" d=\"M 370 693 C 386 719 411 724 435 709\"/>\n<path id=\"foot-left-lateral-hallux-divider\" data-name=\"Great toe outline\" d=\"M 112 759 C 131 756 137 749 152 746 C 160 744 169 742 177 741\"/>\n<path id=\"foot-left-lateral-toe-2-divider\" data-name=\"Second toe outline\" d=\"M 129 779 C 142 777 151 766 164 762 C 174 758 184 755 195 751\"/>\n<path id=\"foot-left-lateral-toe-3-divider\" data-name=\"Third toe outline\" d=\"M 151 793 C 167 789 173 776 187 770 C 194 766 201 763 207 760\"/>\n<path id=\"foot-left-lateral-toe-4-divider\" data-name=\"Fourth toe outline\" d=\"M 175 804 C 187 798 191 790 204 786 L 212 782\"/>\n<path id=\"foot-left-lateral-hallux-fold\" data-name=\"Great toe joint fold\" d=\"M 168 743 L 174 736 L 179 734\"/>\n<path id=\"foot-left-lateral-toe-4-fold\" data-name=\"Little toe joint fold\" d=\"M 203 785 L 208 778 L 212 776\"/>\n<path id=\"foot-left-lateral-nail-1\" data-name=\"Great toe nail\" d=\"M 108 728 C 115 724 125 729 135 728 C 139 729 135 736 131 737 C 122 740 112 738 110 735 Z\" fill=\"#fff\"/>\n<path id=\"foot-left-lateral-nail-2\" data-name=\"Second toe nail\" d=\"M 112 763 L 123 760 C 130 760 126 768 119 770 C 113 772 111 768 112 763 Z\" fill=\"#fff\"/>\n<path id=\"foot-left-lateral-nail-3\" data-name=\"Third toe nail\" d=\"M 130 775 C 134 772 142 772 143 776 C 144 780 135 783 131 781 Z\" fill=\"#fff\"/>\n<path id=\"foot-left-lateral-nail-4\" data-name=\"Fourth toe nail\" d=\"M 151 788 C 154 785 162 783 165 786 C 168 790 159 795 155 794 Z\" fill=\"#fff\"/>\n<path id=\"foot-left-lateral-nail-5\" data-name=\"Little toe nail\" d=\"M 179 796 C 182 791 189 791 194 795 C 198 800 191 804 186 803 Z\" fill=\"#fff\"/></g></g>",
+      "landmarks": [
+        {
+          "id": "foot-left-lateral-ankle-landmark",
+          "label": "Ankle crease",
+          "x": 314,
+          "y": 149,
+          "targetId": "foot-left-lateral-ankle-crease"
+        },
+        {
+          "id": "foot-left-lateral-heel-landmark",
+          "label": "Heel contour",
+          "x": 386,
+          "y": 198,
+          "targetId": "foot-left-lateral-outline"
+        },
+        {
+          "id": "foot-left-lateral-hallux-landmark",
+          "label": "Great toe nail",
+          "x": 33,
+          "y": 165,
+          "targetId": "foot-left-lateral-nail-1"
+        },
+        {
+          "id": "foot-left-lateral-toe-2-landmark",
+          "label": "Second toe nail",
+          "x": 31,
+          "y": 198,
+          "targetId": "foot-left-lateral-nail-2"
+        },
+        {
+          "id": "foot-left-lateral-toe-3-landmark",
+          "label": "Third toe nail",
+          "x": 48,
+          "y": 209,
+          "targetId": "foot-left-lateral-nail-3"
+        },
+        {
+          "id": "foot-left-lateral-toe-4-landmark",
+          "label": "Fourth toe nail",
+          "x": 70,
+          "y": 221,
+          "targetId": "foot-left-lateral-nail-4"
+        },
+        {
+          "id": "foot-left-lateral-toe-5-landmark",
+          "label": "Little toe nail",
+          "x": 99,
+          "y": 230,
+          "targetId": "foot-left-lateral-nail-5"
+        }
+      ],
+      "source": "Twelve-view left and right foot chart(1).png"
+    },
+    {
+      "id": "foot-left-dorsal-oblique",
+      "name": "Left foot — dorsal oblique",
+      "width": 220,
+      "height": 397,
+      "inner": "<g id=\"foot-left-dorsal-oblique-artwork\" data-name=\"Left foot — dorsal oblique\" fill=\"none\" stroke=\"#151515\" stroke-width=\"3.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g id=\"foot-left-dorsal-oblique-source-frame\" transform=\"translate(-710 -408)\"><path id=\"foot-left-dorsal-oblique-outline\" data-name=\"Dorsal foot silhouette\" d=\"M 803 422 L 800 480 C 799 495 796 506 799 517 C 789 533 785 547 773 560 C 757 579 749 596 744 615 C 742 628 734 638 735 648 C 727 659 722 674 722 686 C 720 696 724 702 730 704 C 726 713 729 723 737 727 C 734 735 739 745 747 750 C 742 760 747 771 758 773 C 763 776 770 775 776 771 C 770 781 778 789 790 792 C 805 796 816 788 826 777 C 834 768 839 758 840 747 C 841 735 851 723 859 711 C 871 694 871 678 870 656 C 869 623 877 589 889 563 C 903 545 913 528 916 508 C 920 489 910 470 903 459 L 917 423\" fill=\"#fff\"/>\n<path id=\"foot-left-dorsal-oblique-ankle-outer\" data-name=\"Outer ankle fold\" d=\"M 799 501 C 797 511 798 517 801 524\"/>\n<path id=\"foot-left-dorsal-oblique-ankle-inner\" data-name=\"Inner ankle contour\" d=\"M 903 459 C 899 474 903 491 895 507 C 890 520 882 528 876 533\"/>\n<path id=\"foot-left-dorsal-oblique-instep-tendon\" data-name=\"Instep tendon contour\" d=\"M 900 512 C 898 533 893 548 889 563\"/>\n<path id=\"foot-left-dorsal-oblique-forefoot-edge\" data-name=\"Forefoot edge fold\" d=\"M 738 647 L 733 653\"/>\n<path id=\"foot-left-dorsal-oblique-toe-5-divider\" data-name=\"Little toe outline\" d=\"M 759 669 C 743 675 743 690 731 706 C 726 714 730 722 737 725\"/>\n<path id=\"foot-left-dorsal-oblique-toe-5-fold\" data-name=\"Little toe crease\" d=\"M 749 677 L 750 668 L 753 663\"/>\n<path id=\"foot-left-dorsal-oblique-toe-4-divider\" data-name=\"Fourth toe outline\" d=\"M 774 682 C 750 693 747 708 739 725 C 733 737 740 746 747 749\"/>\n<path id=\"foot-left-dorsal-oblique-toe-3-divider\" data-name=\"Third toe outline\" d=\"M 783 700 C 765 707 773 723 755 740 C 741 755 746 767 758 771\"/>\n<path id=\"foot-left-dorsal-oblique-toe-2-divider\" data-name=\"Second toe outline\" d=\"M 797 717 C 797 730 788 743 786 749 C 781 760 778 767 776 771\"/>\n<path id=\"foot-left-dorsal-oblique-hallux-divider\" data-name=\"Great toe outline\" d=\"M 808 712 C 805 730 797 742 790 754 C 783 764 775 770 776 777\"/>\n<path id=\"foot-left-dorsal-oblique-hallux-fold\" data-name=\"Great toe flexion creases\" d=\"M 806 739 C 812 733 816 737 822 738 M 805 743 C 809 747 815 747 820 748\"/>\n<path id=\"foot-left-dorsal-oblique-nail-5\" data-name=\"Little toe nail\" d=\"M 723 692 C 728 688 732 692 733 697 L 729 703 C 725 702 722 697 723 692 Z\" fill=\"#fff\"/>\n<path id=\"foot-left-dorsal-oblique-nail-4\" data-name=\"Fourth toe nail\" d=\"M 732 716 C 735 712 740 715 742 720 L 738 726 C 733 724 730 720 732 716 Z\" fill=\"#fff\"/>\n<path id=\"foot-left-dorsal-oblique-nail-3\" data-name=\"Third toe nail\" d=\"M 741 736 C 746 731 752 735 754 740 C 754 744 750 748 747 749 C 742 746 739 741 741 736 Z\" fill=\"#fff\"/>\n<path id=\"foot-left-dorsal-oblique-nail-2\" data-name=\"Second toe nail\" d=\"M 752 757 C 755 752 762 754 767 759 C 772 763 768 769 763 770 C 757 769 752 765 750 762 Z\" fill=\"#fff\"/>\n<path id=\"foot-left-dorsal-oblique-nail-1\" data-name=\"Great toe nail\" d=\"M 783 757 C 791 750 803 751 809 759 C 811 765 807 774 802 778 C 793 778 782 773 779 771 C 779 765 782 760 783 757 Z\" fill=\"#fff\"/></g></g>",
+      "landmarks": [
+        {
+          "id": "foot-left-dorsal-oblique-ankle-landmark",
+          "label": "Inner ankle contour",
+          "x": 189,
+          "y": 84,
+          "targetId": "foot-left-dorsal-oblique-ankle-inner"
+        },
+        {
+          "id": "foot-left-dorsal-oblique-instep-landmark",
+          "label": "Instep contour",
+          "x": 185,
+          "y": 133,
+          "targetId": "foot-left-dorsal-oblique-instep-tendon"
+        },
+        {
+          "id": "foot-left-dorsal-oblique-hallux-landmark",
+          "label": "Great toe nail",
+          "x": 84,
+          "y": 358,
+          "targetId": "foot-left-dorsal-oblique-nail-1"
+        },
+        {
+          "id": "foot-left-dorsal-oblique-toe-2-landmark",
+          "label": "Second toe nail",
+          "x": 50,
+          "y": 354,
+          "targetId": "foot-left-dorsal-oblique-nail-2"
+        },
+        {
+          "id": "foot-left-dorsal-oblique-toe-3-landmark",
+          "label": "Third toe nail",
+          "x": 37,
+          "y": 332,
+          "targetId": "foot-left-dorsal-oblique-nail-3"
+        },
+        {
+          "id": "foot-left-dorsal-oblique-toe-4-landmark",
+          "label": "Fourth toe nail",
+          "x": 27,
+          "y": 312,
+          "targetId": "foot-left-dorsal-oblique-nail-4"
+        },
+        {
+          "id": "foot-left-dorsal-oblique-toe-5-landmark",
+          "label": "Little toe nail",
+          "x": 17,
+          "y": 288,
+          "targetId": "foot-left-dorsal-oblique-nail-5"
+        }
+      ],
+      "source": "Twelve-view left and right foot chart(1).png"
+    },
+    {
+      "id": "foot-right-toe-front",
+      "name": "Right foot — toe front",
+      "width": 194,
+      "height": 224,
+      "inner": "<g id=\"foot-right-toe-front-artwork\" data-name=\"Right foot — toe front\" fill=\"none\" stroke=\"#151515\" stroke-width=\"3.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g id=\"foot-right-toe-front-source-frame\" transform=\"translate(294 -33) scale(-1 1)\"><path id=\"foot-right-toe-front-outline\" data-name=\"Foot silhouette\" d=\"M 137.5 45 C 134 63 130 77 127.6 91 C 123.9 113 123.3 129 125.9 146 C 123.4 162 117.5 174 112.8 190 C 109.9 199 110.8 204 115.2 208 C 112.6 218 111.7 226 115.5 233 C 120.7 245 139 246 151.5 245 C 164 244.6 174.9 241.2 176.8 230.4 L 179.4 219.5 C 181.3 239 188.1 246 200.8 246.4 C 214.3 247.4 224.7 244.4 225.2 233.3 C 235.2 238.7 245.5 236.8 246.4 227.7 C 256.6 232.1 266 226.6 265.2 216.4 C 275.8 220.9 281.3 215.1 282 207.4 C 284.2 190 274.8 179.4 260.9 168.7 C 253.8 154.1 241.5 139.8 231 124.5 C 227 115.8 228.3 108.6 227.6 101.2 C 227 88.3 220 80.1 221.4 69.8 L 224.2 45\" fill=\"#fff\"/>\n<path id=\"foot-right-toe-front-ankle-crease\" data-name=\"Front ankle crease\" d=\"M 142.5 91 C 156 77 174 74 191 84\"/>\n<path id=\"foot-right-toe-front-ankle-inner\" data-name=\"Inner ankle contour\" d=\"M 139 109 C 131 126 128 144 126 156\"/>\n<path id=\"foot-right-toe-front-ankle-outer\" data-name=\"Outer ankle contour\" d=\"M 211 91 C 220 98 224 105 228 115\"/>\n<path id=\"foot-right-toe-front-hallux-fold\" data-name=\"Great toe flexion fold\" d=\"M 128 195 C 136 191 149 191 158 195\"/>\n<path id=\"foot-right-toe-front-hallux-nail\" data-name=\"Great toe nail rim\" d=\"M 127 208 C 137 200 151 201 162 208 M 130 204 C 139 199 152 199 160 204\"/>\n<path id=\"foot-right-toe-front-hallux-divider\" data-name=\"Great toe outline\" d=\"M 169 192 C 167.9 200 171.5 208 174.2 215 C 177.9 225 179 233 174.3 239 M 176 191 C 175 202 178.8 211 180.5 219\"/>\n<path id=\"foot-right-toe-front-toe-2-divider\" data-name=\"Second toe outline\" d=\"M 202.5 188 C 212.2 196 207.8 207 217 216 C 223.6 222 228.1 230 225.2 237.6\"/>\n<path id=\"foot-right-toe-front-toe-3-divider\" data-name=\"Third toe outline\" d=\"M 230 183.5 C 236 192 242.1 199 243 210 C 244.8 216 248.2 221 246.4 227.7\"/>\n<path id=\"foot-right-toe-front-toe-4-divider\" data-name=\"Fourth toe outline\" d=\"M 250.9 176 C 257 182 262.2 187.4 264 199.5 L 265.2 216.4\"/>\n<path id=\"foot-right-toe-front-toe-5-fold\" data-name=\"Little toe dorsal fold\" d=\"M 249 171 L 250.2 177 M 254 165.8 L 253.1 172.4\"/>\n<path id=\"foot-right-toe-front-nail-2\" data-name=\"Second toe nail\" d=\"M 197.6 220.9 C 200.6 216.5 211 216.5 216.1 220 C 222 224.1 218.6 228.9 209.7 229 C 199.4 229.2 194.6 226.4 197.6 220.9 Z\" fill=\"#fff\"/>\n<path id=\"foot-right-toe-front-nail-3\" data-name=\"Third toe nail\" d=\"M 225.2 214.2 C 229.5 209.5 237.3 211 241.1 217.3 C 244.2 221.9 239.6 223.8 233.8 222.8 C 226.7 222 221.8 218.5 225.2 214.2 Z\" fill=\"#fff\"/>\n<path id=\"foot-right-toe-front-nail-4\" data-name=\"Fourth toe nail\" d=\"M 248.3 208.7 C 250.9 204.1 257 205.4 260.5 211.1 C 263.5 217.4 259.8 218.2 253.8 216.6 C 248 215.2 246.7 212.1 248.3 208.7 Z\" fill=\"#fff\"/>\n<path id=\"foot-right-toe-front-nail-5\" data-name=\"Little toe nail\" d=\"M 270.8 194.7 C 274 192.2 278.6 195.1 280.1 200.4 C 281.1 205.7 277.7 207 273.3 204.3 C 269.8 202.1 268.6 197.1 270.8 194.7 Z\" fill=\"#fff\"/></g></g>",
+      "landmarks": [
+        {
+          "id": "foot-right-toe-front-ankle-landmark",
+          "label": "Ankle crease",
+          "x": 128,
+          "y": 46,
+          "targetId": "foot-right-toe-front-ankle-crease"
+        },
+        {
+          "id": "foot-right-toe-front-hallux-landmark",
+          "label": "Great toe",
+          "x": 149,
+          "y": 172,
+          "targetId": "foot-right-toe-front-hallux-nail"
+        },
+        {
+          "id": "foot-right-toe-front-toe-2-landmark",
+          "label": "Second toe",
+          "x": 86,
+          "y": 191,
+          "targetId": "foot-right-toe-front-nail-2"
+        },
+        {
+          "id": "foot-right-toe-front-toe-3-landmark",
+          "label": "Third toe",
+          "x": 62,
+          "y": 186,
+          "targetId": "foot-right-toe-front-nail-3"
+        },
+        {
+          "id": "foot-right-toe-front-toe-4-landmark",
+          "label": "Fourth toe",
+          "x": 40,
+          "y": 179,
+          "targetId": "foot-right-toe-front-nail-4"
+        },
+        {
+          "id": "foot-right-toe-front-toe-5-landmark",
+          "label": "Little toe",
+          "x": 19,
+          "y": 167,
+          "targetId": "foot-right-toe-front-nail-5"
+        }
+      ],
+      "source": "Twelve-view left and right foot chart(1).png"
+    },
+    {
+      "id": "foot-right-plantar",
+      "name": "Right foot — plantar",
+      "width": 168,
+      "height": 340,
+      "inner": "<g id=\"foot-right-plantar-artwork\" data-name=\"Right foot — plantar\" fill=\"none\" stroke=\"#151515\" stroke-width=\"3.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g id=\"foot-right-plantar-source-frame\" transform=\"translate(513 -22) scale(-1 1)\"><path id=\"foot-right-plantar-outline\" data-name=\"Plantar foot silhouette\" d=\"M 374 188 C 375 215 376 237 375 258 C 369 278 367 298 373 318 C 379 339 398 350 419 349 C 441 348 456 332 465 313 C 474 295 473 281 479 263 C 493 219 498 175 498 141 C 498 126 495 112 496 100 C 497 88 491 78 483 79 C 475 79 470 87 470 95 C 473 85 474 78 471 68 C 468 56 459 54 452 59 C 453 48 445 40 436 43 C 431 44 428 48 426 54 C 429 44 424 35 416 34 C 406 32 399 39 399 48 C 393 35 379 34 370 42 C 359 54 356 72 359 86 C 361 98 357 111 357 128 C 357 149 363 169 374 188 Z\" fill=\"#fff\"/>\n<path id=\"foot-right-plantar-hallux-pad\" data-name=\"Great toe pad\" d=\"M 399 49 C 403 61 400 76 394 81 C 388 87 380 89 369 87\"/>\n<path id=\"foot-right-plantar-toe-2-pad\" data-name=\"Second toe pad\" d=\"M 400 51 C 402 58 408 61 413 61 M 400 70 L 400 85\"/>\n<path id=\"foot-right-plantar-toe-3-pad\" data-name=\"Third toe pad\" d=\"M 428 54 C 425 63 424 73 424 82 M 427 65 C 429 70 433 73 437 72\"/>\n<path id=\"foot-right-plantar-toe-4-pad\" data-name=\"Fourth toe pad\" d=\"M 451 60 C 447 72 447 80 449 88 M 449 76 C 451 82 455 86 460 85\"/>\n<path id=\"foot-right-plantar-toe-5-pad\" data-name=\"Little toe pad\" d=\"M 472 91 C 469 99 474 106 479 107 C 483 109 486 107 489 105\"/>\n<path id=\"foot-right-plantar-ball-crease\" data-name=\"Forefoot crease\" d=\"M 368 101 C 390 94 413 77 435 84 C 456 89 474 105 488 113\"/>\n<path id=\"foot-right-plantar-arch-crease\" data-name=\"Plantar arch crease\" d=\"M 422 124 C 422 145 414 162 399 172\"/></g></g>",
+      "landmarks": [
+        {
+          "id": "foot-right-plantar-hallux-landmark",
+          "label": "Great toe pad",
+          "x": 129,
+          "y": 63,
+          "targetId": "foot-right-plantar-hallux-pad"
+        },
+        {
+          "id": "foot-right-plantar-toe-2-landmark",
+          "label": "Second toe pad",
+          "x": 107,
+          "y": 37,
+          "targetId": "foot-right-plantar-toe-2-pad"
+        },
+        {
+          "id": "foot-right-plantar-toe-3-landmark",
+          "label": "Third toe pad",
+          "x": 81,
+          "y": 50,
+          "targetId": "foot-right-plantar-toe-3-pad"
+        },
+        {
+          "id": "foot-right-plantar-toe-5-landmark",
+          "label": "Little toe pad",
+          "x": 31,
+          "y": 85,
+          "targetId": "foot-right-plantar-toe-5-pad"
+        },
+        {
+          "id": "foot-right-plantar-forefoot-landmark",
+          "label": "Forefoot crease",
+          "x": 78,
+          "y": 62,
+          "targetId": "foot-right-plantar-ball-crease"
+        },
+        {
+          "id": "foot-right-plantar-arch-landmark",
+          "label": "Arch crease",
+          "x": 98,
+          "y": 131,
+          "targetId": "foot-right-plantar-arch-crease"
+        },
+        {
+          "id": "foot-right-plantar-heel-landmark",
+          "label": "Heel contour",
+          "x": 94,
+          "y": 326,
+          "targetId": "foot-right-plantar-outline"
+        }
+      ],
+      "source": "Twelve-view left and right foot chart(1).png"
+    },
+    {
+      "id": "foot-right-heel",
+      "name": "Right foot — heel rear",
+      "width": 180,
+      "height": 272,
+      "inner": "<g id=\"foot-right-heel-artwork\" data-name=\"Right foot — heel rear\" fill=\"none\" stroke=\"#151515\" stroke-width=\"3.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g id=\"foot-right-heel-source-frame\" transform=\"translate(913 -66) scale(-1 1)\"><path id=\"foot-right-heel-outline\" data-name=\"Rear foot silhouette\" d=\"M 783 84 C 785 111 791 129 789 151 C 789 171 788 188 780 208 C 777 219 778 224 782 229 C 771 234 761 251 749 259 C 741 263 744 274 750 281 C 757 291 768 292 780 299 C 790 318 805 325 826 325 C 844 325 862 320 872 307 L 879 294 C 890 297 899 286 899 274 C 900 258 884 242 881 232 C 881 220 884 210 884 202 C 889 190 894 182 891 168 C 888 157 880 142 880 129 L 880 79\" fill=\"#fff\"/>\n<path id=\"foot-right-heel-heel-contour\" data-name=\"Heel and Achilles contours\" d=\"M 809 151 C 809 175 807 195 800 215 C 792 235 782 255 780 273 C 777 285 778 292 780 299 M 859 181 L 860 209 C 861 230 871 253 876 278 C 878 284 879 289 879 294\"/></g></g>",
+      "landmarks": [
+        {
+          "id": "foot-right-heel-ankle-outer-landmark",
+          "label": "Outer ankle contour",
+          "x": 107,
+          "y": 124,
+          "targetId": "foot-right-heel-heel-contour"
+        },
+        {
+          "id": "foot-right-heel-ankle-inner-landmark",
+          "label": "Inner ankle contour",
+          "x": 53,
+          "y": 135,
+          "targetId": "foot-right-heel-heel-contour"
+        },
+        {
+          "id": "foot-right-heel-heel-landmark",
+          "label": "Heel bottom",
+          "x": 87,
+          "y": 259,
+          "targetId": "foot-right-heel-outline"
+        },
+        {
+          "id": "foot-right-heel-heel-outer-landmark",
+          "label": "Outer heel contour",
+          "x": 133,
+          "y": 215,
+          "targetId": "foot-right-heel-heel-contour"
+        },
+        {
+          "id": "foot-right-heel-heel-inner-landmark",
+          "label": "Inner heel contour",
+          "x": 36,
+          "y": 222,
+          "targetId": "foot-right-heel-heel-contour"
+        },
+        {
+          "id": "foot-right-heel-foot-edge-landmark",
+          "label": "Visible foot edge",
+          "x": 164,
+          "y": 213,
+          "targetId": "foot-right-heel-outline"
+        }
+      ],
+      "source": "Twelve-view left and right foot chart(1).png"
+    },
+    {
+      "id": "foot-right-medial",
+      "name": "Right foot — medial side",
+      "width": 410,
+      "height": 247,
+      "inner": "<g id=\"foot-right-medial-artwork\" data-name=\"Right foot — medial side\" fill=\"none\" stroke=\"#151515\" stroke-width=\"3.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g id=\"foot-right-medial-source-frame\" transform=\"translate(493 -310) scale(-1 1)\"><path id=\"foot-right-medial-outline\" data-name=\"Side foot silhouette\" d=\"M 119 322 C 120 351 124 378 120 399 C 117 423 108 436 102 452 C 94 470 91 485 98 501 C 106 530 129 533 155 531 C 182 529 203 522 222 519 C 231 516 236 516 245 518 L 294 524 C 320 529 338 536 354 540 C 373 547 390 544 404 539 C 429 547 454 543 470 535 C 481 528 485 516 476 508 C 469 500 461 503 455 501 C 453 494 443 493 430 493 C 419 493 409 485 398 481 C 382 474 365 467 345 457 C 320 443 299 430 275 419 C 263 405 254 389 255 375 L 258 322\" fill=\"#fff\"/>\n<path id=\"foot-right-medial-ankle-crease\" data-name=\"Ankle crease\" d=\"M 153 424 C 177 440 201 433 217 410\"/>\n<path id=\"foot-right-medial-arch-crease\" data-name=\"Arch contour\" d=\"M 220 505 C 252 490 286 493 318 515\"/>\n<path id=\"foot-right-medial-forefoot-top\" data-name=\"Top of forefoot\" d=\"M 345 457 C 371 477 394 487 421 499 C 430 503 442 504 458 501\"/>\n<path id=\"foot-right-medial-lesser-toe-ridge\" data-name=\"Lesser toe ridges\" d=\"M 366 470 C 378 470 391 476 397 481 M 391 479 C 409 484 418 491 429 493\"/>\n<path id=\"foot-right-medial-hallux-nail\" data-name=\"Great toe nail\" d=\"M 446 505 C 452 502 461 502 466 503 C 474 506 472 513 466 515 C 461 517 454 517 449 516 C 442 515 442 509 446 505 Z\" fill=\"#fff\"/>\n<path id=\"foot-right-medial-hallux-fold\" data-name=\"Great toe flexion crease\" d=\"M 424 508 C 419 514 420 521 424 522 C 430 525 435 513 430 507\"/>\n<path id=\"foot-right-medial-toe-ridge-fold\" data-name=\"Toe ridge fold\" d=\"M 443 495 C 441 499 444 502 448 503\"/></g></g>",
+      "landmarks": [
+        {
+          "id": "foot-right-medial-ankle-landmark",
+          "label": "Ankle crease",
+          "x": 308,
+          "y": 122,
+          "targetId": "foot-right-medial-ankle-crease"
+        },
+        {
+          "id": "foot-right-medial-heel-landmark",
+          "label": "Heel contour",
+          "x": 377,
+          "y": 214,
+          "targetId": "foot-right-medial-outline"
+        },
+        {
+          "id": "foot-right-medial-arch-landmark",
+          "label": "Arch contour",
+          "x": 223,
+          "y": 187,
+          "targetId": "foot-right-medial-arch-crease"
+        },
+        {
+          "id": "foot-right-medial-hallux-landmark",
+          "label": "Great toe nail",
+          "x": 36,
+          "y": 200,
+          "targetId": "foot-right-medial-hallux-nail"
+        },
+        {
+          "id": "foot-right-medial-forefoot-landmark",
+          "label": "Forefoot ridge",
+          "x": 98,
+          "y": 175,
+          "targetId": "foot-right-medial-forefoot-top"
+        },
+        {
+          "id": "foot-right-medial-toe-fold-landmark",
+          "label": "Toe crease",
+          "x": 67,
+          "y": 209,
+          "targetId": "foot-right-medial-hallux-fold"
+        }
+      ],
+      "source": "Twelve-view left and right foot chart(1).png"
+    },
+    {
+      "id": "foot-right-lateral",
+      "name": "Right foot — lateral side",
+      "width": 413,
+      "height": 257,
+      "inner": "<g id=\"foot-right-lateral-artwork\" data-name=\"Right foot — lateral side\" fill=\"none\" stroke=\"#151515\" stroke-width=\"3.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g id=\"foot-right-lateral-source-frame\" transform=\"translate(501 -568) scale(-1 1)\"><path id=\"foot-right-lateral-outline\" data-name=\"Oblique side foot silhouette\" d=\"M 337 580 C 338 599 342 615 342 629 C 341 643 333 655 320 665 C 288 674 265 682 242 695 C 220 707 202 711 184 717 C 173 721 165 726 155 727 C 142 729 129 727 117 726 C 108 724 102 726 99 735 C 95 746 99 754 112 759 C 106 765 109 775 119 780 C 122 782 127 782 131 779 C 124 786 131 794 140 796 C 146 798 152 796 156 793 C 151 802 160 809 171 804 L 180 800 C 174 806 180 811 190 812 C 202 813 215 808 222 805 C 253 814 302 802 329 795 C 350 790 365 782 383 781 C 407 781 435 784 457 776 C 479 769 488 751 488 732 C 488 713 478 699 471 682 C 460 657 462 625 467 581\" fill=\"#fff\"/>\n<path id=\"foot-right-lateral-ankle-crease\" data-name=\"Ankle crease\" d=\"M 370 693 C 386 719 411 724 435 709\"/>\n<path id=\"foot-right-lateral-hallux-divider\" data-name=\"Great toe outline\" d=\"M 112 759 C 131 756 137 749 152 746 C 160 744 169 742 177 741\"/>\n<path id=\"foot-right-lateral-toe-2-divider\" data-name=\"Second toe outline\" d=\"M 129 779 C 142 777 151 766 164 762 C 174 758 184 755 195 751\"/>\n<path id=\"foot-right-lateral-toe-3-divider\" data-name=\"Third toe outline\" d=\"M 151 793 C 167 789 173 776 187 770 C 194 766 201 763 207 760\"/>\n<path id=\"foot-right-lateral-toe-4-divider\" data-name=\"Fourth toe outline\" d=\"M 175 804 C 187 798 191 790 204 786 L 212 782\"/>\n<path id=\"foot-right-lateral-hallux-fold\" data-name=\"Great toe joint fold\" d=\"M 168 743 L 174 736 L 179 734\"/>\n<path id=\"foot-right-lateral-toe-4-fold\" data-name=\"Little toe joint fold\" d=\"M 203 785 L 208 778 L 212 776\"/>\n<path id=\"foot-right-lateral-nail-1\" data-name=\"Great toe nail\" d=\"M 108 728 C 115 724 125 729 135 728 C 139 729 135 736 131 737 C 122 740 112 738 110 735 Z\" fill=\"#fff\"/>\n<path id=\"foot-right-lateral-nail-2\" data-name=\"Second toe nail\" d=\"M 112 763 L 123 760 C 130 760 126 768 119 770 C 113 772 111 768 112 763 Z\" fill=\"#fff\"/>\n<path id=\"foot-right-lateral-nail-3\" data-name=\"Third toe nail\" d=\"M 130 775 C 134 772 142 772 143 776 C 144 780 135 783 131 781 Z\" fill=\"#fff\"/>\n<path id=\"foot-right-lateral-nail-4\" data-name=\"Fourth toe nail\" d=\"M 151 788 C 154 785 162 783 165 786 C 168 790 159 795 155 794 Z\" fill=\"#fff\"/>\n<path id=\"foot-right-lateral-nail-5\" data-name=\"Little toe nail\" d=\"M 179 796 C 182 791 189 791 194 795 C 198 800 191 804 186 803 Z\" fill=\"#fff\"/></g></g>",
+      "landmarks": [
+        {
+          "id": "foot-right-lateral-ankle-landmark",
+          "label": "Ankle crease",
+          "x": 99,
+          "y": 149,
+          "targetId": "foot-right-lateral-ankle-crease"
+        },
+        {
+          "id": "foot-right-lateral-heel-landmark",
+          "label": "Heel contour",
+          "x": 27,
+          "y": 198,
+          "targetId": "foot-right-lateral-outline"
+        },
+        {
+          "id": "foot-right-lateral-hallux-landmark",
+          "label": "Great toe nail",
+          "x": 380,
+          "y": 165,
+          "targetId": "foot-right-lateral-nail-1"
+        },
+        {
+          "id": "foot-right-lateral-toe-2-landmark",
+          "label": "Second toe nail",
+          "x": 382,
+          "y": 198,
+          "targetId": "foot-right-lateral-nail-2"
+        },
+        {
+          "id": "foot-right-lateral-toe-3-landmark",
+          "label": "Third toe nail",
+          "x": 365,
+          "y": 209,
+          "targetId": "foot-right-lateral-nail-3"
+        },
+        {
+          "id": "foot-right-lateral-toe-4-landmark",
+          "label": "Fourth toe nail",
+          "x": 343,
+          "y": 221,
+          "targetId": "foot-right-lateral-nail-4"
+        },
+        {
+          "id": "foot-right-lateral-toe-5-landmark",
+          "label": "Little toe nail",
+          "x": 314,
+          "y": 230,
+          "targetId": "foot-right-lateral-nail-5"
+        }
+      ],
+      "source": "Twelve-view left and right foot chart(1).png"
+    },
+    {
+      "id": "foot-right-dorsal-oblique",
+      "name": "Right foot — dorsal oblique",
+      "width": 220,
+      "height": 397,
+      "inner": "<g id=\"foot-right-dorsal-oblique-artwork\" data-name=\"Right foot — dorsal oblique\" fill=\"none\" stroke=\"#151515\" stroke-width=\"3.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g id=\"foot-right-dorsal-oblique-source-frame\" transform=\"translate(930 -408) scale(-1 1)\"><path id=\"foot-right-dorsal-oblique-outline\" data-name=\"Dorsal foot silhouette\" d=\"M 803 422 L 800 480 C 799 495 796 506 799 517 C 789 533 785 547 773 560 C 757 579 749 596 744 615 C 742 628 734 638 735 648 C 727 659 722 674 722 686 C 720 696 724 702 730 704 C 726 713 729 723 737 727 C 734 735 739 745 747 750 C 742 760 747 771 758 773 C 763 776 770 775 776 771 C 770 781 778 789 790 792 C 805 796 816 788 826 777 C 834 768 839 758 840 747 C 841 735 851 723 859 711 C 871 694 871 678 870 656 C 869 623 877 589 889 563 C 903 545 913 528 916 508 C 920 489 910 470 903 459 L 917 423\" fill=\"#fff\"/>\n<path id=\"foot-right-dorsal-oblique-ankle-outer\" data-name=\"Outer ankle fold\" d=\"M 799 501 C 797 511 798 517 801 524\"/>\n<path id=\"foot-right-dorsal-oblique-ankle-inner\" data-name=\"Inner ankle contour\" d=\"M 903 459 C 899 474 903 491 895 507 C 890 520 882 528 876 533\"/>\n<path id=\"foot-right-dorsal-oblique-instep-tendon\" data-name=\"Instep tendon contour\" d=\"M 900 512 C 898 533 893 548 889 563\"/>\n<path id=\"foot-right-dorsal-oblique-forefoot-edge\" data-name=\"Forefoot edge fold\" d=\"M 738 647 L 733 653\"/>\n<path id=\"foot-right-dorsal-oblique-toe-5-divider\" data-name=\"Little toe outline\" d=\"M 759 669 C 743 675 743 690 731 706 C 726 714 730 722 737 725\"/>\n<path id=\"foot-right-dorsal-oblique-toe-5-fold\" data-name=\"Little toe crease\" d=\"M 749 677 L 750 668 L 753 663\"/>\n<path id=\"foot-right-dorsal-oblique-toe-4-divider\" data-name=\"Fourth toe outline\" d=\"M 774 682 C 750 693 747 708 739 725 C 733 737 740 746 747 749\"/>\n<path id=\"foot-right-dorsal-oblique-toe-3-divider\" data-name=\"Third toe outline\" d=\"M 783 700 C 765 707 773 723 755 740 C 741 755 746 767 758 771\"/>\n<path id=\"foot-right-dorsal-oblique-toe-2-divider\" data-name=\"Second toe outline\" d=\"M 797 717 C 797 730 788 743 786 749 C 781 760 778 767 776 771\"/>\n<path id=\"foot-right-dorsal-oblique-hallux-divider\" data-name=\"Great toe outline\" d=\"M 808 712 C 805 730 797 742 790 754 C 783 764 775 770 776 777\"/>\n<path id=\"foot-right-dorsal-oblique-hallux-fold\" data-name=\"Great toe flexion creases\" d=\"M 806 739 C 812 733 816 737 822 738 M 805 743 C 809 747 815 747 820 748\"/>\n<path id=\"foot-right-dorsal-oblique-nail-5\" data-name=\"Little toe nail\" d=\"M 723 692 C 728 688 732 692 733 697 L 729 703 C 725 702 722 697 723 692 Z\" fill=\"#fff\"/>\n<path id=\"foot-right-dorsal-oblique-nail-4\" data-name=\"Fourth toe nail\" d=\"M 732 716 C 735 712 740 715 742 720 L 738 726 C 733 724 730 720 732 716 Z\" fill=\"#fff\"/>\n<path id=\"foot-right-dorsal-oblique-nail-3\" data-name=\"Third toe nail\" d=\"M 741 736 C 746 731 752 735 754 740 C 754 744 750 748 747 749 C 742 746 739 741 741 736 Z\" fill=\"#fff\"/>\n<path id=\"foot-right-dorsal-oblique-nail-2\" data-name=\"Second toe nail\" d=\"M 752 757 C 755 752 762 754 767 759 C 772 763 768 769 763 770 C 757 769 752 765 750 762 Z\" fill=\"#fff\"/>\n<path id=\"foot-right-dorsal-oblique-nail-1\" data-name=\"Great toe nail\" d=\"M 783 757 C 791 750 803 751 809 759 C 811 765 807 774 802 778 C 793 778 782 773 779 771 C 779 765 782 760 783 757 Z\" fill=\"#fff\"/></g></g>",
+      "landmarks": [
+        {
+          "id": "foot-right-dorsal-oblique-ankle-landmark",
+          "label": "Inner ankle contour",
+          "x": 31,
+          "y": 84,
+          "targetId": "foot-right-dorsal-oblique-ankle-inner"
+        },
+        {
+          "id": "foot-right-dorsal-oblique-instep-landmark",
+          "label": "Instep contour",
+          "x": 35,
+          "y": 133,
+          "targetId": "foot-right-dorsal-oblique-instep-tendon"
+        },
+        {
+          "id": "foot-right-dorsal-oblique-hallux-landmark",
+          "label": "Great toe nail",
+          "x": 136,
+          "y": 358,
+          "targetId": "foot-right-dorsal-oblique-nail-1"
+        },
+        {
+          "id": "foot-right-dorsal-oblique-toe-2-landmark",
+          "label": "Second toe nail",
+          "x": 170,
+          "y": 354,
+          "targetId": "foot-right-dorsal-oblique-nail-2"
+        },
+        {
+          "id": "foot-right-dorsal-oblique-toe-3-landmark",
+          "label": "Third toe nail",
+          "x": 183,
+          "y": 332,
+          "targetId": "foot-right-dorsal-oblique-nail-3"
+        },
+        {
+          "id": "foot-right-dorsal-oblique-toe-4-landmark",
+          "label": "Fourth toe nail",
+          "x": 193,
+          "y": 312,
+          "targetId": "foot-right-dorsal-oblique-nail-4"
+        },
+        {
+          "id": "foot-right-dorsal-oblique-toe-5-landmark",
+          "label": "Little toe nail",
+          "x": 203,
+          "y": 288,
+          "targetId": "foot-right-dorsal-oblique-nail-5"
+        }
+      ],
+      "source": "Twelve-view left and right foot chart(1).png"
+    }
+  ],
+  "images": [
+    {
+      "id": "foot-left-toe-front",
+      "assetId": "foot-left-toe-front",
+      "name": "Left foot — toe front",
+      "x": 100,
+      "y": 33,
+      "width": 194,
+      "height": 224,
+      "rotation": 0
+    },
+    {
+      "id": "foot-left-plantar",
+      "assetId": "foot-left-plantar",
+      "name": "Left foot — plantar",
+      "x": 345,
+      "y": 22,
+      "width": 168,
+      "height": 340,
+      "rotation": 0
+    },
+    {
+      "id": "foot-left-heel",
+      "assetId": "foot-left-heel",
+      "name": "Left foot — heel rear",
+      "x": 733,
+      "y": 66,
+      "width": 180,
+      "height": 272,
+      "rotation": 0
+    },
+    {
+      "id": "foot-left-medial",
+      "assetId": "foot-left-medial",
+      "name": "Left foot — medial side",
+      "x": 83,
+      "y": 310,
+      "width": 410,
+      "height": 247,
+      "rotation": 0
+    },
+    {
+      "id": "foot-left-lateral",
+      "assetId": "foot-left-lateral",
+      "name": "Left foot — lateral side",
+      "x": 88,
+      "y": 568,
+      "width": 413,
+      "height": 257,
+      "rotation": 0
+    },
+    {
+      "id": "foot-left-dorsal-oblique",
+      "assetId": "foot-left-dorsal-oblique",
+      "name": "Left foot — dorsal oblique",
+      "x": 710,
+      "y": 408,
+      "width": 220,
+      "height": 397,
+      "rotation": 0
+    },
+    {
+      "id": "foot-right-toe-front",
+      "assetId": "foot-right-toe-front",
+      "name": "Right foot — toe front",
+      "x": 1521,
+      "y": 33,
+      "width": 194,
+      "height": 224,
+      "rotation": 0
+    },
+    {
+      "id": "foot-right-plantar",
+      "assetId": "foot-right-plantar",
+      "name": "Right foot — plantar",
+      "x": 1303,
+      "y": 22,
+      "width": 168,
+      "height": 340,
+      "rotation": 0
+    },
+    {
+      "id": "foot-right-heel",
+      "assetId": "foot-right-heel",
+      "name": "Right foot — heel rear",
+      "x": 940,
+      "y": 66,
+      "width": 180,
+      "height": 272,
+      "rotation": 0
+    },
+    {
+      "id": "foot-right-medial",
+      "assetId": "foot-right-medial",
+      "name": "Right foot — medial side",
+      "x": 1323,
+      "y": 310,
+      "width": 410,
+      "height": 247,
+      "rotation": 0
+    },
+    {
+      "id": "foot-right-lateral",
+      "assetId": "foot-right-lateral",
+      "name": "Right foot — lateral side",
+      "x": 1315,
+      "y": 568,
+      "width": 413,
+      "height": 257,
+      "rotation": 0
+    },
+    {
+      "id": "foot-right-dorsal-oblique",
+      "assetId": "foot-right-dorsal-oblique",
+      "name": "Right foot — dorsal oblique",
+      "x": 925,
+      "y": 408,
+      "width": 220,
+      "height": 397,
+      "rotation": 0
+    }
+  ],
+  "sites": [
+    {
+      "id": "site-foot-left-great-toe",
+      "label": "Left foot — great toe",
+      "fieldKey": "example.foot_left_great_toe",
+      "number": 1
+    },
+    {
+      "id": "site-foot-left-heel",
+      "label": "Left foot — heel",
+      "fieldKey": "example.foot_left_heel",
+      "number": 2
+    },
+    {
+      "id": "site-foot-right-great-toe",
+      "label": "Right foot — great toe",
+      "fieldKey": "example.foot_right_great_toe",
+      "number": 3
+    },
+    {
+      "id": "site-foot-right-heel",
+      "label": "Right foot — heel",
+      "fieldKey": "example.foot_right_heel",
+      "number": 4
+    }
+  ],
+  "links": [
+    {
+      "id": "link-foot-left-toe-front-great-toe",
+      "siteId": "site-foot-left-great-toe",
+      "imageId": "foot-left-toe-front",
+      "u": 0.23195876288659795,
+      "v": 0.7678571428571429,
+      "radius": 7,
+      "targetId": "foot-left-toe-front-hallux-nail"
+    },
+    {
+      "id": "link-foot-left-plantar-heel",
+      "siteId": "site-foot-left-heel",
+      "imageId": "foot-left-plantar",
+      "u": 0.44047619047619047,
+      "v": 0.9588235294117647,
+      "radius": 7,
+      "targetId": "foot-left-plantar-outline"
+    },
+    {
+      "id": "link-foot-left-plantar-great-toe",
+      "siteId": "site-foot-left-great-toe",
+      "imageId": "foot-left-plantar",
+      "u": 0.23214285714285715,
+      "v": 0.18529411764705883,
+      "radius": 7,
+      "targetId": "foot-left-plantar-hallux-pad"
+    },
+    {
+      "id": "link-foot-left-heel-heel",
+      "siteId": "site-foot-left-heel",
+      "imageId": "foot-left-heel",
+      "u": 0.5166666666666667,
+      "v": 0.9522058823529411,
+      "radius": 7,
+      "targetId": "foot-left-heel-outline"
+    },
+    {
+      "id": "link-foot-left-medial-heel",
+      "siteId": "site-foot-left-heel",
+      "imageId": "foot-left-medial",
+      "u": 0.08048780487804878,
+      "v": 0.8663967611336032,
+      "radius": 7,
+      "targetId": "foot-left-medial-outline"
+    },
+    {
+      "id": "link-foot-left-medial-great-toe",
+      "siteId": "site-foot-left-great-toe",
+      "imageId": "foot-left-medial",
+      "u": 0.9121951219512195,
+      "v": 0.8097165991902834,
+      "radius": 7,
+      "targetId": "foot-left-medial-hallux-nail"
+    },
+    {
+      "id": "link-foot-left-lateral-heel",
+      "siteId": "site-foot-left-heel",
+      "imageId": "foot-left-lateral",
+      "u": 0.9346246973365617,
+      "v": 0.7704280155642024,
+      "radius": 7,
+      "targetId": "foot-left-lateral-outline"
+    },
+    {
+      "id": "link-foot-left-lateral-great-toe",
+      "siteId": "site-foot-left-great-toe",
+      "imageId": "foot-left-lateral",
+      "u": 0.07990314769975787,
+      "v": 0.642023346303502,
+      "radius": 7,
+      "targetId": "foot-left-lateral-nail-1"
+    },
+    {
+      "id": "link-foot-left-dorsal-oblique-great-toe",
+      "siteId": "site-foot-left-great-toe",
+      "imageId": "foot-left-dorsal-oblique",
+      "u": 0.38181818181818183,
+      "v": 0.9017632241813602,
+      "radius": 7,
+      "targetId": "foot-left-dorsal-oblique-nail-1"
+    },
+    {
+      "id": "link-foot-right-toe-front-great-toe",
+      "siteId": "site-foot-right-great-toe",
+      "imageId": "foot-right-toe-front",
+      "u": 0.7680412371134021,
+      "v": 0.7678571428571429,
+      "radius": 7,
+      "targetId": "foot-right-toe-front-hallux-nail"
+    },
+    {
+      "id": "link-foot-right-plantar-heel",
+      "siteId": "site-foot-right-heel",
+      "imageId": "foot-right-plantar",
+      "u": 0.5595238095238095,
+      "v": 0.9588235294117647,
+      "radius": 7,
+      "targetId": "foot-right-plantar-outline"
+    },
+    {
+      "id": "link-foot-right-plantar-great-toe",
+      "siteId": "site-foot-right-great-toe",
+      "imageId": "foot-right-plantar",
+      "u": 0.7678571428571429,
+      "v": 0.18529411764705883,
+      "radius": 7,
+      "targetId": "foot-right-plantar-hallux-pad"
+    },
+    {
+      "id": "link-foot-right-heel-heel",
+      "siteId": "site-foot-right-heel",
+      "imageId": "foot-right-heel",
+      "u": 0.48333333333333334,
+      "v": 0.9522058823529411,
+      "radius": 7,
+      "targetId": "foot-right-heel-outline"
+    },
+    {
+      "id": "link-foot-right-medial-heel",
+      "siteId": "site-foot-right-heel",
+      "imageId": "foot-right-medial",
+      "u": 0.9195121951219513,
+      "v": 0.8663967611336032,
+      "radius": 7,
+      "targetId": "foot-right-medial-outline"
+    },
+    {
+      "id": "link-foot-right-medial-great-toe",
+      "siteId": "site-foot-right-great-toe",
+      "imageId": "foot-right-medial",
+      "u": 0.08780487804878048,
+      "v": 0.8097165991902834,
+      "radius": 7,
+      "targetId": "foot-right-medial-hallux-nail"
+    },
+    {
+      "id": "link-foot-right-lateral-heel",
+      "siteId": "site-foot-right-heel",
+      "imageId": "foot-right-lateral",
+      "u": 0.06537530266343826,
+      "v": 0.7704280155642024,
+      "radius": 7,
+      "targetId": "foot-right-lateral-outline"
+    },
+    {
+      "id": "link-foot-right-lateral-great-toe",
+      "siteId": "site-foot-right-great-toe",
+      "imageId": "foot-right-lateral",
+      "u": 0.9200968523002422,
+      "v": 0.642023346303502,
+      "radius": 7,
+      "targetId": "foot-right-lateral-nail-1"
+    },
+    {
+      "id": "link-foot-right-dorsal-oblique-great-toe",
+      "siteId": "site-foot-right-great-toe",
+      "imageId": "foot-right-dorsal-oblique",
+      "u": 0.6181818181818182,
+      "v": 0.9017632241813602,
+      "radius": 7,
+      "targetId": "foot-right-dorsal-oblique-nail-1"
+    }
+  ],
+  "annotations": [],
+  "texts": [
+    {
+      "id": "feet-left-caption",
+      "text": "Left",
+      "x": 379,
+      "y": 129,
+      "fontSize": 62,
+      "bold": true,
+      "imageId": "foot-left-medial",
+      "align": "start"
+    },
+    {
+      "id": "feet-right-caption",
+      "text": "Right",
+      "x": 305,
+      "y": 31,
+      "fontSize": 62,
+      "bold": true,
+      "imageId": "foot-right-dorsal-oblique",
+      "align": "start"
+    }
+  ],
+  "legend": {
+    "x": 24,
+    "y": 24,
+    "width": 300,
+    "rowHeight": 26,
+    "fontSize": 18,
+    "heading": "Shared example sites",
+    "visible": false
+  },
+  "provenance": {
+    "source": "Twelve-view left and right foot chart(1).png",
+    "artwork": "Manually authored cubic Bezier contours and separate named detail paths; no bitmap embedding or automatic contour tracing.",
+    "review": "Visual reconstruction from supplied illustrations. Landmark and site positions are illustrative and have not been clinically validated.",
+    "symmetry": "Paired left/right views are explicitly reconstructed from mirrored masters; labels remain independent editable text."
+  }
+}
