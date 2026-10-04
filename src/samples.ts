@@ -1,6 +1,7 @@
 // Registry of the bundled body drawings + demo landmark/text seeds.
 
 import type { TextAnnotation } from './types'
+import { CLINICAL_ASSETS, CLINICAL_TEMPLATES } from './clinicalCatalog'
 
 export interface SampleDef {
   key: string
@@ -16,6 +17,7 @@ export const SAMPLES: SampleDef[] = [
   { key: 'sideLying', file: 'side_lying_view.svg', label: 'Side-lying' },
   { key: 'wheelchair', file: 'seated_wheelchair_side_view.svg', label: 'Seated — wheelchair' },
   { key: 'organs', file: 'organs_demo.svg', label: 'Torso organs (parts demo)' },
+  ...CLINICAL_ASSETS,
 ]
 
 export const DEFAULT_SAMPLE_KEY = 'divider'
@@ -30,6 +32,10 @@ export interface TemplateDef {
 }
 
 export const TEMPLATES: TemplateDef[] = [
+  ...CLINICAL_TEMPLATES.map((template) => ({
+    ...template,
+    note: 'Reconstructed vector views. Select and move each view; use Landmarks for named points and Clinical charts for the layout and connections tables.',
+  })),
   {
     key: 'skinLibrary',
     file: 'diorama/skin-assessment-library.scene.json',

@@ -9,6 +9,7 @@ import type {
   DrawerDoc,
   DrawingElement,
   ImageInstance,
+  Landmark,
   MappingValue,
   Site,
   TextAnnotation,
@@ -54,6 +55,27 @@ const ident = (v: unknown): string => {
 const unique = (ids: string[], what: string) => {
   if (new Set(ids).size !== ids.length) throw new Error(`Duplicate ${what} IDs.`)
 }
+const boolean = (v: unknown, what: string): boolean => {
+  if (typeof v !== 'boolean') throw new Error(`${what} must be true or false.`)
+  return v
+}
+const targetName = (v: unknown): string | null => {
+  if (v === undefined || v === null) return null
+  const id = text(v, 'target ID', 240)
+  if (!id.trim()) throw new Error('Invalid target ID.')
+  return id
+}
+// A missing/empty named target must never silently become a whole-image point.
+const checkedTargetBox = (drawing: BaseDrawing, targetId: string | null) => {
+  if (targetId !== null && !Object.prototype.hasOwnProperty.call(drawing.targetBoxes, targetId)) {
+    throw new Error(`Missing SVG target "${targetId}".`)
+  }
+  const box = boxForTarget(drawing, targetId)
+  if (![box.x, box.y, box.w, box.h].every(Number.isFinite) || box.w <= 0 || box.h <= 0) {
+    throw new Error(`${targetId === null ? 'Content' : `SVG target "${targetId}"`} bounding box must have finite coordinates and positive width and height.`)
+  }
+  return box
+}
 
 /** Parse an asset's inner markup as a sanitized drawing in its own 0..w × 0..h space. */
 export function parseSceneAsset(inner: string, width: number, height: number): BaseDrawing {
@@ -75,30 +97,58 @@ export function sceneToDoc(
   const name = text(scene.name, 'scene name', 240)
   const width = num(scene.width, 'Page width', 100, 12000)
   const height = num(scene.height, 'Page height', 100, 12000)
+  const pageRule = scene.pageRule === undefined ? true : boolean(scene.pageRule, 'Page rule')
+  const cleanView = scene.cleanView === undefined ? false : boolean(scene.cleanView, 'Clean view')
+  let provenance: DrawerDoc['provenance']
+  if (scene.provenance !== undefined) {
+    const entries = Object.entries(obj(scene.provenance, 'scene provenance'))
+    if (entries.length > 40) throw new Error('Invalid scene provenance; at most 40 entries allowed.')
+    provenance = Object.fromEntries(entries.map(([key, value]) => {
+      if (!key.trim() || key.length > 240 || ['__proto__', 'prototype', 'constructor'].includes(key)) throw new Error('Invalid provenance key.')
+      return [key, text(value, 'provenance value', 4000)]
+    }))
+  }
 
   // assets: one sanitized drawing each (copied into every image that uses it)
-  const assets = new Map<string, { name: string; width: number; height: number; drawing: BaseDrawing; source: string }>()
+  const assets = new Map<string, { name: string; width: number; height: number; drawing: BaseDrawing; source: string; landmarks: Landmark[] }>()
   for (const raw of list(scene.assets, 'assets', 100)) {
     const a = obj(raw, 'asset')
     const id = ident(a.id)
     if (assets.has(id)) throw new Error('Duplicate asset IDs.')
     const w = num(a.width, 'Asset width', 1, 12000)
     const h = num(a.height, 'Asset height', 1, 12000)
+    const drawing = parseDrawing(text(a.inner, 'asset markup', 3_000_000), w, h)
+    const landmarks: Landmark[] = list(a.landmarks, 'asset landmarks', 2000).map((raw) => {
+      const l = obj(raw, 'asset landmark')
+      const targetId = targetName(l.targetId)
+      const local = { x: num(l.x, 'Landmark x', 0, w), y: num(l.y, 'Landmark y', 0, h) }
+      const label = text(l.label, 'landmark label', 240)
+      if (!label.trim()) throw new Error('A landmark needs a label.')
+      return {
+        id: ident(l.id),
+        name: label,
+        targetId,
+        ...pointToNormalized(local, checkedTargetBox(drawing, targetId)),
+      }
+    })
+    unique(landmarks.map((l) => l.id), 'asset landmark')
     assets.set(id, {
       name: text(a.name, 'asset name', 240),
       width: w,
       height: h,
-      drawing: parseDrawing(text(a.inner, 'asset markup', 3_000_000), w, h),
+      drawing,
       source: a.source === undefined ? '' : text(a.source, 'asset source', 1000),
+      landmarks,
     })
   }
 
   const images: ImageInstance[] = []
+  const landmarks: Landmark[] = []
   for (const raw of list(scene.images, 'images', 100)) {
     const i = obj(raw, 'image')
     const asset = assets.get(String(i.assetId))
     if (!asset) throw new Error(`Image ${String(i.id)} refers to a missing asset.`)
-    images.push({
+    const image: ImageInstance = {
       id: ident(i.id),
       name: text(i.name, 'image name', 240),
       drawing: structuredClone(asset.drawing),
@@ -107,10 +157,19 @@ export function sceneToDoc(
       width: num(i.width, 'Image width', 1, 12000),
       height: num(i.height, 'Image height', 1, 12000),
       rotation: num(i.rotation ?? 0, 'Rotation', -3600, 3600),
+      ...(i.flipX === undefined ? {} : { flipX: boolean(i.flipX, 'Image flipX') }),
       visible: i.visible === undefined ? true : Boolean(i.visible),
       locked: Boolean(i.locked),
       ...(asset.source ? { source: asset.source } : {}),
-    })
+    }
+    images.push(image)
+    landmarks.push(...asset.landmarks.map((l) => ({
+      ...l,
+      // Length-prefix the image ID so hyphenated image/landmark IDs cannot collide.
+      id: `landmark-${image.id.length}-${image.id}-${l.id}`,
+      imageId: image.id,
+      group: image.name,
+    })))
   }
   unique(images.map((i) => i.id), 'image')
   const imageById = new Map(images.map((i) => [i.id, i]))
@@ -140,11 +199,11 @@ export function sceneToDoc(
   const callouts: Callout[] = []
   const hidden: string[] = []
 
-  // relative anchor on the whole drawing from scene u/v (fractions of the asset frame)
-  const anchorAt = (id: string, image: ImageInstance, u: number, v: number): Anchor => {
+  // Scene u/v are always fractions of the asset frame, including named targets.
+  const anchorAt = (id: string, image: ImageInstance, u: number, v: number, targetId: string | null = null): Anchor => {
     const vb = assetSize(image)
     const local = { x: vb.x + u * vb.w, y: vb.y + v * vb.h }
-    return { id, mode: 'relative-bbox', imageId: image.id, relative: { targetId: null, ...pointToNormalized(local, boxForTarget(image.drawing, null)) } }
+    return { id, mode: 'relative-bbox', imageId: image.id, relative: { targetId, ...pointToNormalized(local, checkedTargetBox(image.drawing, targetId)) } }
   }
   const pagePoint = (image: ImageInstance, u: number, v: number) => {
     const vb = assetSize(image)
@@ -160,7 +219,7 @@ export function sceneToDoc(
     const u = num(l.u, 'Connection u', 0, 1)
     const v = num(l.v, 'Connection v', 0, 1)
     const radius = num(l.radius ?? 13, 'Marker radius', 2, 80)
-    const anchor = anchorAt(`anchor-${id}`, image, u, v)
+    const anchor = anchorAt(`anchor-${id}`, image, u, v, targetName(l.targetId))
     anchors.push(anchor)
     callouts.push({
       id: `callout-${id}`,
@@ -211,18 +270,21 @@ export function sceneToDoc(
       color: '#333333',
     })
   }
+  unique(anchors.map((a) => a.id), 'anchor')
 
   const textAnnotations: TextAnnotation[] = []
-  const drawingElements: DrawingElement[] = [
+  const drawingElements: DrawingElement[] = pageRule ? [
     // the source sheet's top rule
     { id: 'page-rule', kind: 'line', start: { x: 30, y: 6 }, end: { x: 1507, y: 6 }, stroke: '#222222', strokeWidth: 2, dashed: false, fill: null },
-  ]
+  ] : []
   for (const raw of list(scene.texts, 'texts', 500)) {
     const t = obj(raw, 'text')
     const id = ident(t.id)
     const image = t.imageId === undefined ? undefined : imageById.get(String(t.imageId))
     if (t.imageId !== undefined && !image) throw new Error('A text item refers to a missing image.')
     const fontSize = num(t.fontSize ?? 24, 'Font size', 6, 150)
+    const align = t.align ?? 'start'
+    if (align !== 'start' && align !== 'middle' && align !== 'end') throw new Error('Text alignment must be start, middle or end.')
     const x = num(t.x, 'Text x')
     const y = num(t.y, 'Text y')
     const p = image ? imageToPage(image, { x: image.drawing.viewBox.x + x, y: image.drawing.viewBox.y + y }) : { x, y }
@@ -233,7 +295,7 @@ export function sceneToDoc(
       style: 'plain',
       fontSize,
       fontWeight: t.bold ? 700 : 400,
-      align: 'start',
+      align,
       color: '#111111',
       ruleWidth: 0,
       ...(image ? { imageId: image.id } : {}),
@@ -254,6 +316,7 @@ export function sceneToDoc(
       })
     }
   }
+  unique(textAnnotations.map((t) => t.id), 'text')
 
   const g = obj(scene.legend, 'legend')
   const hide: Record<string, CalloutOverride> = Object.fromEntries(hidden.map((id) => [id, { visible: false }]))
@@ -264,6 +327,7 @@ export function sceneToDoc(
   return {
     id: sceneId,
     name,
+    ...(provenance ? { provenance } : {}),
     base: pageDrawing({ x: 0, y: 0, w: width, h: height }),
     images,
     sites,
@@ -278,16 +342,20 @@ export function sceneToDoc(
     anchors,
     callouts,
     views: [
+      ...(cleanView ? [{
+        ...view('artwork', 'Clean artwork', 'numbers'),
+        overrides: Object.fromEntries(callouts.map((c) => [c.id, { visible: false }])),
+      }] : []),
       view('site-numbers', 'Site numbers', 'numbers'),
       view('site-names', 'Site names', 'names'),
       view('field-values', 'Field values', 'values'),
       view('blank-markers', 'Blank markers', 'blank'),
     ],
-    activeViewId: 'site-numbers',
-    landmarks: [],
+    activeViewId: cleanView ? 'artwork' : 'site-numbers',
+    landmarks,
     textAnnotations,
     drawingElements,
-    landmarkGroupOrder: [],
+    landmarkGroupOrder: [...new Set(landmarks.map((l) => l.group!))],
     hiddenLandmarkGroups: [],
     mappingValues,
   }

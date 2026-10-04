@@ -28,6 +28,7 @@ the body art. (`absolute` and `path-offset` modes also exist in the model.)
 
 ## What you can do
 
+- **Clinical chart dioramas** — twenty manually reconstructed SVG views from the supplied body, hand and foot charts. Open **Clinical charts & dioramas** for a thumbnail library, image layout table and site-to-view connection matrix. The three source-layout sheets and an all-view atlas have 188 named landmarks; hand and foot examples include 16 shared sites across 42 placements. Each view is independently movable, and its captions and points follow. See [docs/clinical-vectors.md](docs/clinical-vectors.md) for provenance, reconstruction limits, rebuilding and validation.
 - **Load a body** — bundled views (standing front/back, back, half-body front/back,
   side-lying, seated wheelchair, plus a multi-part *torso organs* demo), or start a fresh
   document with **New…**. Upload SVG, PNG, JPEG, or WebP; paste SVG markup; or fetch an

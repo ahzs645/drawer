@@ -1,0 +1,1570 @@
+[
+  {
+    "key": "body-anterior",
+    "file": "clinical/assets/body-anterior.svg",
+    "label": "Body — anterior",
+    "region": "Body",
+    "side": "unspecified",
+    "view": "anterior",
+    "source": "Four-view clinical body chart(1).png",
+    "width": 280,
+    "height": 962,
+    "landmarks": [
+      {
+        "id": "body-anterior-forehead",
+        "label": "Forehead",
+        "x": 139.5,
+        "y": 42,
+        "targetId": "body-anterior-right-head"
+      },
+      {
+        "id": "body-anterior-chin-site",
+        "label": "Chin",
+        "x": 139.5,
+        "y": 142,
+        "targetId": "body-anterior-chin"
+      },
+      {
+        "id": "body-anterior-neck-site",
+        "label": "Anterior neck",
+        "x": 139.5,
+        "y": 169,
+        "targetId": "body-anterior-central-anatomy"
+      },
+      {
+        "id": "body-anterior-right-shoulder-site",
+        "label": "Right shoulder",
+        "x": 40,
+        "y": 199,
+        "targetId": "body-anterior-right-neck-shoulder"
+      },
+      {
+        "id": "body-anterior-left-shoulder-site",
+        "label": "Left shoulder",
+        "x": 239,
+        "y": 199,
+        "targetId": "body-anterior-left-neck-shoulder"
+      },
+      {
+        "id": "body-anterior-sternum",
+        "label": "Sternum",
+        "x": 139.5,
+        "y": 254,
+        "targetId": "body-anterior-right-surface"
+      },
+      {
+        "id": "body-anterior-umbilicus-site",
+        "label": "Umbilicus",
+        "x": 139.5,
+        "y": 393,
+        "targetId": "body-anterior-umbilicus"
+      },
+      {
+        "id": "body-anterior-right-elbow-site",
+        "label": "Right elbow",
+        "x": 37,
+        "y": 360,
+        "targetId": "body-anterior-right-elbow-crease"
+      },
+      {
+        "id": "body-anterior-left-elbow-site",
+        "label": "Left elbow",
+        "x": 242,
+        "y": 360,
+        "targetId": "body-anterior-left-elbow-crease"
+      },
+      {
+        "id": "body-anterior-right-hand-site",
+        "label": "Right hand",
+        "x": 36,
+        "y": 553,
+        "targetId": "body-anterior-right-arm-hand-outline"
+      },
+      {
+        "id": "body-anterior-left-hand-site",
+        "label": "Left hand",
+        "x": 243,
+        "y": 553,
+        "targetId": "body-anterior-left-arm-hand-outline"
+      },
+      {
+        "id": "body-anterior-right-knee-site",
+        "label": "Right knee",
+        "x": 102,
+        "y": 687,
+        "targetId": "body-anterior-right-outer-thigh-knee-calf"
+      },
+      {
+        "id": "body-anterior-left-knee-site",
+        "label": "Left knee",
+        "x": 177,
+        "y": 687,
+        "targetId": "body-anterior-left-outer-thigh-knee-calf"
+      },
+      {
+        "id": "body-anterior-right-foot-site",
+        "label": "Right foot",
+        "x": 98,
+        "y": 920,
+        "targetId": "body-anterior-right-foot"
+      },
+      {
+        "id": "body-anterior-left-foot-site",
+        "label": "Left foot",
+        "x": 181,
+        "y": 920,
+        "targetId": "body-anterior-left-foot"
+      }
+    ]
+  },
+  {
+    "key": "body-profile-left",
+    "file": "clinical/assets/body-profile-left.svg",
+    "label": "Body — left-facing profile",
+    "region": "Body",
+    "side": "unspecified",
+    "view": "left-facing profile",
+    "source": "Four-view clinical body chart(1).png",
+    "width": 170,
+    "height": 943,
+    "landmarks": [
+      {
+        "id": "body-profile-left-temple",
+        "label": "Temple",
+        "x": 66,
+        "y": 62,
+        "targetId": "body-profile-left-body-contour"
+      },
+      {
+        "id": "body-profile-left-ear-site",
+        "label": "Ear",
+        "x": 84,
+        "y": 72,
+        "targetId": "body-profile-left-ear"
+      },
+      {
+        "id": "body-profile-left-jaw-site",
+        "label": "Jaw",
+        "x": 65,
+        "y": 113,
+        "targetId": "body-profile-left-jaw"
+      },
+      {
+        "id": "body-profile-left-neck-site",
+        "label": "Neck",
+        "x": 80,
+        "y": 176,
+        "targetId": "body-profile-left-neck-tendon"
+      },
+      {
+        "id": "body-profile-left-shoulder-site",
+        "label": "Shoulder",
+        "x": 118,
+        "y": 245,
+        "targetId": "body-profile-left-near-arm-hand"
+      },
+      {
+        "id": "body-profile-left-chest-site",
+        "label": "Chest",
+        "x": 36,
+        "y": 255,
+        "targetId": "body-profile-left-body-contour"
+      },
+      {
+        "id": "body-profile-left-abdomen",
+        "label": "Abdomen",
+        "x": 39,
+        "y": 389,
+        "targetId": "body-profile-left-body-contour"
+      },
+      {
+        "id": "body-profile-left-elbow-site",
+        "label": "Elbow",
+        "x": 115,
+        "y": 355,
+        "targetId": "body-profile-left-elbow"
+      },
+      {
+        "id": "body-profile-left-wrist-site",
+        "label": "Wrist",
+        "x": 61,
+        "y": 495,
+        "targetId": "body-profile-left-near-arm-hand"
+      },
+      {
+        "id": "body-profile-left-hand-site",
+        "label": "Hand",
+        "x": 52,
+        "y": 545,
+        "targetId": "body-profile-left-near-arm-hand"
+      },
+      {
+        "id": "body-profile-left-hip-site",
+        "label": "Hip",
+        "x": 139,
+        "y": 472,
+        "targetId": "body-profile-left-body-contour"
+      },
+      {
+        "id": "body-profile-left-knee-site",
+        "label": "Knee",
+        "x": 102,
+        "y": 672,
+        "targetId": "body-profile-left-body-contour"
+      },
+      {
+        "id": "body-profile-left-ankle-site",
+        "label": "Ankle",
+        "x": 126,
+        "y": 864,
+        "targetId": "body-profile-left-ankle"
+      },
+      {
+        "id": "body-profile-left-foot-site",
+        "label": "Near foot",
+        "x": 79,
+        "y": 906,
+        "targetId": "body-profile-left-body-contour"
+      }
+    ]
+  },
+  {
+    "key": "body-posterior",
+    "file": "clinical/assets/body-posterior.svg",
+    "label": "Body — posterior",
+    "region": "Body",
+    "side": "unspecified",
+    "view": "posterior",
+    "source": "Four-view clinical body chart(1).png",
+    "width": 274,
+    "height": 945,
+    "landmarks": [
+      {
+        "id": "body-posterior-occiput",
+        "label": "Occiput",
+        "x": 136,
+        "y": 54,
+        "targetId": "body-posterior-left-head"
+      },
+      {
+        "id": "body-posterior-neck-site",
+        "label": "Posterior neck",
+        "x": 136,
+        "y": 144,
+        "targetId": "body-posterior-left-surface"
+      },
+      {
+        "id": "body-posterior-left-shoulder-site",
+        "label": "Left shoulder",
+        "x": 46,
+        "y": 202,
+        "targetId": "body-posterior-left-neck-shoulder"
+      },
+      {
+        "id": "body-posterior-right-shoulder-site",
+        "label": "Right shoulder",
+        "x": 226,
+        "y": 202,
+        "targetId": "body-posterior-right-neck-shoulder"
+      },
+      {
+        "id": "body-posterior-left-scapula-site",
+        "label": "Left scapula",
+        "x": 104,
+        "y": 247,
+        "targetId": "body-posterior-left-scapula-medial"
+      },
+      {
+        "id": "body-posterior-right-scapula-site",
+        "label": "Right scapula",
+        "x": 168,
+        "y": 247,
+        "targetId": "body-posterior-right-scapula-medial"
+      },
+      {
+        "id": "body-posterior-lumbar-site",
+        "label": "Lumbar midline",
+        "x": 136,
+        "y": 370,
+        "targetId": "body-posterior-lumbar-spine"
+      },
+      {
+        "id": "body-posterior-sacrum",
+        "label": "Sacrum",
+        "x": 136,
+        "y": 434,
+        "targetId": "body-posterior-sacral-fold"
+      },
+      {
+        "id": "body-posterior-left-elbow-site",
+        "label": "Left elbow",
+        "x": 35,
+        "y": 372,
+        "targetId": "body-posterior-left-elbow"
+      },
+      {
+        "id": "body-posterior-right-elbow-site",
+        "label": "Right elbow",
+        "x": 237,
+        "y": 372,
+        "targetId": "body-posterior-right-elbow"
+      },
+      {
+        "id": "body-posterior-left-hand-site",
+        "label": "Left hand",
+        "x": 39,
+        "y": 549,
+        "targetId": "body-posterior-left-hand-dorsum"
+      },
+      {
+        "id": "body-posterior-right-hand-site",
+        "label": "Right hand",
+        "x": 233,
+        "y": 549,
+        "targetId": "body-posterior-right-hand-dorsum"
+      },
+      {
+        "id": "body-posterior-left-knee-site",
+        "label": "Left posterior knee",
+        "x": 100,
+        "y": 670,
+        "targetId": "body-posterior-left-outer-thigh-knee-calf"
+      },
+      {
+        "id": "body-posterior-right-knee-site",
+        "label": "Right posterior knee",
+        "x": 172,
+        "y": 670,
+        "targetId": "body-posterior-right-outer-thigh-knee-calf"
+      },
+      {
+        "id": "body-posterior-heel-site",
+        "label": "Left heel",
+        "x": 115,
+        "y": 918,
+        "targetId": "body-posterior-left-foot"
+      }
+    ]
+  },
+  {
+    "key": "body-profile-right",
+    "file": "clinical/assets/body-profile-right.svg",
+    "label": "Body — right-facing profile",
+    "region": "Body",
+    "side": "unspecified",
+    "view": "right-facing profile",
+    "source": "Four-view clinical body chart(1).png",
+    "width": 175,
+    "height": 943,
+    "landmarks": [
+      {
+        "id": "body-profile-right-temple",
+        "label": "Temple",
+        "x": 107,
+        "y": 62,
+        "targetId": "body-profile-right-body-contour"
+      },
+      {
+        "id": "body-profile-right-ear-site",
+        "label": "Ear",
+        "x": 89,
+        "y": 72,
+        "targetId": "body-profile-right-ear"
+      },
+      {
+        "id": "body-profile-right-jaw-site",
+        "label": "Jaw",
+        "x": 108,
+        "y": 113,
+        "targetId": "body-profile-right-jaw"
+      },
+      {
+        "id": "body-profile-right-neck-site",
+        "label": "Neck",
+        "x": 93,
+        "y": 176,
+        "targetId": "body-profile-right-neck-tendon"
+      },
+      {
+        "id": "body-profile-right-shoulder-site",
+        "label": "Shoulder",
+        "x": 55,
+        "y": 245,
+        "targetId": "body-profile-right-near-arm-hand"
+      },
+      {
+        "id": "body-profile-right-chest-site",
+        "label": "Chest",
+        "x": 137,
+        "y": 255,
+        "targetId": "body-profile-right-body-contour"
+      },
+      {
+        "id": "body-profile-right-abdomen",
+        "label": "Abdomen",
+        "x": 134,
+        "y": 389,
+        "targetId": "body-profile-right-body-contour"
+      },
+      {
+        "id": "body-profile-right-elbow-site",
+        "label": "Elbow",
+        "x": 58,
+        "y": 355,
+        "targetId": "body-profile-right-elbow"
+      },
+      {
+        "id": "body-profile-right-wrist-site",
+        "label": "Wrist",
+        "x": 112,
+        "y": 495,
+        "targetId": "body-profile-right-near-arm-hand"
+      },
+      {
+        "id": "body-profile-right-hand-site",
+        "label": "Hand",
+        "x": 121,
+        "y": 545,
+        "targetId": "body-profile-right-near-arm-hand"
+      },
+      {
+        "id": "body-profile-right-hip-site",
+        "label": "Hip",
+        "x": 34,
+        "y": 472,
+        "targetId": "body-profile-right-body-contour"
+      },
+      {
+        "id": "body-profile-right-knee-site",
+        "label": "Knee",
+        "x": 71,
+        "y": 672,
+        "targetId": "body-profile-right-body-contour"
+      },
+      {
+        "id": "body-profile-right-ankle-site",
+        "label": "Ankle",
+        "x": 47,
+        "y": 864,
+        "targetId": "body-profile-right-ankle"
+      },
+      {
+        "id": "body-profile-right-foot-site",
+        "label": "Near foot",
+        "x": 94,
+        "y": 906,
+        "targetId": "body-profile-right-body-contour"
+      }
+    ]
+  },
+  {
+    "key": "hand-right-palmar",
+    "file": "clinical/assets/hand-right-palmar.svg",
+    "label": "Right hand — palm, fingers down",
+    "region": "Hands",
+    "side": "right",
+    "view": "palmar",
+    "source": "Labeled hand views in four positions(1).png",
+    "width": 346,
+    "height": 501,
+    "landmarks": [
+      {
+        "id": "hand-right-palmar-wrist-landmark",
+        "label": "Wrist centre",
+        "x": 221,
+        "y": 59
+      },
+      {
+        "id": "hand-right-palmar-palm-landmark",
+        "label": "Palm centre",
+        "x": 227,
+        "y": 259
+      },
+      {
+        "id": "hand-right-palmar-thumb-tip-landmark",
+        "label": "Thumb tip",
+        "x": 28,
+        "y": 283,
+        "targetId": "hand-right-palmar-thumb"
+      },
+      {
+        "id": "hand-right-palmar-index-tip-landmark",
+        "label": "Index fingertip",
+        "x": 112,
+        "y": 453,
+        "targetId": "hand-right-palmar-index"
+      },
+      {
+        "id": "hand-right-palmar-middle-tip-landmark",
+        "label": "Middle fingertip",
+        "x": 189,
+        "y": 491,
+        "targetId": "hand-right-palmar-middle"
+      },
+      {
+        "id": "hand-right-palmar-ring-tip-landmark",
+        "label": "Ring fingertip",
+        "x": 246,
+        "y": 474,
+        "targetId": "hand-right-palmar-ring"
+      },
+      {
+        "id": "hand-right-palmar-little-tip-landmark",
+        "label": "Little fingertip",
+        "x": 323,
+        "y": 416,
+        "targetId": "hand-right-palmar-little"
+      },
+      {
+        "id": "hand-right-palmar-thumb-web-landmark",
+        "label": "Thumb–index web",
+        "x": 125,
+        "y": 218,
+        "targetId": "hand-right-palmar-thumb-web"
+      },
+      {
+        "id": "hand-right-palmar-palm-thumb-fold-landmark",
+        "label": "Palm fold — thumb side",
+        "x": 194,
+        "y": 193,
+        "targetId": "hand-right-palmar-palm-thumb-fold"
+      },
+      {
+        "id": "hand-right-palmar-palm-ulnar-fold-landmark",
+        "label": "Palm fold — little-finger side",
+        "x": 247,
+        "y": 212,
+        "targetId": "hand-right-palmar-palm-ulnar-fold"
+      },
+      {
+        "id": "hand-right-palmar-index-middle-web-landmark",
+        "label": "Index–middle web",
+        "x": 170,
+        "y": 311,
+        "targetId": "hand-right-palmar-index-middle-web"
+      },
+      {
+        "id": "hand-right-palmar-middle-ring-web-landmark",
+        "label": "Middle–ring web",
+        "x": 220,
+        "y": 318,
+        "targetId": "hand-right-palmar-middle-ring-web"
+      },
+      {
+        "id": "hand-right-palmar-ring-little-web-landmark",
+        "label": "Ring–little web",
+        "x": 272,
+        "y": 303,
+        "targetId": "hand-right-palmar-ring-little-web"
+      }
+    ]
+  },
+  {
+    "key": "hand-left-palmar",
+    "file": "clinical/assets/hand-left-palmar.svg",
+    "label": "Left hand — palm, fingers down",
+    "region": "Hands",
+    "side": "left",
+    "view": "palmar",
+    "source": "Labeled hand views in four positions(1).png",
+    "width": 346,
+    "height": 501,
+    "landmarks": [
+      {
+        "id": "hand-left-palmar-wrist-landmark",
+        "label": "Wrist centre",
+        "x": 125,
+        "y": 59
+      },
+      {
+        "id": "hand-left-palmar-palm-landmark",
+        "label": "Palm centre",
+        "x": 119,
+        "y": 259
+      },
+      {
+        "id": "hand-left-palmar-thumb-tip-landmark",
+        "label": "Thumb tip",
+        "x": 318,
+        "y": 283,
+        "targetId": "hand-left-palmar-thumb"
+      },
+      {
+        "id": "hand-left-palmar-index-tip-landmark",
+        "label": "Index fingertip",
+        "x": 234,
+        "y": 453,
+        "targetId": "hand-left-palmar-index"
+      },
+      {
+        "id": "hand-left-palmar-middle-tip-landmark",
+        "label": "Middle fingertip",
+        "x": 157,
+        "y": 491,
+        "targetId": "hand-left-palmar-middle"
+      },
+      {
+        "id": "hand-left-palmar-ring-tip-landmark",
+        "label": "Ring fingertip",
+        "x": 100,
+        "y": 474,
+        "targetId": "hand-left-palmar-ring"
+      },
+      {
+        "id": "hand-left-palmar-little-tip-landmark",
+        "label": "Little fingertip",
+        "x": 23,
+        "y": 416,
+        "targetId": "hand-left-palmar-little"
+      },
+      {
+        "id": "hand-left-palmar-thumb-web-landmark",
+        "label": "Thumb–index web",
+        "x": 221,
+        "y": 218,
+        "targetId": "hand-left-palmar-thumb-web"
+      },
+      {
+        "id": "hand-left-palmar-palm-thumb-fold-landmark",
+        "label": "Palm fold — thumb side",
+        "x": 152,
+        "y": 193,
+        "targetId": "hand-left-palmar-palm-thumb-fold"
+      },
+      {
+        "id": "hand-left-palmar-palm-ulnar-fold-landmark",
+        "label": "Palm fold — little-finger side",
+        "x": 99,
+        "y": 212,
+        "targetId": "hand-left-palmar-palm-ulnar-fold"
+      },
+      {
+        "id": "hand-left-palmar-index-middle-web-landmark",
+        "label": "Index–middle web",
+        "x": 176,
+        "y": 311,
+        "targetId": "hand-left-palmar-index-middle-web"
+      },
+      {
+        "id": "hand-left-palmar-middle-ring-web-landmark",
+        "label": "Middle–ring web",
+        "x": 126,
+        "y": 318,
+        "targetId": "hand-left-palmar-middle-ring-web"
+      },
+      {
+        "id": "hand-left-palmar-ring-little-web-landmark",
+        "label": "Ring–little web",
+        "x": 74,
+        "y": 303,
+        "targetId": "hand-left-palmar-ring-little-web"
+      }
+    ]
+  },
+  {
+    "key": "hand-left-dorsal",
+    "file": "clinical/assets/hand-left-dorsal.svg",
+    "label": "Left hand — dorsum, fingers up",
+    "region": "Hands",
+    "side": "left",
+    "view": "dorsal",
+    "source": "Labeled hand views in four positions(1).png",
+    "width": 365,
+    "height": 499,
+    "landmarks": [
+      {
+        "id": "hand-left-dorsal-wrist-landmark",
+        "label": "Wrist centre",
+        "x": 120,
+        "y": 429
+      },
+      {
+        "id": "hand-left-dorsal-dorsum-landmark",
+        "label": "Dorsum centre",
+        "x": 149,
+        "y": 259
+      },
+      {
+        "id": "hand-left-dorsal-thumb-tip-landmark",
+        "label": "Thumb tip",
+        "x": 355,
+        "y": 209,
+        "targetId": "hand-left-dorsal-thumb"
+      },
+      {
+        "id": "hand-left-dorsal-index-tip-landmark",
+        "label": "Index fingertip",
+        "x": 219,
+        "y": 37,
+        "targetId": "hand-left-dorsal-index"
+      },
+      {
+        "id": "hand-left-dorsal-middle-tip-landmark",
+        "label": "Middle fingertip",
+        "x": 130,
+        "y": 7,
+        "targetId": "hand-left-dorsal-middle"
+      },
+      {
+        "id": "hand-left-dorsal-ring-tip-landmark",
+        "label": "Ring fingertip",
+        "x": 70,
+        "y": 41,
+        "targetId": "hand-left-dorsal-ring"
+      },
+      {
+        "id": "hand-left-dorsal-little-tip-landmark",
+        "label": "Little fingertip",
+        "x": 24,
+        "y": 99,
+        "targetId": "hand-left-dorsal-little"
+      },
+      {
+        "id": "hand-left-dorsal-thumb-nail-landmark",
+        "label": "Thumbnail centre",
+        "x": 336,
+        "y": 217,
+        "targetId": "hand-left-dorsal-thumb-nail"
+      },
+      {
+        "id": "hand-left-dorsal-index-nail-landmark",
+        "label": "Index fingernail centre",
+        "x": 219,
+        "y": 55,
+        "targetId": "hand-left-dorsal-index-nail"
+      },
+      {
+        "id": "hand-left-dorsal-middle-nail-landmark",
+        "label": "Middle fingernail centre",
+        "x": 132,
+        "y": 25,
+        "targetId": "hand-left-dorsal-middle-nail"
+      },
+      {
+        "id": "hand-left-dorsal-ring-nail-landmark",
+        "label": "Ring fingernail centre",
+        "x": 71,
+        "y": 57,
+        "targetId": "hand-left-dorsal-ring-nail"
+      },
+      {
+        "id": "hand-left-dorsal-little-nail-landmark",
+        "label": "Little fingernail centre",
+        "x": 25,
+        "y": 115,
+        "targetId": "hand-left-dorsal-little-nail"
+      },
+      {
+        "id": "hand-left-dorsal-thumb-web-landmark",
+        "label": "Thumb–index web",
+        "x": 238,
+        "y": 270,
+        "targetId": "hand-left-dorsal-thumb-web"
+      }
+    ]
+  },
+  {
+    "key": "hand-right-dorsal",
+    "file": "clinical/assets/hand-right-dorsal.svg",
+    "label": "Right hand — dorsum, fingers up",
+    "region": "Hands",
+    "side": "right",
+    "view": "dorsal",
+    "source": "Labeled hand views in four positions(1).png",
+    "width": 365,
+    "height": 499,
+    "landmarks": [
+      {
+        "id": "hand-right-dorsal-wrist-landmark",
+        "label": "Wrist centre",
+        "x": 245,
+        "y": 429
+      },
+      {
+        "id": "hand-right-dorsal-dorsum-landmark",
+        "label": "Dorsum centre",
+        "x": 216,
+        "y": 259
+      },
+      {
+        "id": "hand-right-dorsal-thumb-tip-landmark",
+        "label": "Thumb tip",
+        "x": 10,
+        "y": 209,
+        "targetId": "hand-right-dorsal-thumb"
+      },
+      {
+        "id": "hand-right-dorsal-index-tip-landmark",
+        "label": "Index fingertip",
+        "x": 146,
+        "y": 37,
+        "targetId": "hand-right-dorsal-index"
+      },
+      {
+        "id": "hand-right-dorsal-middle-tip-landmark",
+        "label": "Middle fingertip",
+        "x": 235,
+        "y": 7,
+        "targetId": "hand-right-dorsal-middle"
+      },
+      {
+        "id": "hand-right-dorsal-ring-tip-landmark",
+        "label": "Ring fingertip",
+        "x": 295,
+        "y": 41,
+        "targetId": "hand-right-dorsal-ring"
+      },
+      {
+        "id": "hand-right-dorsal-little-tip-landmark",
+        "label": "Little fingertip",
+        "x": 341,
+        "y": 99,
+        "targetId": "hand-right-dorsal-little"
+      },
+      {
+        "id": "hand-right-dorsal-thumb-nail-landmark",
+        "label": "Thumbnail centre",
+        "x": 29,
+        "y": 217,
+        "targetId": "hand-right-dorsal-thumb-nail"
+      },
+      {
+        "id": "hand-right-dorsal-index-nail-landmark",
+        "label": "Index fingernail centre",
+        "x": 146,
+        "y": 55,
+        "targetId": "hand-right-dorsal-index-nail"
+      },
+      {
+        "id": "hand-right-dorsal-middle-nail-landmark",
+        "label": "Middle fingernail centre",
+        "x": 233,
+        "y": 25,
+        "targetId": "hand-right-dorsal-middle-nail"
+      },
+      {
+        "id": "hand-right-dorsal-ring-nail-landmark",
+        "label": "Ring fingernail centre",
+        "x": 294,
+        "y": 57,
+        "targetId": "hand-right-dorsal-ring-nail"
+      },
+      {
+        "id": "hand-right-dorsal-little-nail-landmark",
+        "label": "Little fingernail centre",
+        "x": 340,
+        "y": 115,
+        "targetId": "hand-right-dorsal-little-nail"
+      },
+      {
+        "id": "hand-right-dorsal-thumb-web-landmark",
+        "label": "Thumb–index web",
+        "x": 127,
+        "y": 270,
+        "targetId": "hand-right-dorsal-thumb-web"
+      }
+    ]
+  },
+  {
+    "key": "foot-left-toe-front",
+    "file": "clinical/assets/foot-left-toe-front.svg",
+    "label": "Left foot — toe front",
+    "region": "Feet",
+    "side": "left",
+    "view": "toe-front",
+    "source": "Twelve-view left and right foot chart(1).png",
+    "width": 194,
+    "height": 224,
+    "landmarks": [
+      {
+        "id": "foot-left-toe-front-ankle-landmark",
+        "label": "Ankle crease",
+        "x": 66,
+        "y": 46,
+        "targetId": "foot-left-toe-front-ankle-crease"
+      },
+      {
+        "id": "foot-left-toe-front-hallux-landmark",
+        "label": "Great toe",
+        "x": 45,
+        "y": 172,
+        "targetId": "foot-left-toe-front-hallux-nail"
+      },
+      {
+        "id": "foot-left-toe-front-toe-2-landmark",
+        "label": "Second toe",
+        "x": 108,
+        "y": 191,
+        "targetId": "foot-left-toe-front-nail-2"
+      },
+      {
+        "id": "foot-left-toe-front-toe-3-landmark",
+        "label": "Third toe",
+        "x": 132,
+        "y": 186,
+        "targetId": "foot-left-toe-front-nail-3"
+      },
+      {
+        "id": "foot-left-toe-front-toe-4-landmark",
+        "label": "Fourth toe",
+        "x": 154,
+        "y": 179,
+        "targetId": "foot-left-toe-front-nail-4"
+      },
+      {
+        "id": "foot-left-toe-front-toe-5-landmark",
+        "label": "Little toe",
+        "x": 175,
+        "y": 167,
+        "targetId": "foot-left-toe-front-nail-5"
+      }
+    ]
+  },
+  {
+    "key": "foot-left-plantar",
+    "file": "clinical/assets/foot-left-plantar.svg",
+    "label": "Left foot — plantar",
+    "region": "Feet",
+    "side": "left",
+    "view": "plantar",
+    "source": "Twelve-view left and right foot chart(1).png",
+    "width": 168,
+    "height": 340,
+    "landmarks": [
+      {
+        "id": "foot-left-plantar-hallux-landmark",
+        "label": "Great toe pad",
+        "x": 39,
+        "y": 63,
+        "targetId": "foot-left-plantar-hallux-pad"
+      },
+      {
+        "id": "foot-left-plantar-toe-2-landmark",
+        "label": "Second toe pad",
+        "x": 61,
+        "y": 37,
+        "targetId": "foot-left-plantar-toe-2-pad"
+      },
+      {
+        "id": "foot-left-plantar-toe-3-landmark",
+        "label": "Third toe pad",
+        "x": 87,
+        "y": 50,
+        "targetId": "foot-left-plantar-toe-3-pad"
+      },
+      {
+        "id": "foot-left-plantar-toe-5-landmark",
+        "label": "Little toe pad",
+        "x": 137,
+        "y": 85,
+        "targetId": "foot-left-plantar-toe-5-pad"
+      },
+      {
+        "id": "foot-left-plantar-forefoot-landmark",
+        "label": "Forefoot crease",
+        "x": 90,
+        "y": 62,
+        "targetId": "foot-left-plantar-ball-crease"
+      },
+      {
+        "id": "foot-left-plantar-arch-landmark",
+        "label": "Arch crease",
+        "x": 70,
+        "y": 131,
+        "targetId": "foot-left-plantar-arch-crease"
+      },
+      {
+        "id": "foot-left-plantar-heel-landmark",
+        "label": "Heel contour",
+        "x": 74,
+        "y": 326,
+        "targetId": "foot-left-plantar-outline"
+      }
+    ]
+  },
+  {
+    "key": "foot-left-heel",
+    "file": "clinical/assets/foot-left-heel.svg",
+    "label": "Left foot — heel rear",
+    "region": "Feet",
+    "side": "left",
+    "view": "heel",
+    "source": "Twelve-view left and right foot chart(1).png",
+    "width": 180,
+    "height": 272,
+    "landmarks": [
+      {
+        "id": "foot-left-heel-ankle-outer-landmark",
+        "label": "Outer ankle contour",
+        "x": 73,
+        "y": 124,
+        "targetId": "foot-left-heel-heel-contour"
+      },
+      {
+        "id": "foot-left-heel-ankle-inner-landmark",
+        "label": "Inner ankle contour",
+        "x": 127,
+        "y": 135,
+        "targetId": "foot-left-heel-heel-contour"
+      },
+      {
+        "id": "foot-left-heel-heel-landmark",
+        "label": "Heel bottom",
+        "x": 93,
+        "y": 259,
+        "targetId": "foot-left-heel-outline"
+      },
+      {
+        "id": "foot-left-heel-heel-outer-landmark",
+        "label": "Outer heel contour",
+        "x": 47,
+        "y": 215,
+        "targetId": "foot-left-heel-heel-contour"
+      },
+      {
+        "id": "foot-left-heel-heel-inner-landmark",
+        "label": "Inner heel contour",
+        "x": 144,
+        "y": 222,
+        "targetId": "foot-left-heel-heel-contour"
+      },
+      {
+        "id": "foot-left-heel-foot-edge-landmark",
+        "label": "Visible foot edge",
+        "x": 16,
+        "y": 213,
+        "targetId": "foot-left-heel-outline"
+      }
+    ]
+  },
+  {
+    "key": "foot-left-medial",
+    "file": "clinical/assets/foot-left-medial.svg",
+    "label": "Left foot — medial side",
+    "region": "Feet",
+    "side": "left",
+    "view": "medial",
+    "source": "Twelve-view left and right foot chart(1).png",
+    "width": 410,
+    "height": 247,
+    "landmarks": [
+      {
+        "id": "foot-left-medial-ankle-landmark",
+        "label": "Ankle crease",
+        "x": 102,
+        "y": 122,
+        "targetId": "foot-left-medial-ankle-crease"
+      },
+      {
+        "id": "foot-left-medial-heel-landmark",
+        "label": "Heel contour",
+        "x": 33,
+        "y": 214,
+        "targetId": "foot-left-medial-outline"
+      },
+      {
+        "id": "foot-left-medial-arch-landmark",
+        "label": "Arch contour",
+        "x": 187,
+        "y": 187,
+        "targetId": "foot-left-medial-arch-crease"
+      },
+      {
+        "id": "foot-left-medial-hallux-landmark",
+        "label": "Great toe nail",
+        "x": 374,
+        "y": 200,
+        "targetId": "foot-left-medial-hallux-nail"
+      },
+      {
+        "id": "foot-left-medial-forefoot-landmark",
+        "label": "Forefoot ridge",
+        "x": 312,
+        "y": 175,
+        "targetId": "foot-left-medial-forefoot-top"
+      },
+      {
+        "id": "foot-left-medial-toe-fold-landmark",
+        "label": "Toe crease",
+        "x": 343,
+        "y": 209,
+        "targetId": "foot-left-medial-hallux-fold"
+      }
+    ]
+  },
+  {
+    "key": "foot-left-lateral",
+    "file": "clinical/assets/foot-left-lateral.svg",
+    "label": "Left foot — lateral side",
+    "region": "Feet",
+    "side": "left",
+    "view": "lateral",
+    "source": "Twelve-view left and right foot chart(1).png",
+    "width": 413,
+    "height": 257,
+    "landmarks": [
+      {
+        "id": "foot-left-lateral-ankle-landmark",
+        "label": "Ankle crease",
+        "x": 314,
+        "y": 149,
+        "targetId": "foot-left-lateral-ankle-crease"
+      },
+      {
+        "id": "foot-left-lateral-heel-landmark",
+        "label": "Heel contour",
+        "x": 386,
+        "y": 198,
+        "targetId": "foot-left-lateral-outline"
+      },
+      {
+        "id": "foot-left-lateral-hallux-landmark",
+        "label": "Great toe nail",
+        "x": 33,
+        "y": 165,
+        "targetId": "foot-left-lateral-nail-1"
+      },
+      {
+        "id": "foot-left-lateral-toe-2-landmark",
+        "label": "Second toe nail",
+        "x": 31,
+        "y": 198,
+        "targetId": "foot-left-lateral-nail-2"
+      },
+      {
+        "id": "foot-left-lateral-toe-3-landmark",
+        "label": "Third toe nail",
+        "x": 48,
+        "y": 209,
+        "targetId": "foot-left-lateral-nail-3"
+      },
+      {
+        "id": "foot-left-lateral-toe-4-landmark",
+        "label": "Fourth toe nail",
+        "x": 70,
+        "y": 221,
+        "targetId": "foot-left-lateral-nail-4"
+      },
+      {
+        "id": "foot-left-lateral-toe-5-landmark",
+        "label": "Little toe nail",
+        "x": 99,
+        "y": 230,
+        "targetId": "foot-left-lateral-nail-5"
+      }
+    ]
+  },
+  {
+    "key": "foot-left-dorsal-oblique",
+    "file": "clinical/assets/foot-left-dorsal-oblique.svg",
+    "label": "Left foot — dorsal oblique",
+    "region": "Feet",
+    "side": "left",
+    "view": "dorsal-oblique",
+    "source": "Twelve-view left and right foot chart(1).png",
+    "width": 220,
+    "height": 397,
+    "landmarks": [
+      {
+        "id": "foot-left-dorsal-oblique-ankle-landmark",
+        "label": "Inner ankle contour",
+        "x": 189,
+        "y": 84,
+        "targetId": "foot-left-dorsal-oblique-ankle-inner"
+      },
+      {
+        "id": "foot-left-dorsal-oblique-instep-landmark",
+        "label": "Instep contour",
+        "x": 185,
+        "y": 133,
+        "targetId": "foot-left-dorsal-oblique-instep-tendon"
+      },
+      {
+        "id": "foot-left-dorsal-oblique-hallux-landmark",
+        "label": "Great toe nail",
+        "x": 84,
+        "y": 358,
+        "targetId": "foot-left-dorsal-oblique-nail-1"
+      },
+      {
+        "id": "foot-left-dorsal-oblique-toe-2-landmark",
+        "label": "Second toe nail",
+        "x": 50,
+        "y": 354,
+        "targetId": "foot-left-dorsal-oblique-nail-2"
+      },
+      {
+        "id": "foot-left-dorsal-oblique-toe-3-landmark",
+        "label": "Third toe nail",
+        "x": 37,
+        "y": 332,
+        "targetId": "foot-left-dorsal-oblique-nail-3"
+      },
+      {
+        "id": "foot-left-dorsal-oblique-toe-4-landmark",
+        "label": "Fourth toe nail",
+        "x": 27,
+        "y": 312,
+        "targetId": "foot-left-dorsal-oblique-nail-4"
+      },
+      {
+        "id": "foot-left-dorsal-oblique-toe-5-landmark",
+        "label": "Little toe nail",
+        "x": 17,
+        "y": 288,
+        "targetId": "foot-left-dorsal-oblique-nail-5"
+      }
+    ]
+  },
+  {
+    "key": "foot-right-toe-front",
+    "file": "clinical/assets/foot-right-toe-front.svg",
+    "label": "Right foot — toe front",
+    "region": "Feet",
+    "side": "right",
+    "view": "toe-front",
+    "source": "Twelve-view left and right foot chart(1).png",
+    "width": 194,
+    "height": 224,
+    "landmarks": [
+      {
+        "id": "foot-right-toe-front-ankle-landmark",
+        "label": "Ankle crease",
+        "x": 128,
+        "y": 46,
+        "targetId": "foot-right-toe-front-ankle-crease"
+      },
+      {
+        "id": "foot-right-toe-front-hallux-landmark",
+        "label": "Great toe",
+        "x": 149,
+        "y": 172,
+        "targetId": "foot-right-toe-front-hallux-nail"
+      },
+      {
+        "id": "foot-right-toe-front-toe-2-landmark",
+        "label": "Second toe",
+        "x": 86,
+        "y": 191,
+        "targetId": "foot-right-toe-front-nail-2"
+      },
+      {
+        "id": "foot-right-toe-front-toe-3-landmark",
+        "label": "Third toe",
+        "x": 62,
+        "y": 186,
+        "targetId": "foot-right-toe-front-nail-3"
+      },
+      {
+        "id": "foot-right-toe-front-toe-4-landmark",
+        "label": "Fourth toe",
+        "x": 40,
+        "y": 179,
+        "targetId": "foot-right-toe-front-nail-4"
+      },
+      {
+        "id": "foot-right-toe-front-toe-5-landmark",
+        "label": "Little toe",
+        "x": 19,
+        "y": 167,
+        "targetId": "foot-right-toe-front-nail-5"
+      }
+    ]
+  },
+  {
+    "key": "foot-right-plantar",
+    "file": "clinical/assets/foot-right-plantar.svg",
+    "label": "Right foot — plantar",
+    "region": "Feet",
+    "side": "right",
+    "view": "plantar",
+    "source": "Twelve-view left and right foot chart(1).png",
+    "width": 168,
+    "height": 340,
+    "landmarks": [
+      {
+        "id": "foot-right-plantar-hallux-landmark",
+        "label": "Great toe pad",
+        "x": 129,
+        "y": 63,
+        "targetId": "foot-right-plantar-hallux-pad"
+      },
+      {
+        "id": "foot-right-plantar-toe-2-landmark",
+        "label": "Second toe pad",
+        "x": 107,
+        "y": 37,
+        "targetId": "foot-right-plantar-toe-2-pad"
+      },
+      {
+        "id": "foot-right-plantar-toe-3-landmark",
+        "label": "Third toe pad",
+        "x": 81,
+        "y": 50,
+        "targetId": "foot-right-plantar-toe-3-pad"
+      },
+      {
+        "id": "foot-right-plantar-toe-5-landmark",
+        "label": "Little toe pad",
+        "x": 31,
+        "y": 85,
+        "targetId": "foot-right-plantar-toe-5-pad"
+      },
+      {
+        "id": "foot-right-plantar-forefoot-landmark",
+        "label": "Forefoot crease",
+        "x": 78,
+        "y": 62,
+        "targetId": "foot-right-plantar-ball-crease"
+      },
+      {
+        "id": "foot-right-plantar-arch-landmark",
+        "label": "Arch crease",
+        "x": 98,
+        "y": 131,
+        "targetId": "foot-right-plantar-arch-crease"
+      },
+      {
+        "id": "foot-right-plantar-heel-landmark",
+        "label": "Heel contour",
+        "x": 94,
+        "y": 326,
+        "targetId": "foot-right-plantar-outline"
+      }
+    ]
+  },
+  {
+    "key": "foot-right-heel",
+    "file": "clinical/assets/foot-right-heel.svg",
+    "label": "Right foot — heel rear",
+    "region": "Feet",
+    "side": "right",
+    "view": "heel",
+    "source": "Twelve-view left and right foot chart(1).png",
+    "width": 180,
+    "height": 272,
+    "landmarks": [
+      {
+        "id": "foot-right-heel-ankle-outer-landmark",
+        "label": "Outer ankle contour",
+        "x": 107,
+        "y": 124,
+        "targetId": "foot-right-heel-heel-contour"
+      },
+      {
+        "id": "foot-right-heel-ankle-inner-landmark",
+        "label": "Inner ankle contour",
+        "x": 53,
+        "y": 135,
+        "targetId": "foot-right-heel-heel-contour"
+      },
+      {
+        "id": "foot-right-heel-heel-landmark",
+        "label": "Heel bottom",
+        "x": 87,
+        "y": 259,
+        "targetId": "foot-right-heel-outline"
+      },
+      {
+        "id": "foot-right-heel-heel-outer-landmark",
+        "label": "Outer heel contour",
+        "x": 133,
+        "y": 215,
+        "targetId": "foot-right-heel-heel-contour"
+      },
+      {
+        "id": "foot-right-heel-heel-inner-landmark",
+        "label": "Inner heel contour",
+        "x": 36,
+        "y": 222,
+        "targetId": "foot-right-heel-heel-contour"
+      },
+      {
+        "id": "foot-right-heel-foot-edge-landmark",
+        "label": "Visible foot edge",
+        "x": 164,
+        "y": 213,
+        "targetId": "foot-right-heel-outline"
+      }
+    ]
+  },
+  {
+    "key": "foot-right-medial",
+    "file": "clinical/assets/foot-right-medial.svg",
+    "label": "Right foot — medial side",
+    "region": "Feet",
+    "side": "right",
+    "view": "medial",
+    "source": "Twelve-view left and right foot chart(1).png",
+    "width": 410,
+    "height": 247,
+    "landmarks": [
+      {
+        "id": "foot-right-medial-ankle-landmark",
+        "label": "Ankle crease",
+        "x": 308,
+        "y": 122,
+        "targetId": "foot-right-medial-ankle-crease"
+      },
+      {
+        "id": "foot-right-medial-heel-landmark",
+        "label": "Heel contour",
+        "x": 377,
+        "y": 214,
+        "targetId": "foot-right-medial-outline"
+      },
+      {
+        "id": "foot-right-medial-arch-landmark",
+        "label": "Arch contour",
+        "x": 223,
+        "y": 187,
+        "targetId": "foot-right-medial-arch-crease"
+      },
+      {
+        "id": "foot-right-medial-hallux-landmark",
+        "label": "Great toe nail",
+        "x": 36,
+        "y": 200,
+        "targetId": "foot-right-medial-hallux-nail"
+      },
+      {
+        "id": "foot-right-medial-forefoot-landmark",
+        "label": "Forefoot ridge",
+        "x": 98,
+        "y": 175,
+        "targetId": "foot-right-medial-forefoot-top"
+      },
+      {
+        "id": "foot-right-medial-toe-fold-landmark",
+        "label": "Toe crease",
+        "x": 67,
+        "y": 209,
+        "targetId": "foot-right-medial-hallux-fold"
+      }
+    ]
+  },
+  {
+    "key": "foot-right-lateral",
+    "file": "clinical/assets/foot-right-lateral.svg",
+    "label": "Right foot — lateral side",
+    "region": "Feet",
+    "side": "right",
+    "view": "lateral",
+    "source": "Twelve-view left and right foot chart(1).png",
+    "width": 413,
+    "height": 257,
+    "landmarks": [
+      {
+        "id": "foot-right-lateral-ankle-landmark",
+        "label": "Ankle crease",
+        "x": 99,
+        "y": 149,
+        "targetId": "foot-right-lateral-ankle-crease"
+      },
+      {
+        "id": "foot-right-lateral-heel-landmark",
+        "label": "Heel contour",
+        "x": 27,
+        "y": 198,
+        "targetId": "foot-right-lateral-outline"
+      },
+      {
+        "id": "foot-right-lateral-hallux-landmark",
+        "label": "Great toe nail",
+        "x": 380,
+        "y": 165,
+        "targetId": "foot-right-lateral-nail-1"
+      },
+      {
+        "id": "foot-right-lateral-toe-2-landmark",
+        "label": "Second toe nail",
+        "x": 382,
+        "y": 198,
+        "targetId": "foot-right-lateral-nail-2"
+      },
+      {
+        "id": "foot-right-lateral-toe-3-landmark",
+        "label": "Third toe nail",
+        "x": 365,
+        "y": 209,
+        "targetId": "foot-right-lateral-nail-3"
+      },
+      {
+        "id": "foot-right-lateral-toe-4-landmark",
+        "label": "Fourth toe nail",
+        "x": 343,
+        "y": 221,
+        "targetId": "foot-right-lateral-nail-4"
+      },
+      {
+        "id": "foot-right-lateral-toe-5-landmark",
+        "label": "Little toe nail",
+        "x": 314,
+        "y": 230,
+        "targetId": "foot-right-lateral-nail-5"
+      }
+    ]
+  },
+  {
+    "key": "foot-right-dorsal-oblique",
+    "file": "clinical/assets/foot-right-dorsal-oblique.svg",
+    "label": "Right foot — dorsal oblique",
+    "region": "Feet",
+    "side": "right",
+    "view": "dorsal-oblique",
+    "source": "Twelve-view left and right foot chart(1).png",
+    "width": 220,
+    "height": 397,
+    "landmarks": [
+      {
+        "id": "foot-right-dorsal-oblique-ankle-landmark",
+        "label": "Inner ankle contour",
+        "x": 31,
+        "y": 84,
+        "targetId": "foot-right-dorsal-oblique-ankle-inner"
+      },
+      {
+        "id": "foot-right-dorsal-oblique-instep-landmark",
+        "label": "Instep contour",
+        "x": 35,
+        "y": 133,
+        "targetId": "foot-right-dorsal-oblique-instep-tendon"
+      },
+      {
+        "id": "foot-right-dorsal-oblique-hallux-landmark",
+        "label": "Great toe nail",
+        "x": 136,
+        "y": 358,
+        "targetId": "foot-right-dorsal-oblique-nail-1"
+      },
+      {
+        "id": "foot-right-dorsal-oblique-toe-2-landmark",
+        "label": "Second toe nail",
+        "x": 170,
+        "y": 354,
+        "targetId": "foot-right-dorsal-oblique-nail-2"
+      },
+      {
+        "id": "foot-right-dorsal-oblique-toe-3-landmark",
+        "label": "Third toe nail",
+        "x": 183,
+        "y": 332,
+        "targetId": "foot-right-dorsal-oblique-nail-3"
+      },
+      {
+        "id": "foot-right-dorsal-oblique-toe-4-landmark",
+        "label": "Fourth toe nail",
+        "x": 193,
+        "y": 312,
+        "targetId": "foot-right-dorsal-oblique-nail-4"
+      },
+      {
+        "id": "foot-right-dorsal-oblique-toe-5-landmark",
+        "label": "Little toe nail",
+        "x": 203,
+        "y": 288,
+        "targetId": "foot-right-dorsal-oblique-nail-5"
+      }
+    ]
+  }
+]

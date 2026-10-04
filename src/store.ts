@@ -10,6 +10,7 @@ import {
   updateGroup as updateGroupInDoc,
 } from './areaModel'
 import { applyArrangement } from './autoLayout'
+import { clinicalAsset, clinicalLandmarks, containAddedImage } from './clinical'
 import {
   anchorPagePoint,
   docContentBox,
@@ -174,6 +175,8 @@ interface StoreState {
   selectedSiteId: string | null
   /** when set, the next click on the drawing places a marker for this site */
   pendingSiteId: string | null
+  /** Optional view chosen from the connections matrix. */
+  pendingSiteImageId: string | null
   /** draw dashed lines from the selected site's markers to its legend row */
   showSiteConnections: boolean
   selectedAreaId: string | null
@@ -204,12 +207,12 @@ interface StoreState {
   landmarkFocusRequest: number
   // lifecycle
   loadSampleKey: (key: string, withSeeds?: boolean) => Promise<void>
-  loadTemplate: (key: string) => Promise<void>
+  loadTemplate: (key: string) => Promise<boolean>
   importSvgText: (name: string, raw: string) => void
   loadDoc: (doc: DrawerDoc) => void
   // images on the page
   addImageFromSvg: (name: string, raw: string, sampleKey?: string | null) => boolean
-  addSampleImage: (key: string) => Promise<void>
+  addSampleImage: (key: string) => Promise<boolean>
   selectImage: (id: string | null) => void
   setImagePlacement: (id: string, patch: Partial<Pick<ImageInstance, 'x' | 'y' | 'width' | 'height' | 'rotation' | 'flipX'>>) => void
   updateImageMeta: (id: string, patch: Partial<Pick<ImageInstance, 'name' | 'visible' | 'locked' | 'source'>>) => void
@@ -225,7 +228,7 @@ interface StoreState {
   updateSite: (id: string, patch: Partial<Omit<Site, 'id'>>) => void
   deleteSite: (id: string) => void
   linkCalloutToSite: (calloutId: string, siteId: string | null) => void
-  startSitePlacement: (siteId: string | null) => void
+  startSitePlacement: (siteId: string | null, imageId?: string) => void
   updateSiteLegend: (patch: Partial<SiteLegend>) => void
   setMappingValue: (fieldKey: string, value: string) => void
   setShowSiteConnections: (v: boolean) => void
@@ -334,11 +337,15 @@ const NO_SELECTION = {
 const FRESH = {
   ...NO_SELECTION,
   pendingSiteId: null,
+  pendingSiteImageId: null,
   past: [] as DrawerDoc[],
   future: [] as DrawerDoc[],
   hoverLandmarkId: null,
   hoverPart: null,
 }
+
+// Async artwork reads must not overwrite a later project-opening action.
+let documentLoadRequest = 0
 
 export const useStore = create<StoreState>((set, get) => ({
   doc: null,
@@ -350,6 +357,7 @@ export const useStore = create<StoreState>((set, get) => ({
   selectedImageId: null,
   selectedSiteId: null,
   pendingSiteId: null,
+  pendingSiteImageId: null,
   showSiteConnections: false,
   selectedAreaId: null,
   selectedGroupId: null,
@@ -371,6 +379,7 @@ export const useStore = create<StoreState>((set, get) => ({
   landmarkFocusRequest: 0,
 
   loadSampleKey: async (key, withSeeds = false) => {
+    const request = ++documentLoadRequest
     const sample = SAMPLES.find((s) => s.key === key) ?? SAMPLES[0]
     set({ status: `Loading ${sample.label}…` })
     try {
@@ -379,31 +388,46 @@ export const useStore = create<StoreState>((set, get) => ({
         return r.text()
       })
       const base = parseSvg(raw)
-      const landmarks = buildLandmarksFor(sample.key, base.targetBoxes)
+      if (request !== documentLoadRequest) return
+      const asset = clinicalAsset(sample.key)
+      const landmarks = asset ? clinicalLandmarks(asset, base) : buildLandmarksFor(sample.key, base.targetBoxes)
       const doc = makeDoc(sample.label, base, landmarks)
+      if (asset) doc.images[0].source = asset.source
       if (withSeeds && key === 'divider') seedDivider(doc)
       set({ ...FRESH, doc, status: '', tool: 'anchor' })
     } catch (e) {
-      set({ status: `Failed to load sample: ${(e as Error).message}` })
+      if (request === documentLoadRequest) set({ status: `Failed to load sample: ${(e as Error).message}` })
     }
   },
 
   loadTemplate: async (key) => {
     const template = TEMPLATES.find((t) => t.key === key)
-    if (!template) return
+    if (!template) return false
+    const request = ++documentLoadRequest
     set({ status: `Loading ${template.label}…` })
     try {
       const text = await fetch(sampleUrl(template.file)).then((r) => {
         if (!r.ok) throw new Error(`${r.status} ${r.statusText}`)
         return r.text()
       })
-      set({ ...FRESH, doc: parseProject(text), status: template.note, tool: 'select', showLandmarks: true })
+      if (request !== documentLoadRequest) return false
+      const current = get().doc
+      const next = parseProject(text)
+      const isClinical = key.startsWith('clinical')
+      set({
+        ...FRESH, doc: next, status: template.note, tool: 'select', showLandmarks: !isClinical,
+        // Opening a chart is reversible, including from the library panel.
+        past: current ? [...get().past, structuredClone(current)].slice(-HISTORY_LIMIT) : [],
+      })
+      return true
     } catch (e) {
-      set({ status: `Failed to load template: ${(e as Error).message}` })
+      if (request === documentLoadRequest) set({ status: `Failed to load template: ${(e as Error).message}` })
+      return false
     }
   },
 
   importSvgText: (name, raw) => {
+    documentLoadRequest += 1
     try {
       const base = parseSvg(raw)
       // imported SVGs get a catalog auto-derived from their named elements
@@ -415,7 +439,10 @@ export const useStore = create<StoreState>((set, get) => ({
     }
   },
 
-  loadDoc: (doc) => set({ ...FRESH, doc: normalizeDoc(doc), status: '', tool: 'select' }),
+  loadDoc: (doc) => {
+    documentLoadRequest += 1
+    set({ ...FRESH, doc: normalizeDoc(doc), status: '', tool: 'select' })
+  },
 
   // --- images on the page ---------------------------------------------------
 
@@ -424,10 +451,12 @@ export const useStore = create<StoreState>((set, get) => ({
     if (!doc) return false
     try {
       const drawing = parseSvg(raw)
-      const landmarks = buildLandmarksFor(sampleKey, drawing.targetBoxes)
+      const asset = clinicalAsset(sampleKey)
+      const landmarks = asset ? clinicalLandmarks(asset, drawing) : buildLandmarksFor(sampleKey, drawing.targetBoxes)
       get().record()
       const result = addImageToDoc(doc, drawing, name.replace(/\.svg$/i, '') || 'Image', landmarks)
-      set({ doc: result.doc, ...NO_SELECTION, selectedImageId: result.imageId, tool: 'select', fitRequest: get().fitRequest + 1, status: '' })
+      if (asset) result.doc.images = result.doc.images.map((image) => image.id === result.imageId ? { ...image, source: asset.source } : image)
+      set({ doc: containAddedImage(result.doc, result.imageId), ...NO_SELECTION, selectedImageId: result.imageId, tool: 'select', fitRequest: get().fitRequest + 1, status: '' })
       return true
     } catch (e) {
       set({ status: `Could not add the image: ${(e as Error).message}` })
@@ -437,15 +466,19 @@ export const useStore = create<StoreState>((set, get) => ({
 
   addSampleImage: async (key) => {
     const sample = SAMPLES.find((s) => s.key === key)
-    if (!sample || !get().doc) return
+    const documentId = get().doc?.id
+    const request = documentLoadRequest
+    if (!sample || !documentId) return false
     try {
       const raw = await fetch(sampleUrl(sample.file)).then((r) => {
         if (!r.ok) throw new Error(`${r.status} ${r.statusText}`)
         return r.text()
       })
-      get().addImageFromSvg(sample.label, raw, sample.key)
+      if (request !== documentLoadRequest || get().doc?.id !== documentId) return false
+      return get().addImageFromSvg(sample.label, raw, sample.key)
     } catch (e) {
-      set({ status: `Failed to load sample: ${(e as Error).message}` })
+      if (request === documentLoadRequest && get().doc?.id === documentId) set({ status: `Failed to load sample: ${(e as Error).message}` })
+      return false
     }
   },
 
@@ -537,7 +570,7 @@ export const useStore = create<StoreState>((set, get) => ({
     const doc = get().doc
     if (!doc) return
     get().record()
-    set({ doc: deleteSiteFromDoc(doc, id), ...NO_SELECTION, pendingSiteId: null })
+    set({ doc: deleteSiteFromDoc(doc, id), ...NO_SELECTION, pendingSiteId: null, pendingSiteImageId: null })
   },
 
   linkCalloutToSite: (calloutId, siteId) => {
@@ -547,8 +580,18 @@ export const useStore = create<StoreState>((set, get) => ({
     set({ doc: linkCalloutToSiteInDoc(doc, calloutId, siteId), selectedSiteId: siteId })
   },
 
-  startSitePlacement: (siteId) =>
-    set(siteId ? { pendingSiteId: siteId, tool: 'anchor', ...NO_SELECTION, selectedSiteId: siteId } : { pendingSiteId: null }),
+  startSitePlacement: (siteId, imageId) => {
+    const image = imageId ? get().doc?.images.find((item) => item.id === imageId) : undefined
+    if (imageId && (!image || image.visible === false)) {
+      set({ status: 'Show the selected view before placing a marker on it.' })
+      return
+    }
+    set(siteId ? {
+      ...NO_SELECTION, pendingSiteId: siteId, pendingSiteImageId: imageId ?? null,
+      tool: 'anchor', selectedSiteId: siteId, selectedImageId: imageId ?? null,
+      status: image ? `Click ${image.name} to place the selected site.` : '',
+    } : { pendingSiteId: null, pendingSiteImageId: null })
+  },
 
   updateSiteLegend: (patch) => {
     const doc = get().doc
@@ -570,7 +613,7 @@ export const useStore = create<StoreState>((set, get) => ({
 
   // --- areas and counter groups -----------------------------------------------
 
-  setAreaMode: (mode) => set({ areaMode: mode, tool: 'area', pendingSiteId: null }),
+  setAreaMode: (mode) => set({ areaMode: mode, tool: 'area', pendingSiteId: null, pendingSiteImageId: null }),
   setShowAreas: (v) => set({ showAreas: v }),
   setHoverPart: (part) => set({ hoverPart: part }),
   selectArea: (id) => set({ ...NO_SELECTION, selectedAreaId: id }),
@@ -678,8 +721,10 @@ export const useStore = create<StoreState>((set, get) => ({
   undo: () => {
     const { doc, past, future } = get()
     if (!past.length || !doc) return
+    documentLoadRequest += 1
     const prev = past[past.length - 1]
     set({
+      ...NO_SELECTION, pendingSiteId: null, pendingSiteImageId: null, status: '',
       doc: prev,
       past: past.slice(0, -1),
       future: [structuredClone(doc), ...future].slice(0, HISTORY_LIMIT),
@@ -689,15 +734,17 @@ export const useStore = create<StoreState>((set, get) => ({
   redo: () => {
     const { doc, past, future } = get()
     if (!future.length || !doc) return
+    documentLoadRequest += 1
     const next = future[0]
     set({
+      ...NO_SELECTION, pendingSiteId: null, pendingSiteImageId: null, status: '',
       doc: next,
       past: [...past, structuredClone(doc)].slice(-HISTORY_LIMIT),
       future: future.slice(1),
     })
   },
 
-  setTool: (t) => set(t === 'anchor' ? { tool: t } : { tool: t, pendingSiteId: null }),
+  setTool: (t) => set(t === 'anchor' ? { tool: t } : { tool: t, pendingSiteId: null, pendingSiteImageId: null }),
   select: (id) => set({
     ...NO_SELECTION,
     selectedCalloutId: id,
@@ -1013,15 +1060,21 @@ export const useStore = create<StoreState>((set, get) => ({
   addCalloutAt: (point, targetId = null, imageId = null) => {
     const doc = get().doc
     if (!doc) return
-    get().record()
     const pendingSiteId = get().pendingSiteId
+    const requiredImage = get().pendingSiteImageId
+    if (pendingSiteId && requiredImage && imageId !== requiredImage) {
+      const name = findImage(doc, requiredImage)?.name ?? 'the chosen view'
+      set({ status: `Place this marker on ${name}. Esc cancels.` })
+      return
+    }
+    get().record()
     if (pendingSiteId) {
       // placing a marker for a site row
       try {
         const result = addSitePlacement(doc, pendingSiteId, imageId, point, imageId ? targetId : null)
-        set({ doc: result.doc, ...NO_SELECTION, selectedCalloutId: result.calloutId, selectedSiteId: pendingSiteId, pendingSiteId: null, tool: 'select' })
+        set({ doc: result.doc, ...NO_SELECTION, selectedCalloutId: result.calloutId, selectedSiteId: pendingSiteId, pendingSiteId: null, pendingSiteImageId: null, tool: 'select', status: '' })
       } catch (e) {
-        set({ status: (e as Error).message, pendingSiteId: null })
+        set({ status: (e as Error).message, pendingSiteId: null, pendingSiteImageId: null })
       }
       return
     }

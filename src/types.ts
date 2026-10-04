@@ -399,6 +399,8 @@ export interface DrawingElement {
 }
 
 export interface DrawerDoc {
+  /** Source and reconstruction notes carried with an editable chart. */
+  provenance?: Record<string, string>
   /** Flat external-field values. Treat downloaded projects/autosaves as data-bearing. */
   mappingValues?: Record<string, MappingValue>
   id: string

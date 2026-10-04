@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 346 501" width="346" height="501" role="img" aria-label="Left hand — palm, fingers down">
+<title>Left hand — palm, fingers down</title>
+<metadata>{&quot;source&quot;:&quot;Labeled hand views in four positions(1).png&quot;,&quot;artwork&quot;:&quot;Manually authored cubic Bezier contours and separate named detail paths; no bitmap embedding or automatic contour tracing.&quot;,&quot;review&quot;:&quot;Visual reconstruction from supplied illustrations. Landmark and site positions are illustrative and have not been clinically validated.&quot;,&quot;symmetry&quot;:&quot;Paired left/right views are explicitly reconstructed from mirrored masters; labels remain independent editable text.&quot;,&quot;assetId&quot;:&quot;hand-left-palmar&quot;,&quot;view&quot;:&quot;palmar&quot;,&quot;side&quot;:&quot;left&quot;}</metadata>
+<g id="hand-left-palmar-mirror" data-name="Bilateral reconstruction" transform="translate(346 0) scale(-1 1)">
+<g id="hand-left-palmar-geometry" data-name="Left hand — palm, fingers down" transform="translate(-171 -107)">
+<path id="hand-left-palmar-silhouette" data-name="Hand silhouette" d="M325 115 C327 138 331 158 332 178 C334 193 331 201 322 209 L322 209 C309 222 296 235 282 249 C260 270 250 289 239 311 C231 329 215 346 199 362 C192 369 185 375 182 382 C179 391 192 398 207 397 C228 397 245 381 261 357 C273 338 280 327 292 326 L292 326 C302 346 301 375 298 397 C294 418 287 440 283 459 C279 478 275 498 270 516 C264 536 263 558 277 562 C293 569 306 549 310 508 C316 494 320 479 321 465 C330 452 332 429 341 418 L341 418 C344 451 338 482 339 514 C340 532 342 537 339 548 C337 567 338 590 349 597 C357 603 368 600 374 589 C383 575 379 548 380 531 C384 505 383 484 384 466 C384 449 385 436 387 430 C388 426 390 425 393 425 L393 425 C393 443 396 461 400 475 C398 492 401 511 403 522 C399 542 398 563 406 576 C412 586 425 583 433 570 C441 555 440 542 439 520 C438 499 440 476 439 456 L437 420 C437 414 441 410 445 408 L445 408 C449 419 452 431 459 443 C459 455 465 469 469 477 C472 492 477 513 486 521 C493 526 502 524 507 513 C512 503 508 488 505 475 L498 448 C494 431 490 414 487 400 L487 400 C481 388 483 373 485 358 C489 337 489 312 488 286 C488 261 478 244 469 234 L469 234 C463 227 463 215 459 202 C454 187 450 179 451 167 C452 151 457 125 459 115 Z" fill="#ffffff" stroke="none"/>
+<g id="hand-left-palmar-linework" data-name="Editable hand contours and details" fill="none" stroke="#111111" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<path id="hand-left-palmar-wrist-radial" data-name="Wrist — thumb-side contour" d="M325 115 C327 138 331 158 332 178 C334 193 331 201 322 209"/>
+<path id="hand-left-palmar-thumb" data-name="Thumb contour" d="M322 209 C309 222 296 235 282 249 C260 270 250 289 239 311 C231 329 215 346 199 362 C192 369 185 375 182 382 C179 391 192 398 207 397 C228 397 245 381 261 357 C273 338 280 327 292 326"/>
+<path id="hand-left-palmar-index" data-name="Index finger contour" d="M292 326 C302 346 301 375 298 397 C294 418 287 440 283 459 C279 478 275 498 270 516 C264 536 263 558 277 562 C293 569 306 549 310 508 C316 494 320 479 321 465 C330 452 332 429 341 418"/>
+<path id="hand-left-palmar-middle" data-name="Middle finger contour" d="M341 418 C344 451 338 482 339 514 C340 532 342 537 339 548 C337 567 338 590 349 597 C357 603 368 600 374 589 C383 575 379 548 380 531 C384 505 383 484 384 466 C384 449 385 436 387 430 C388 426 390 425 393 425"/>
+<path id="hand-left-palmar-ring" data-name="Ring finger contour" d="M393 425 C393 443 396 461 400 475 C398 492 401 511 403 522 C399 542 398 563 406 576 C412 586 425 583 433 570 C441 555 440 542 439 520 C438 499 440 476 439 456 L437 420 C437 414 441 410 445 408"/>
+<path id="hand-left-palmar-little" data-name="Little finger contour" d="M445 408 C449 419 452 431 459 443 C459 455 465 469 469 477 C472 492 477 513 486 521 C493 526 502 524 507 513 C512 503 508 488 505 475 L498 448 C494 431 490 414 487 400"/>
+<path id="hand-left-palmar-palm-ulnar" data-name="Palm — little-finger-side contour" d="M487 400 C481 388 483 373 485 358 C489 337 489 312 488 286 C488 261 478 244 469 234"/>
+<path id="hand-left-palmar-wrist-ulnar" data-name="Wrist — little-finger-side contour" d="M469 234 C463 227 463 215 459 202 C454 187 450 179 451 167 C452 151 457 125 459 115"/>
+<path id="hand-left-palmar-thumb-web" data-name="Thumb–index web fold" d="M292 326 C298 324 303 324 309 323"/>
+<path id="hand-left-palmar-palm-thumb-fold" data-name="Palm fold — thumb side" d="M330 316 C370 309 396 275 395 220" stroke-width="2.8"/>
+<path id="hand-left-palmar-palm-ulnar-fold" data-name="Palm fold — little-finger side" d="M403 262 C407 299 419 334 441 350" stroke-width="2.8"/>
+<path id="hand-left-palmar-index-middle-web" data-name="Index–middle web fold" d="M340 416 C344 418 347 419 351 420"/>
+<path id="hand-left-palmar-middle-ring-web" data-name="Middle–ring web fold" d="M388 426 C392 425 396 423 400 422"/>
+<path id="hand-left-palmar-ring-little-web" data-name="Ring–little web fold" d="M437 415 C441 410 445 407 449 405"/>
+</g>
+</g>
+</g>
+</svg>

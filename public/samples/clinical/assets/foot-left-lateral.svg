@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 413 257" width="413" height="257" role="img" aria-label="Left foot — lateral side">
+<title>Left foot — lateral side</title>
+<metadata>{&quot;source&quot;:&quot;Twelve-view left and right foot chart(1).png&quot;,&quot;artwork&quot;:&quot;Manually authored cubic Bezier contours and separate named detail paths; no bitmap embedding or automatic contour tracing.&quot;,&quot;review&quot;:&quot;Visual reconstruction from supplied illustrations. Landmark and site positions are illustrative and have not been clinically validated.&quot;,&quot;symmetry&quot;:&quot;Paired left/right views are explicitly reconstructed from mirrored masters; labels remain independent editable text.&quot;,&quot;assetId&quot;:&quot;foot-left-lateral&quot;,&quot;view&quot;:&quot;lateral&quot;,&quot;side&quot;:&quot;left&quot;}</metadata>
+<g id="foot-left-lateral-artwork" data-name="Left foot — lateral side" fill="none" stroke="#151515" stroke-width="3.3" stroke-linecap="round" stroke-linejoin="round"><g id="foot-left-lateral-source-frame" transform="translate(-88 -568)"><path id="foot-left-lateral-outline" data-name="Oblique side foot silhouette" d="M 337 580 C 338 599 342 615 342 629 C 341 643 333 655 320 665 C 288 674 265 682 242 695 C 220 707 202 711 184 717 C 173 721 165 726 155 727 C 142 729 129 727 117 726 C 108 724 102 726 99 735 C 95 746 99 754 112 759 C 106 765 109 775 119 780 C 122 782 127 782 131 779 C 124 786 131 794 140 796 C 146 798 152 796 156 793 C 151 802 160 809 171 804 L 180 800 C 174 806 180 811 190 812 C 202 813 215 808 222 805 C 253 814 302 802 329 795 C 350 790 365 782 383 781 C 407 781 435 784 457 776 C 479 769 488 751 488 732 C 488 713 478 699 471 682 C 460 657 462 625 467 581" fill="#fff"/>
+<path id="foot-left-lateral-ankle-crease" data-name="Ankle crease" d="M 370 693 C 386 719 411 724 435 709"/>
+<path id="foot-left-lateral-hallux-divider" data-name="Great toe outline" d="M 112 759 C 131 756 137 749 152 746 C 160 744 169 742 177 741"/>
+<path id="foot-left-lateral-toe-2-divider" data-name="Second toe outline" d="M 129 779 C 142 777 151 766 164 762 C 174 758 184 755 195 751"/>
+<path id="foot-left-lateral-toe-3-divider" data-name="Third toe outline" d="M 151 793 C 167 789 173 776 187 770 C 194 766 201 763 207 760"/>
+<path id="foot-left-lateral-toe-4-divider" data-name="Fourth toe outline" d="M 175 804 C 187 798 191 790 204 786 L 212 782"/>
+<path id="foot-left-lateral-hallux-fold" data-name="Great toe joint fold" d="M 168 743 L 174 736 L 179 734"/>
+<path id="foot-left-lateral-toe-4-fold" data-name="Little toe joint fold" d="M 203 785 L 208 778 L 212 776"/>
+<path id="foot-left-lateral-nail-1" data-name="Great toe nail" d="M 108 728 C 115 724 125 729 135 728 C 139 729 135 736 131 737 C 122 740 112 738 110 735 Z" fill="#fff"/>
+<path id="foot-left-lateral-nail-2" data-name="Second toe nail" d="M 112 763 L 123 760 C 130 760 126 768 119 770 C 113 772 111 768 112 763 Z" fill="#fff"/>
+<path id="foot-left-lateral-nail-3" data-name="Third toe nail" d="M 130 775 C 134 772 142 772 143 776 C 144 780 135 783 131 781 Z" fill="#fff"/>
+<path id="foot-left-lateral-nail-4" data-name="Fourth toe nail" d="M 151 788 C 154 785 162 783 165 786 C 168 790 159 795 155 794 Z" fill="#fff"/>
+<path id="foot-left-lateral-nail-5" data-name="Little toe nail" d="M 179 796 C 182 791 189 791 194 795 C 198 800 191 804 186 803 Z" fill="#fff"/></g></g>
+</svg>
